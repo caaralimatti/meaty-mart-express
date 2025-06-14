@@ -1,246 +1,185 @@
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { 
-  Clock, 
-  Zap, 
-  Star, 
-  Gift, 
-  TrendingUp, 
-  Heart,
-  ShoppingCart,
-  MapPin,
-  Phone
-} from "lucide-react";
+import { ArrowLeft, User, MapPin, Clock, CreditCard, Gift, Package, Star } from "lucide-react";
+import ProfileSettings from "@/components/ProfileSettings";
 
 interface CustomerDashboardProps {
   onBackToShopping: () => void;
 }
 
 const CustomerDashboard = ({ onBackToShopping }: CustomerDashboardProps) => {
-  const [loyaltyPoints, setLoyaltyPoints] = useState(1250);
-  const [timeRemaining, setTimeRemaining] = useState(23 * 60 + 45); // 23:45 in minutes
-  
-  // Countdown timer for flash sale
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeRemaining(prev => prev > 0 ? prev - 1 : 0);
-    }, 60000); // Update every minute
-    
-    return () => clearInterval(timer);
-  }, []);
+  const [activeTab, setActiveTab] = useState<"overview" | "profile" | "orders" | "loyalty">("overview");
 
-  const formatTime = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}:${mins.toString().padStart(2, '0')}`;
+  // Mock data
+  const customerData = {
+    name: "John Doe",
+    loyaltyPoints: 250,
+    totalOrders: 12,
+    savedMoney: 850,
+    recentOrders: [
+      { id: "1", item: "Goat Leg Piece", date: "2 days ago", amount: 450, status: "Delivered" },
+      { id: "2", item: "Goat Shoulder", date: "1 week ago", amount: 680, status: "Delivered" },
+      { id: "3", item: "Goat Ribs", date: "2 weeks ago", amount: 320, status: "Delivered" }
+    ]
   };
 
-  const nextRewardPoints = 2000;
-  const progressPercentage = (loyaltyPoints / nextRewardPoints) * 100;
+  if (activeTab === "profile") {
+    return (
+      <div className="min-h-screen bg-gray-50 p-4">
+        <div className="max-w-4xl mx-auto">
+          <Button 
+            variant="ghost" 
+            onClick={() => setActiveTab("overview")}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Dashboard
+          </Button>
+          <ProfileSettings onClose={() => setActiveTab("overview")} />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-md border-b-2 border-red-100 p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-red-800">Welcome back, Rajesh! 👋</h1>
-            <p className="text-gray-600">Your premium shopping experience awaits</p>
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-4xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Button 
+              variant="ghost" 
+              onClick={onBackToShopping}
+              className="text-red-600"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Shopping
+            </Button>
+            <h1 className="text-2xl font-bold text-gray-800">My Dashboard</h1>
+            <div></div>
           </div>
-          <Button onClick={onBackToShopping} className="bg-red-600 hover:bg-red-700">
-            Continue Shopping
-          </Button>
         </div>
       </div>
 
-      <div className="container mx-auto p-6 space-y-6">
-        {/* Flash Sale Banner - Urgency Psychology */}
-        <Card className="bg-gradient-to-r from-red-600 to-orange-600 text-white border-none shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-2xl font-bold mb-2">⚡ FLASH SALE ENDING SOON!</h3>
-                <p className="text-red-100">Up to 40% OFF on premium cuts - Limited time only!</p>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-mono font-bold">{formatTime(timeRemaining)}</div>
-                <p className="text-sm text-red-100">Time left</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="max-w-4xl mx-auto p-4">
+        {/* Tab Navigation */}
+        <div className="flex space-x-2 mb-6 bg-white rounded-lg p-2 shadow-sm">
+          {[
+            { id: "overview", label: "Overview", icon: User },
+            { id: "profile", label: "Profile", icon: User },
+            { id: "orders", label: "Orders", icon: Package },
+            { id: "loyalty", label: "Rewards", icon: Gift }
+          ].map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id as any)}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-md flex-1 justify-center transition-colors ${
+                activeTab === id 
+                  ? "bg-red-600 text-white" 
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              <span>{label}</span>
+            </button>
+          ))}
+        </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Loyalty Points - Gamification */}
-          <Card className="col-span-1">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Gift className="w-5 h-5 text-yellow-600" />
-                <span>Loyalty Rewards</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="font-semibold text-lg">{loyaltyPoints} Points</span>
-                  <Badge className="bg-yellow-100 text-yellow-800">Gold Member</Badge>
-                </div>
-                <Progress value={progressPercentage} className="h-3" />
-                <p className="text-sm text-gray-600 mt-2">
-                  {nextRewardPoints - loyaltyPoints} points to next reward!
-                </p>
-              </div>
+        {/* Overview Tab */}
+        {activeTab === "overview" && (
+          <div className="space-y-6">
+            {/* Welcome Card */}
+            <Card className="bg-gradient-to-r from-red-600 to-orange-500 text-white">
+              <CardContent className="p-6">
+                <h2 className="text-2xl font-bold mb-2">Welcome back, {customerData.name}! 👋</h2>
+                <p className="opacity-90">Ready for some fresh goat meat?</p>
+              </CardContent>
+            </Card>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <Gift className="w-8 h-8 text-orange-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-orange-600">{customerData.loyaltyPoints}</div>
+                  <div className="text-gray-600">Loyalty Points</div>
+                </CardContent>
+              </Card>
               
-              <div className="space-y-2">
-                <Button className="w-full bg-yellow-600 hover:bg-yellow-700" size="sm">
-                  Redeem 500 Points (₹50 OFF)
-                </Button>
-                <Button variant="outline" className="w-full" size="sm">
-                  View All Rewards
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <Package className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-blue-600">{customerData.totalOrders}</div>
+                  <div className="text-gray-600">Total Orders</div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <Star className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-green-600">₹{customerData.savedMoney}</div>
+                  <div className="text-gray-600">Money Saved</div>
+                </CardContent>
+              </Card>
+            </div>
 
-          {/* Quick Stats */}
-          <Card className="col-span-2">
+            {/* Recent Orders */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Orders</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {customerData.recentOrders.map((order) => (
+                    <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div>
+                        <div className="font-medium">{order.item}</div>
+                        <div className="text-sm text-gray-500">{order.date}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-semibold">₹{order.amount}</div>
+                        <div className="text-sm text-green-600">{order.status}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Button variant="outline" className="w-full mt-4">
+                  View All Orders
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Other tabs content can be added here */}
+        {activeTab === "orders" && (
+          <Card>
             <CardHeader>
-              <CardTitle>Your Shopping Stats</CardTitle>
+              <CardTitle>Order History</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">₹12,450</div>
-                  <p className="text-sm text-gray-600">Total Saved</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">47</div>
-                  <p className="text-sm text-gray-600">Orders Placed</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">4.9⭐</div>
-                  <p className="text-sm text-gray-600">Avg Rating</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-red-600">18 min</div>
-                  <p className="text-sm text-gray-600">Avg Delivery</p>
-                </div>
+              <p className="text-gray-600">Your complete order history will appear here.</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {activeTab === "loyalty" && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Loyalty Program</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center space-y-4">
+                <div className="text-4xl font-bold text-orange-600">{customerData.loyaltyPoints}</div>
+                <p className="text-gray-600">Points Available</p>
+                <Button className="bg-orange-600 hover:bg-orange-700">
+                  Redeem Points
+                </Button>
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        {/* Personalized Recommendations - AI Psychology */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <TrendingUp className="w-5 h-5 text-red-600" />
-              <span>Handpicked Just for You</span>
-              <Badge className="bg-red-100 text-red-700">AI Powered</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-4">
-              {[
-                { name: "Premium Mutton Curry Cut", price: 620, originalPrice: 780, saving: "21% OFF", badge: "Most Ordered" },
-                { name: "Fresh Goat Liver", price: 280, originalPrice: 350, saving: "20% OFF", badge: "Low Stock" },
-                { name: "Boneless Mutton Chunks", price: 720, originalPrice: 900, saving: "20% OFF", badge: "Trending" }
-              ].map((product, index) => (
-                <Card key={index} className="border-red-100 hover:border-red-300 transition-colors cursor-pointer">
-                  <CardContent className="p-4">
-                    <Badge className="mb-2 bg-green-100 text-green-700">{product.badge}</Badge>
-                    <h4 className="font-semibold mb-2">{product.name}</h4>
-                    <div className="flex items-center space-x-2 mb-3">
-                      <span className="text-lg font-bold text-red-600">₹{product.price}</span>
-                      <span className="text-sm text-gray-500 line-through">₹{product.originalPrice}</span>
-                      <Badge variant="destructive" className="text-xs">{product.saving}</Badge>
-                    </div>
-                    <Button className="w-full bg-red-600 hover:bg-red-700" size="sm">
-                      Add to Cart
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Social Proof & Reviews */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Star className="w-5 h-5 text-yellow-500" />
-                <span>Recent Reviews</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {[
-                { name: "Priya S.", rating: 5, comment: "Amazing quality! Delivered in 25 minutes.", time: "2 hours ago" },
-                { name: "Amit K.", rating: 5, comment: "Fresh and perfectly cut. Highly recommend!", time: "5 hours ago" },
-                { name: "Sneha M.", rating: 4, comment: "Good quality, will order again.", time: "1 day ago" }
-              ].map((review, index) => (
-                <div key={index} className="border-l-4 border-yellow-400 pl-4">
-                  <div className="flex items-center space-x-2 mb-1">
-                    <span className="font-semibold">{review.name}</span>
-                    <div className="flex">
-                      {Array.from({length: review.rating}).map((_, i) => (
-                        <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                      ))}
-                    </div>
-                    <span className="text-xs text-gray-500">{review.time}</span>
-                  </div>
-                  <p className="text-sm text-gray-700">"{review.comment}"</p>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button className="w-full justify-start bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800">
-                <Heart className="w-4 h-4 mr-2" />
-                View Wishlist (8 items)
-              </Button>
-              <Button className="w-full justify-start bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
-                <Clock className="w-4 h-4 mr-2" />
-                Reorder Last Purchase
-              </Button>
-              <Button className="w-full justify-start bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800">
-                <MapPin className="w-4 h-4 mr-2" />
-                Track Active Orders
-              </Button>
-              <Button className="w-full justify-start bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800">
-                <Phone className="w-4 h-4 mr-2" />
-                Contact Support (24/7)
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Scarcity Psychology - Stock Alert */}
-        <Card className="border-orange-200 bg-orange-50">
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-3">
-              <Zap className="w-6 h-6 text-orange-600" />
-              <div>
-                <p className="font-semibold text-orange-800">⚠️ Running Low on Your Favorites!</p>
-                <p className="text-sm text-orange-700">Premium Mutton Curry Cut - Only 3 kg left in stock. Order now to avoid disappointment!</p>
-              </div>
-              <Button className="bg-orange-600 hover:bg-orange-700 ml-auto">
-                Order Now
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        )}
       </div>
     </div>
   );
