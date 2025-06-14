@@ -1,5 +1,4 @@
 
-```typescript
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 
 const corsHeaders = {
@@ -18,10 +17,7 @@ serve(async (req) => {
 
     const ODOO_URL = Deno.env.get('ODOO_URL')
     if (!ODOO_URL) {
-      return new Response(JSON.stringify({ error: 'Odoo URL is not configured in Supabase secrets.' }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
+      throw new Error('Odoo URL is not configured in Supabase secrets.')
     }
     
     // For authentication calls, inject credentials from secrets
@@ -31,10 +27,7 @@ serve(async (req) => {
         const ODOO_PASSWORD = Deno.env.get('ODOO_PASSWORD')
 
         if (!ODOO_DB || !ODOO_USERNAME || !ODOO_PASSWORD) {
-            return new Response(JSON.stringify({ error: 'Odoo credentials for auth are not configured in Supabase secrets.' }), {
-                status: 500,
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            })
+            throw new Error('Odoo credentials for auth are not configured in Supabase secrets.')
         }
         
         if (data && data.params) {
@@ -45,6 +38,7 @@ serve(async (req) => {
     }
 
     const odooUrl = `${ODOO_URL}${odoo_endpoint}`;
+    
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
     };
@@ -71,12 +65,10 @@ serve(async (req) => {
       status: odooResponse.status,
     })
   } catch (error) {
-    console.error('Proxy Error:', error);
+    console.error('Proxy Error:', error.message);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
 })
-
-```

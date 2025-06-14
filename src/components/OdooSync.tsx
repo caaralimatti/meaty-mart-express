@@ -1,5 +1,4 @@
 
-```typescript
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,7 +51,7 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       setIsConnected(false);
       toast({
         title: "Connection Error",
@@ -67,7 +66,6 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
     setSyncProgress(0);
     
     try {
-      // Step 1: Authenticate
       setSyncProgress(20);
       const connected = await odooService.authenticate();
       
@@ -75,12 +73,10 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
         throw new Error('Authentication failed. Check Supabase secrets and Odoo credentials.');
       }
 
-      // Step 2: Sync products
       setSyncProgress(50);
       const syncedProducts = await odooService.syncProductsToLocal(products);
       setSyncProgress(80);
       
-      // Step 3: Update local state
       onProductsSync(syncedProducts);
       setSyncProgress(100);
       
@@ -98,7 +94,7 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
         title: "Sync Completed",
         description: `Successfully synced ${updatedCount} products with Odoo.`,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Sync failed:', error);
       toast({
         title: "Sync Failed",
@@ -113,12 +109,11 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
 
   const createSampleOrder = async () => {
     try {
-      // This would typically be called when a real order is placed
       const sampleOrder = {
-        partner_id: 1, // Would be actual customer ID
+        partner_id: 1, // This should be a real customer ID from Odoo
         order_line: [
           {
-            product_id: 1, // Would be actual product ID from Odoo
+            product_id: 1, // This should be a real product ID from Odoo
             product_uom_qty: 1,
             price_unit: 420,
           }
@@ -128,20 +123,19 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
       const orderId = await odooService.createOrder(sampleOrder);
       
       if (orderId) {
-        setSyncStats(prev => ({ 
-          ...prev, 
-          ordersCreated: prev.ordersCreated + 1 
-        }));
-        
+        setSyncStats(prev => ({ ...prev, ordersCreated: prev.ordersCreated + 1 }));
         toast({
           title: "Order Created",
           description: `Order #${orderId} created in Odoo successfully.`,
         });
+      } else {
+         throw new Error("Order creation returned null ID.");
       }
-    } catch (error) {
-      toast({
+    } catch (error: any) {
+       console.error("Order creation failed:", error);
+       toast({
         title: "Order Creation Failed",
-        description: "Could not create order in Odoo.",
+        description: error.message || "Could not create order in Odoo.",
         variant: "destructive",
       });
     }
@@ -165,7 +159,6 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
         </CardHeader>
         
         <CardContent className="space-y-6">
-          {/* Connection Status */}
           <div className="flex items-center justify-between p-4 border rounded-lg">
             <div>
               <h3 className="font-semibold">Connection Status</h3>
@@ -179,7 +172,6 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
             </Button>
           </div>
 
-          {/* Sync Progress */}
           {isSyncing && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -190,7 +182,6 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
             </div>
           )}
 
-          {/* Sync Statistics */}
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center p-4 border rounded-lg">
               <Package className="w-6 h-6 mx-auto mb-2 text-blue-600" />
@@ -209,7 +200,6 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
             </div>
           </div>
 
-          {/* Last Sync Info */}
           {lastSync && (
             <div className="text-center p-3 bg-gray-50 rounded-lg">
               <p className="text-sm text-gray-600">
@@ -218,7 +208,6 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
             </div>
           )}
 
-          {/* Action Buttons */}
           <div className="flex space-x-3">
             <Button 
               onClick={syncProducts} 
@@ -250,4 +239,3 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
 };
 
 export default OdooSync;
-```
