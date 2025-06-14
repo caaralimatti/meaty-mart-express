@@ -3,7 +3,7 @@ import { useUserRole } from "@/hooks/useUserRole";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
 import RoleSelector from "@/components/RoleSelector";
-import EnhancedCustomerInterface from "@/components/customer/EnhancedCustomerInterface";
+import CustomerInterface from "@/components/customer/CustomerInterface";
 import SellerDashboard from "@/components/seller/SellerDashboard";
 
 const Index = () => {
@@ -52,7 +52,7 @@ const Index = () => {
   }
 
   if (userRole === 'customer') {
-    return <EnhancedCustomerInterface onSwitchRole={handleSwitchRole} />;
+    return <CustomerInterface onSwitchRole={handleSwitchRole} />;
   }
 
   if (userRole === 'seller') {
