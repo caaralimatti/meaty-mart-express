@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -113,7 +114,6 @@ const DeliveryPreferences = ({ onComplete, onBack }: DeliveryPreferencesProps) =
         // Other major cities
         '382418': 'Gandhinagar, Ahmedabad',
         '380001': 'Ellis Bridge, Ahmedabad',
-        '560025': 'Jeevanbhimanagar, Bangalore',
         '590001': 'Belgaum, Karnataka',
         '590003': 'Tilakwadi, Belgaum',
         '590006': 'Camp, Belgaum',
