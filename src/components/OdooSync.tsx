@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { RotateCw, Database, ShoppingCart, Users, Package } from "lucide-react";
+import { RotateCw, Database, ShoppingCart, Users, Package, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { odooService } from "@/services/odooService";
 
@@ -47,7 +47,7 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
       } else {
         toast({
           title: "Connection Failed",
-          description: "Could not authenticate with Odoo. Please check your configuration in Supabase secrets.",
+          description: "Could not authenticate with Odoo. Please configure your Odoo credentials in Supabase secrets first.",
           variant: "destructive",
         });
       }
@@ -55,7 +55,7 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
       setIsConnected(false);
       toast({
         title: "Connection Error",
-        description: error.message || "An unexpected error occurred. Check the console and Supabase function logs for details.",
+        description: error.message || "An unexpected error occurred. Make sure your Odoo credentials are configured in Supabase secrets.",
         variant: "destructive",
       });
     }
@@ -70,7 +70,7 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
       const connected = await odooService.authenticate();
       
       if (!connected) {
-        throw new Error('Authentication failed. Check Supabase secrets and Odoo credentials.');
+        throw new Error('Authentication failed. Please configure your Odoo credentials in Supabase secrets.');
       }
 
       setSyncProgress(50);
@@ -110,10 +110,10 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
   const createSampleOrder = async () => {
     try {
       const sampleOrder = {
-        partner_id: 1, // This should be a real customer ID from Odoo
+        partner_id: 1,
         order_line: [
           {
-            product_id: 1, // This should be a real product ID from Odoo
+            product_id: 1,
             product_uom_qty: 1,
             price_unit: 420,
           }
@@ -159,11 +159,29 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
         </CardHeader>
         
         <CardContent className="space-y-6">
+          <div className="p-4 border border-yellow-200 bg-yellow-50 rounded-lg">
+            <div className="flex items-start space-x-3">
+              <Settings className="w-5 h-5 text-yellow-600 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-yellow-800">Configuration Required</h3>
+                <p className="text-sm text-yellow-700 mt-1">
+                  To use the Odoo integration, you need to configure your Odoo credentials as Supabase secrets:
+                </p>
+                <ul className="text-sm text-yellow-700 mt-2 space-y-1">
+                  <li>• ODOO_URL (your Odoo server URL)</li>
+                  <li>• ODOO_DB (your Odoo database name)</li>
+                  <li>• ODOO_USERNAME (your Odoo username)</li>
+                  <li>• ODOO_PASSWORD (your Odoo password)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           <div className="flex items-center justify-between p-4 border rounded-lg">
             <div>
               <h3 className="font-semibold">Connection Status</h3>
               <p className="text-sm text-gray-600">
-                {isConnected ? "Connected to Odoo" : "Not connected. Test the connection to begin."}
+                {isConnected ? "Connected to Odoo" : "Not connected. Configure secrets and test the connection to begin."}
               </p>
             </div>
             <Button onClick={testConnection} variant="outline">
