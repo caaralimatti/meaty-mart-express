@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +19,7 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const [lastSync, setLastSync] = useState<Date | null>(null);
+  const [connectionDetails, setConnectionDetails] = useState<string>('');
   const [syncStats, setSyncStats] = useState({
     productsUpdated: 0,
     ordersCreated: 0,
@@ -36,26 +36,33 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
 
   const testConnection = async () => {
     try {
+      setConnectionDetails('Testing connection...');
+      console.log('Starting connection test...');
+      
       const connected = await odooService.authenticate();
       setIsConnected(connected);
       
       if (connected) {
+        setConnectionDetails('Successfully connected to Odoo');
         toast({
           title: "Connected to Odoo",
           description: "Successfully authenticated with Odoo instance.",
         });
       } else {
+        setConnectionDetails('Authentication failed - check credentials and server');
         toast({
-          title: "Connection Failed",
-          description: "Could not authenticate with Odoo. Please configure your Odoo credentials in Supabase secrets first.",
+          title: "Connection Failed", 
+          description: "Could not authenticate with Odoo. Please verify your Odoo server is running and credentials are correct.",
           variant: "destructive",
         });
       }
     } catch (error: any) {
+      console.error('Connection test error:', error);
       setIsConnected(false);
+      setConnectionDetails(`Error: ${error.message}`);
       toast({
         title: "Connection Error",
-        description: error.message || "An unexpected error occurred. Make sure your Odoo credentials are configured in Supabase secrets.",
+        description: error.message || "An unexpected error occurred during connection test.",
         variant: "destructive",
       });
     }
@@ -165,13 +172,13 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
               <div>
                 <h3 className="font-semibold text-yellow-800">Configuration Required</h3>
                 <p className="text-sm text-yellow-700 mt-1">
-                  To use the Odoo integration, you need to configure your Odoo credentials as Supabase secrets:
+                  Expected configuration:
                 </p>
                 <ul className="text-sm text-yellow-700 mt-2 space-y-1">
-                  <li>• ODOO_URL (your Odoo server URL)</li>
-                  <li>• ODOO_DB (your Odoo database name)</li>
-                  <li>• ODOO_USERNAME (your Odoo username)</li>
-                  <li>• ODOO_PASSWORD (your Odoo password)</li>
+                  <li>• ODOO_URL: http://138.91.109.69:8069</li>
+                  <li>• ODOO_DB: ipurvey_staging</li>
+                  <li>• ODOO_USERNAME: admin</li>
+                  <li>• ODOO_PASSWORD: admin</li>
                 </ul>
               </div>
             </div>
@@ -181,13 +188,20 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
             <div>
               <h3 className="font-semibold">Connection Status</h3>
               <p className="text-sm text-gray-600">
-                {isConnected ? "Connected to Odoo" : "Not connected. Configure secrets and test the connection to begin."}
+                {connectionDetails || (isConnected ? "Connected to Odoo" : "Not connected. Click test to begin.")}
               </p>
             </div>
             <Button onClick={testConnection} variant="outline">
               <Database className="w-4 h-4 mr-2" />
               Test Connection
             </Button>
+          </div>
+
+          {/* Debug section */}
+          <div className="p-3 bg-gray-50 rounded-lg text-xs">
+            <p className="font-medium mb-1">Debug Info:</p>
+            <p>Check console logs for detailed authentication flow</p>
+            <p>Expected Odoo server: http://138.91.109.69:8069</p>
           </div>
 
           {isSyncing && (

@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 interface OdooConfig {
@@ -45,7 +46,7 @@ class OdooService {
   private sessionId: string | null = null;
 
   private async makeRequest(endpoint: string, data?: any) {
-    console.log(`Making Odoo proxy request for endpoint: ${endpoint}`, { data });
+    console.log(`Making Odoo proxy request for endpoint: ${endpoint}`, { data, sessionId: this.sessionId });
     
     try {
       const { data: responseData, error } = await supabase.functions.invoke('odoo-api-proxy', {
@@ -57,10 +58,13 @@ class OdooService {
       });
 
       if (error) {
+        console.error('Supabase function invoke error:', error);
         throw error;
       }
       
-      if (responseData.error) {
+      console.log('Odoo response:', responseData);
+      
+      if (responseData?.error) {
         console.error('Odoo API Error:', responseData.error);
         const odooErrorMessage = responseData.error.data?.message || responseData.error.message || 'Odoo API request failed';
         throw new Error(odooErrorMessage);
@@ -75,19 +79,56 @@ class OdooService {
 
   async authenticate(): Promise<boolean> {
     try {
+      console.log('Starting Odoo authentication...');
+      
+      // Try the web session authenticate endpoint first
       const response = await this.makeRequest('/web/session/authenticate', {
         jsonrpc: '2.0',
         method: 'call',
-        params: {},
+        params: {
+          db: '', // Will be filled by the edge function
+          login: '', // Will be filled by the edge function  
+          password: '' // Will be filled by the edge function
+        },
+        id: Math.random(),
       });
 
-      if (response.result && response.result.session_id) {
-        this.sessionId = response.result.session_id;
-        console.log('Odoo authentication successful via proxy');
+      console.log('Authentication response:', response);
+
+      if (response?.result) {
+        if (response.result.session_id) {
+          this.sessionId = response.result.session_id;
+          console.log('Odoo authentication successful via /web/session/authenticate');
+          return true;
+        } else if (response.result.uid && response.result.uid !== false) {
+          // Some Odoo versions return uid instead of session_id
+          this.sessionId = 'authenticated';
+          console.log('Odoo authentication successful via uid');
+          return true;
+        }
+      }
+      
+      // Fallback: try the common authenticate endpoint
+      console.log('Trying fallback authentication method...');
+      const fallbackResponse = await this.makeRequest('/xmlrpc/2/common', {
+        jsonrpc: '2.0',
+        method: 'call',
+        params: {
+          service: 'common',
+          method: 'authenticate',
+          args: ['', '', ''] // Will be filled by edge function
+        },
+        id: Math.random(),
+      });
+
+      if (fallbackResponse?.result && fallbackResponse.result !== false) {
+        this.sessionId = 'authenticated';
+        console.log('Odoo authentication successful via /xmlrpc/2/common');
         return true;
       }
       
       this.sessionId = null;
+      console.log('Authentication failed - no valid response');
       return false;
     } catch (error) {
       console.error('Odoo authentication failed:', error);
@@ -97,8 +138,10 @@ class OdooService {
   }
 
   async getProducts(): Promise<OdooProduct[]> {
-    if (!this.sessionId) await this.authenticate();
-    if (!this.sessionId) throw new Error("Not authenticated with Odoo");
+    if (!this.sessionId) {
+      const authSuccess = await this.authenticate();
+      if (!authSuccess) throw new Error("Not authenticated with Odoo");
+    }
 
     try {
       const response = await this.makeRequest('/web/dataset/call_kw', {
@@ -113,6 +156,7 @@ class OdooService {
             limit: 100,
           },
         },
+        id: Math.random(),
       });
 
       return response.result || [];
@@ -123,8 +167,10 @@ class OdooService {
   }
 
   async createCustomer(customer: Partial<OdooCustomer>): Promise<number | null> {
-    if (!this.sessionId) await this.authenticate();
-    if (!this.sessionId) throw new Error("Not authenticated with Odoo");
+    if (!this.sessionId) {
+      const authSuccess = await this.authenticate();
+      if (!authSuccess) throw new Error("Not authenticated with Odoo");
+    }
 
     try {
       const response = await this.makeRequest('/web/dataset/call_kw', {
@@ -136,6 +182,7 @@ class OdooService {
           args: [customer],
           kwargs: {},
         },
+        id: Math.random(),
       });
 
       return response.result;
@@ -146,8 +193,10 @@ class OdooService {
   }
 
   async createOrder(order: OdooOrder): Promise<number | null> {
-    if (!this.sessionId) await this.authenticate();
-    if (!this.sessionId) throw new Error("Not authenticated with Odoo");
+    if (!this.sessionId) {
+      const authSuccess = await this.authenticate();
+      if (!authSuccess) throw new Error("Not authenticated with Odoo");
+    }
     
     try {
       const response = await this.makeRequest('/web/dataset/call_kw', {
@@ -159,6 +208,7 @@ class OdooService {
           args: [order],
           kwargs: {},
         },
+        id: Math.random(),
       });
 
       return response.result;
