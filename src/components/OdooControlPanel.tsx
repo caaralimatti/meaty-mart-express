@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Database, Settings, Sync, BarChart3 } from "lucide-react";
+import { Database, Settings, RotateCw, BarChart3 } from "lucide-react";
 
 interface OdooControlPanelProps {
   onConfigOpen: () => void;
@@ -33,7 +33,7 @@ const OdooControlPanel = ({ onConfigOpen, onSyncOpen }: OdooControlPanelProps) =
             variant="outline" 
             className="flex items-center space-x-2 hover:bg-blue-50"
           >
-            <Sync className="w-4 h-4" />
+            <RotateCw className="w-4 h-4" />
             <span>Sync Data</span>
           </Button>
           

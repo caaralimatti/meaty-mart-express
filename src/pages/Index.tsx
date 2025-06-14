@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import TrustBanner from "@/components/TrustBanner";
 import HeroSection from "@/components/HeroSection";
@@ -138,7 +137,7 @@ const Index = () => {
         onProfileClose={() => modalHandlers.setIsProfileOpen(false)}
         onTrackingClose={() => modalHandlers.setIsTrackingOpen(false)}
         onWishlistClose={() => modalHandlers.setIsWishlistOpen(false)}
-        onReviewsClose={() => modalHandlers.setIsReviewsClose(false)}
+        onReviewsClose={() => modalHandlers.setIsReviewsOpen(false)}
         onNotificationClose={() => modalHandlers.setIsNotificationOpen(false)}
         onSchedulerClose={() => modalHandlers.setIsSchedulerOpen(false)}
         onRecipesClose={() => modalHandlers.setIsRecipesOpen(false)}

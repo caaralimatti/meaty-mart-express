@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Sync, Database, ShoppingCart, Users, Package } from "lucide-react";
+import { RotateCw, Database, ShoppingCart, Users, Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { odooService } from "@/services/odooService";
 
@@ -223,7 +222,7 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
               disabled={!isConnected || isSyncing}
               className="flex-1 bg-red-600 hover:bg-red-700"
             >
-              <Sync className={`w-4 h-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
+              <RotateCw className={`w-4 h-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
               {isSyncing ? 'Syncing...' : 'Sync Products'}
             </Button>
             
