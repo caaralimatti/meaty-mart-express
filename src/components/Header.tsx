@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Phone, Package, Heart, User, LogOut } from "lucide-react";
+import { Bell, Phone, Package, Heart, User } from "lucide-react";
 
 interface HeaderProps {
   isLoggedIn: boolean;
@@ -14,7 +14,6 @@ interface HeaderProps {
   onWishlistOpen: () => void;
   onProfileOpen: () => void;
   onCartOpen: () => void;
-  onLogout?: () => void;
 }
 
 const Header = ({
@@ -27,8 +26,7 @@ const Header = ({
   onTrackingOpen,
   onWishlistOpen,
   onProfileOpen,
-  onCartOpen,
-  onLogout
+  onCartOpen
 }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md border-b-2 border-red-100">
@@ -106,18 +104,6 @@ const Header = ({
                   <User className="w-4 h-4 mr-1" />
                   Profile
                 </Button>
-
-                {onLogout && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={onLogout}
-                    className="border-red-200 text-red-700 hover:bg-red-50"
-                  >
-                    <LogOut className="w-4 h-4 mr-1" />
-                    Logout
-                  </Button>
-                )}
               </>
             )}
             
