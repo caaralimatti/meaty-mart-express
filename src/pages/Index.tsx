@@ -197,7 +197,7 @@ const Index = () => {
         onProfileClose={() => setIsProfileOpen(false)}
         onTrackingClose={() => setIsTrackingOpen(false)}
         onWishlistClose={() => setIsWishlistOpen(false)}
-        onReviewsClose={() => setIsReviewsClose(false)}
+        onReviewsClose={() => setIsReviewsOpen(false)}
         onNotificationClose={() => setIsNotificationOpen(false)}
         onSchedulerClose={() => setIsSchedulerOpen(false)}
         onRecipesClose={() => setIsRecipesOpen(false)}
