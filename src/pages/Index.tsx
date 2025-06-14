@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Header from "@/components/Header";
 import TrustBanner from "@/components/TrustBanner";
@@ -8,6 +7,16 @@ import ProductsGrid from "@/components/ProductsGrid";
 import Footer from "@/components/Footer";
 import ModalsContainer from "@/components/ModalsContainer";
 import LiveChatButton from "@/components/LiveChatButton";
+import LoyaltyProgram from "@/components/LoyaltyProgram";
+import NutritionInfo from "@/components/NutritionInfo";
+import BulkOrdering from "@/components/BulkOrdering";
+import SubscriptionManager from "@/components/SubscriptionManager";
+import QuickReorder from "@/components/QuickReorder";
+import ReferralProgram from "@/components/ReferralProgram";
+import SocialSharing from "@/components/SocialSharing";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Crown, Utensils, Users, RotateCcw, Share2, Gift, Package2, Star } from "lucide-react";
 
 interface FilterOptions {
   priceRange: [number, number];
@@ -31,7 +40,17 @@ const Index = () => {
   const [isSchedulerOpen, setIsSchedulerOpen] = useState(false);
   const [isRecipesOpen, setIsRecipesOpen] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  
+  const [isLoyaltyOpen, setIsLoyaltyOpen] = useState(false);
+  const [isNutritionOpen, setIsNutritionOpen] = useState(false);
+  const [isBulkOrderOpen, setIsBulkOrderOpen] = useState(false);
+  const [isSubscriptionOpen, setIsSubscriptionOpen] = useState(false);
+  const [isQuickReorderOpen, setIsQuickReorderOpen] = useState(false);
+  const [isReferralOpen, setIsReferralOpen] = useState(false);
+  const [isSocialSharingOpen, setIsSocialSharingOpen] = useState(false);
+  
   const [selectedProductForReview, setSelectedProductForReview] = useState("");
+  const [selectedProductForNutrition, setSelectedProductForNutrition] = useState("");
   const [cartItems, setCartItems] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([1, 3]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -117,6 +136,11 @@ const Index = () => {
     setIsReviewsOpen(true);
   };
 
+  const openNutritionInfo = (productName) => {
+    setSelectedProductForNutrition(productName);
+    setIsNutritionOpen(true);
+  };
+
   const handleScheduleDelivery = (date: string, time: string) => {
     console.log("Delivery scheduled for:", date, time);
   };
@@ -168,12 +192,79 @@ const Index = () => {
         onSchedulerOpen={() => setIsSchedulerOpen(true)}
       />
 
+      {/* New Feature Buttons */}
+      <div className="container mx-auto px-4 mb-6">
+        <div className="flex flex-wrap gap-2 justify-center">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsLoyaltyOpen(true)}
+            className="border-yellow-200 text-yellow-700 hover:bg-yellow-50"
+          >
+            <Crown className="w-4 h-4 mr-1" />
+            Loyalty Points
+            <Badge className="ml-1 bg-yellow-500">New</Badge>
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsBulkOrderOpen(true)}
+            className="border-blue-200 text-blue-700 hover:bg-blue-50"
+          >
+            <Users className="w-4 h-4 mr-1" />
+            Bulk Orders
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsSubscriptionOpen(true)}
+            className="border-purple-200 text-purple-700 hover:bg-purple-50"
+          >
+            <Package2 className="w-4 h-4 mr-1" />
+            Subscriptions
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsQuickReorderOpen(true)}
+            className="border-green-200 text-green-700 hover:bg-green-50"
+          >
+            <RotateCcw className="w-4 h-4 mr-1" />
+            Quick Reorder
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsReferralOpen(true)}
+            className="border-pink-200 text-pink-700 hover:bg-pink-50"
+          >
+            <Gift className="w-4 h-4 mr-1" />
+            Refer & Earn
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsSocialSharingOpen(true)}
+            className="border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+          >
+            <Share2 className="w-4 h-4 mr-1" />
+            Share Experience
+          </Button>
+        </div>
+      </div>
+
       <ProductsGrid
         products={filteredProducts}
         wishlistItems={wishlistItems}
         onAddToCart={addToCart}
         onToggleWishlist={toggleWishlist}
         onOpenReviews={openReviews}
+        onOpenNutrition={openNutritionInfo}
       />
 
       <Footer />
@@ -207,6 +298,45 @@ const Index = () => {
         onScheduleDelivery={handleScheduleDelivery}
         onApplyFilters={handleApplyFilters}
         onLogin={() => setIsLoggedIn(true)}
+      />
+
+      {/* New Feature Modals */}
+      <LoyaltyProgram 
+        isOpen={isLoyaltyOpen} 
+        onClose={() => setIsLoyaltyOpen(false)} 
+      />
+      
+      <NutritionInfo 
+        isOpen={isNutritionOpen} 
+        onClose={() => setIsNutritionOpen(false)}
+        productName={selectedProductForNutrition}
+      />
+      
+      <BulkOrdering 
+        isOpen={isBulkOrderOpen} 
+        onClose={() => setIsBulkOrderOpen(false)} 
+      />
+      
+      <SubscriptionManager 
+        isOpen={isSubscriptionOpen} 
+        onClose={() => setIsSubscriptionOpen(false)} 
+      />
+      
+      <QuickReorder 
+        isOpen={isQuickReorderOpen} 
+        onClose={() => setIsQuickReorderOpen(false)}
+        onAddToCart={addToCart}
+      />
+      
+      <ReferralProgram 
+        isOpen={isReferralOpen} 
+        onClose={() => setIsReferralOpen(false)} 
+      />
+      
+      <SocialSharing 
+        isOpen={isSocialSharingOpen} 
+        onClose={() => setIsSocialSharingOpen(false)}
+        productName={selectedProductForNutrition}
       />
 
       <LiveChatButton

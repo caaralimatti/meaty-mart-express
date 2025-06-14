@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Heart, Star } from "lucide-react";
+import { Heart, Star, Activity } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 
 interface Product {
@@ -23,6 +23,7 @@ interface ProductsGridProps {
   onAddToCart: (product: Product) => void;
   onToggleWishlist: (productId: number) => void;
   onOpenReviews: (productName: string) => void;
+  onOpenNutrition?: (productName: string) => void;
 }
 
 const ProductsGrid = ({
@@ -30,7 +31,8 @@ const ProductsGrid = ({
   wishlistItems,
   onAddToCart,
   onToggleWishlist,
-  onOpenReviews
+  onOpenReviews,
+  onOpenNutrition
 }: ProductsGridProps) => {
   return (
     <div className="container mx-auto px-4">
@@ -43,29 +45,43 @@ const ProductsGrid = ({
               onAddToCart={onAddToCart}
             />
             <div className="flex justify-between items-center mt-2 px-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onToggleWishlist(product.id)}
-                className={`${
-                  wishlistItems.includes(product.id) 
-                    ? 'text-red-600' 
-                    : 'text-gray-400'
-                } hover:text-red-600`}
-              >
-                <Heart className={`w-4 h-4 ${
-                  wishlistItems.includes(product.id) ? 'fill-current' : ''
-                }`} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onOpenReviews(product.name)}
-                className="text-gray-600 hover:text-red-600"
-              >
-                <Star className="w-4 h-4 mr-1" />
-                Reviews
-              </Button>
+              <div className="flex space-x-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onToggleWishlist(product.id)}
+                  className={`${
+                    wishlistItems.includes(product.id) 
+                      ? 'text-red-600' 
+                      : 'text-gray-400'
+                  } hover:text-red-600`}
+                >
+                  <Heart className={`w-4 h-4 ${
+                    wishlistItems.includes(product.id) ? 'fill-current' : ''
+                  }`} />
+                </Button>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onOpenReviews(product.name)}
+                  className="text-gray-600 hover:text-red-600"
+                >
+                  <Star className="w-4 h-4 mr-1" />
+                  Reviews
+                </Button>
+                
+                {onOpenNutrition && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onOpenNutrition(product.name)}
+                    className="text-gray-600 hover:text-green-600"
+                  >
+                    <Activity className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         ))}
