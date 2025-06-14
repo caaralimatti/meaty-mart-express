@@ -1,5 +1,4 @@
 
-```typescript
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Database, RotateCw, BarChart3 } from "lucide-react";
@@ -52,4 +51,3 @@ const OdooControlPanel = ({ onSyncOpen }: OdooControlPanelProps) => {
 };
 
 export default OdooControlPanel;
-```
