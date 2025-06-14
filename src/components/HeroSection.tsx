@@ -2,7 +2,6 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, MapPin } from "lucide-react";
-import PromoBanners from "@/components/PromoBanners";
 
 interface HeroSectionProps {
   searchQuery: string;
@@ -18,9 +17,6 @@ const HeroSection = ({ searchQuery, onSearchChange }: HeroSectionProps) => {
         </h2>
         <p className="text-gray-600">Premium quality, hygienically processed, farm-fresh goat meat</p>
       </div>
-
-      {/* Promotional Banners */}
-      <PromoBanners />
 
       {/* Location & Search */}
       <div className="max-w-2xl mx-auto mb-6">

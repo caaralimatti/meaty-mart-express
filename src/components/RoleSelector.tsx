@@ -1,8 +1,8 @@
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart, Store, Users, TrendingUp } from "lucide-react";
+import { ShoppingCart, Store, Clock } from "lucide-react";
 import { UserRole } from "@/hooks/useUserRole";
 
 interface RoleSelectorProps {
@@ -11,79 +11,89 @@ interface RoleSelectorProps {
 
 const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">Welcome to QuickGoat</h1>
           <p className="text-lg text-gray-600">Choose your experience</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Customer Interface */}
-          <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-red-300 cursor-pointer group"
-                onClick={() => onRoleSelect('customer')}>
-            <CardHeader className="text-center pb-4">
-              <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                <ShoppingCart className="w-8 h-8 text-white" />
+        <div className="flex gap-x-4 justify-center items-center">
+          {/* Customer Card */}
+          <Card 
+            className="relative w-80 h-96 rounded-2xl shadow-md bg-white cursor-pointer hover:shadow-lg transition-shadow overflow-hidden group"
+            onClick={() => onRoleSelect('customer')}
+          >
+            <CardContent className="p-4 h-full flex flex-col">
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold text-gray-800 mb-1">CUSTOMER</h3>
+                <p className="text-sm text-gray-500 mb-3">FRESH DELIVERY SPECIALS</p>
+                <p className="text-xl font-bold text-orange-600 mb-4">FLAT ₹200 OFF</p>
+                <p className="text-sm text-gray-600 mb-4">Premium quality goat meat delivered in 30 minutes</p>
               </div>
-              <CardTitle className="text-2xl text-gray-800">I'm a Customer</CardTitle>
-              <Badge className="bg-red-100 text-red-700 hover:bg-red-200">Premium Shopping Experience</Badge>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm">✨ Personalized recommendations</span>
+              
+              {/* Image Section */}
+              <div className="relative mt-auto">
+                <div className="w-full h-32 bg-gradient-to-r from-red-100 to-orange-100 rounded-lg flex items-center justify-center mb-4">
+                  <ShoppingCart className="w-16 h-16 text-red-600" />
                 </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm">🚀 Express 30-min delivery</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm">💰 Exclusive deals & discounts</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm">🎁 Loyalty rewards program</span>
+                
+                {/* Optional Badge */}
+                <div className="absolute bottom-16 left-2">
+                  <Badge className="bg-orange-600 text-white flex items-center space-x-1">
+                    <Clock className="w-3 h-3" />
+                    <span>30 mins</span>
+                  </Badge>
                 </div>
               </div>
-              <Button className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-3">
-                Start Shopping Now
+              
+              <Button 
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold mt-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRoleSelect('customer');
+                }}
+              >
+                Start Shopping
               </Button>
             </CardContent>
           </Card>
 
-          {/* Seller Interface */}
-          <Card className="hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-300 cursor-pointer group"
-                onClick={() => onRoleSelect('seller')}>
-            <CardHeader className="text-center pb-4">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                <Store className="w-8 h-8 text-white" />
+          {/* Seller Card */}
+          <Card 
+            className="relative w-80 h-96 rounded-2xl shadow-md bg-white cursor-pointer hover:shadow-lg transition-shadow overflow-hidden group"
+            onClick={() => onRoleSelect('seller')}
+          >
+            <CardContent className="p-4 h-full flex flex-col">
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold text-gray-800 mb-1">SELLER</h3>
+                <p className="text-sm text-gray-500 mb-3">BUSINESS GROWTH OFFERS</p>
+                <p className="text-xl font-bold text-orange-600 mb-4">UP TO ₹500 OFF</p>
+                <p className="text-sm text-gray-600 mb-4">Advanced analytics and inventory management tools</p>
               </div>
-              <CardTitle className="text-2xl text-gray-800">I'm a Seller</CardTitle>
-              <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200">Business Dashboard</Badge>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-sm">📊 Advanced analytics & insights</span>
+              
+              {/* Image Section */}
+              <div className="relative mt-auto">
+                <div className="w-full h-32 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg flex items-center justify-center mb-4">
+                  <Store className="w-16 h-16 text-blue-600" />
                 </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-sm">🎯 Smart inventory management</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-sm">💼 Order & customer management</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-sm">📈 Revenue optimization tools</span>
+                
+                {/* Optional Badge */}
+                <div className="absolute bottom-16 left-2">
+                  <Badge className="bg-orange-600 text-white flex items-center space-x-1">
+                    <span>⚡</span>
+                    <span>Pro Tools</span>
+                  </Badge>
                 </div>
               </div>
-              <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3">
+              
+              <Button 
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mt-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRoleSelect('seller');
+                }}
+              >
                 Access Dashboard
               </Button>
             </CardContent>
@@ -91,16 +101,9 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
         </div>
 
         <div className="text-center mt-8">
-          <div className="flex items-center justify-center space-x-8 text-sm text-gray-600">
-            <div className="flex items-center space-x-2">
-              <Users className="w-4 h-4" />
-              <span>10,000+ Happy Customers</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <TrendingUp className="w-4 h-4" />
-              <span>99.9% Uptime</span>
-            </div>
-          </div>
+          <p className="text-sm text-gray-500">
+            Join thousands of satisfied customers and successful sellers
+          </p>
         </div>
       </div>
     </div>
