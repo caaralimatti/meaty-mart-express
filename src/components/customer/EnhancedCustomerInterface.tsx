@@ -161,7 +161,7 @@ const EnhancedCustomerInterface = ({ onSwitchRole }: EnhancedCustomerInterfacePr
         cartItems={state.cartItems}
         filters={state.filters}
         onAuthClose={() => modalHandlers.setIsAuthOpen(false)}
-        onCartClose={() => modalHandlers.setIsCartClose(false)}
+        onCartClose={() => modalHandlers.setIsCartOpen(false)}
         onProfileClose={() => modalHandlers.setIsProfileOpen(false)}
         onTrackingClose={() => modalHandlers.setIsTrackingOpen(false)}
         onWishlistClose={() => modalHandlers.setIsWishlistOpen(false)}
