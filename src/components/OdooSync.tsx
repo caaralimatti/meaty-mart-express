@@ -1,3 +1,5 @@
+
+```typescript
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,14 +48,15 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
       } else {
         toast({
           title: "Connection Failed",
-          description: "Could not authenticate with Odoo. Please check your configuration.",
+          description: "Could not authenticate with Odoo. Please check your configuration in Supabase secrets.",
           variant: "destructive",
         });
       }
     } catch (error) {
+      setIsConnected(false);
       toast({
         title: "Connection Error",
-        description: "Failed to connect to Odoo instance.",
+        description: error.message || "An unexpected error occurred. Check the console and Supabase function logs for details.",
         variant: "destructive",
       });
     }
@@ -69,7 +72,7 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
       const connected = await odooService.authenticate();
       
       if (!connected) {
-        throw new Error('Authentication failed');
+        throw new Error('Authentication failed. Check Supabase secrets and Odoo credentials.');
       }
 
       // Step 2: Sync products
@@ -99,7 +102,7 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
       console.error('Sync failed:', error);
       toast({
         title: "Sync Failed",
-        description: "Could not sync products with Odoo.",
+        description: error.message || "Could not sync products with Odoo.",
         variant: "destructive",
       });
     } finally {
@@ -167,7 +170,7 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
             <div>
               <h3 className="font-semibold">Connection Status</h3>
               <p className="text-sm text-gray-600">
-                {isConnected ? "Connected to Odoo" : "Not connected"}
+                {isConnected ? "Connected to Odoo" : "Not connected. Test the connection to begin."}
               </p>
             </div>
             <Button onClick={testConnection} variant="outline">
@@ -247,3 +250,4 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
 };
 
 export default OdooSync;
+```

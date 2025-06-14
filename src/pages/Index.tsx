@@ -9,7 +9,6 @@ import LiveChatButton from "@/components/LiveChatButton";
 import FeatureButtons from "@/components/FeatureButtons";
 import FeatureModals from "@/components/FeatureModals";
 import OdooControlPanel from "@/components/OdooControlPanel";
-import OdooConfig from "@/components/OdooConfig";
 import OdooSync from "@/components/OdooSync";
 import { useModalStates } from "@/hooks/useModalStates";
 import { useAppState } from "@/hooks/useAppState";
@@ -85,7 +84,6 @@ const Index = () => {
 
       <div className="container mx-auto px-4">
         <OdooControlPanel
-          onConfigOpen={() => modalHandlers.setIsOdooConfigOpen(true)}
           onSyncOpen={() => modalHandlers.setIsOdooSyncOpen(true)}
         />
       </div>
@@ -141,7 +139,6 @@ const Index = () => {
         onNotificationClose={() => modalHandlers.setIsNotificationOpen(false)}
         onSchedulerClose={() => modalHandlers.setIsSchedulerOpen(false)}
         onRecipesClose={() => modalHandlers.setIsRecipesOpen(false)}
-        onFiltersClose={() => modalHandlers.setIsFiltersOpen(false)}
         onSetCartItems={stateHandlers.setCartItems}
         onAddToCart={handleAddToCart}
         onScheduleDelivery={handleScheduleDelivery}
@@ -166,11 +163,6 @@ const Index = () => {
         onReferralClose={() => modalHandlers.setIsReferralOpen(false)}
         onSocialSharingClose={() => modalHandlers.setIsSocialSharingOpen(false)}
         onAddToCart={handleAddToCart}
-      />
-
-      <OdooConfig
-        isOpen={modals.isOdooConfigOpen}
-        onClose={() => modalHandlers.setIsOdooConfigOpen(false)}
       />
 
       <OdooSync

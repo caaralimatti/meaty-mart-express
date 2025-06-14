@@ -1,3 +1,4 @@
+import { supabase } from '@/integrations/supabase/client';
 
 interface OdooConfig {
   serverUrl: string;
@@ -41,92 +42,66 @@ interface OdooOrder {
 }
 
 class OdooService {
-  private config: OdooConfig | null = null;
   private sessionId: string | null = null;
 
-  constructor() {
-    this.loadConfig();
-  }
-
-  private loadConfig() {
-    const savedConfig = localStorage.getItem('odooConfig');
-    if (savedConfig) {
-      this.config = JSON.parse(savedConfig);
-    }
-  }
-
-  private async makeRequest(endpoint: string, method: string = 'GET', data?: any) {
-    if (!this.config) {
-      throw new Error('Odoo configuration not found');
-    }
-
-    const url = `${this.config.serverUrl}${endpoint}`;
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    if (this.sessionId) {
-      headers['Cookie'] = `session_id=${this.sessionId}`;
-    }
-
-    const requestOptions: RequestInit = {
-      method,
-      headers,
-      credentials: 'include',
-    };
-
-    if (data && (method === 'POST' || method === 'PUT')) {
-      requestOptions.body = JSON.stringify(data);
-    }
-
-    console.log(`Making Odoo API request to: ${url}`, { method, data });
-
+  private async makeRequest(endpoint: string, data?: any) {
+    console.log(`Making Odoo proxy request for endpoint: ${endpoint}`, { data });
+    
     try {
-      const response = await fetch(url, requestOptions);
+      const { data: responseData, error } = await supabase.functions.invoke('odoo-api-proxy', {
+        body: {
+          odoo_endpoint: endpoint,
+          data,
+          session_id: this.sessionId,
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (responseData.error) {
+        console.error('Odoo API Error:', responseData.error);
+        const odooErrorMessage = responseData.error.data?.message || responseData.error.message || 'Odoo API request failed';
+        throw new Error(odooErrorMessage);
       }
 
-      return await response.json();
+      return responseData;
     } catch (error) {
-      console.error('Odoo API request failed:', error);
+      console.error('Odoo proxy request failed:', error);
       throw error;
     }
   }
 
   async authenticate(): Promise<boolean> {
-    if (!this.config) {
-      throw new Error('Odoo configuration not found');
-    }
-
     try {
-      const response = await this.makeRequest('/web/session/authenticate', 'POST', {
+      const response = await this.makeRequest('/web/session/authenticate', {
         jsonrpc: '2.0',
         method: 'call',
-        params: {
-          db: this.config.database,
-          login: this.config.username,
-          password: this.config.password,
-        },
+        params: {},
       });
 
       if (response.result && response.result.session_id) {
         this.sessionId = response.result.session_id;
-        console.log('Odoo authentication successful');
+        console.log('Odoo authentication successful via proxy');
         return true;
       }
-
+      
+      this.sessionId = null;
       return false;
     } catch (error) {
       console.error('Odoo authentication failed:', error);
+      this.sessionId = null;
       return false;
     }
   }
 
   async getProducts(): Promise<OdooProduct[]> {
+    if (!this.sessionId) await this.authenticate();
+    if (!this.sessionId) throw new Error("Not authenticated with Odoo");
+
     try {
-      const response = await this.makeRequest('/web/dataset/call_kw', 'POST', {
+      const response = await this.makeRequest('/web/dataset/call_kw', {
         jsonrpc: '2.0',
         method: 'call',
         params: {
@@ -148,8 +123,11 @@ class OdooService {
   }
 
   async createCustomer(customer: Partial<OdooCustomer>): Promise<number | null> {
+    if (!this.sessionId) await this.authenticate();
+    if (!this.sessionId) throw new Error("Not authenticated with Odoo");
+
     try {
-      const response = await this.makeRequest('/web/dataset/call_kw', 'POST', {
+      const response = await this.makeRequest('/web/dataset/call_kw', {
         jsonrpc: '2.0',
         method: 'call',
         params: {
@@ -168,8 +146,11 @@ class OdooService {
   }
 
   async createOrder(order: OdooOrder): Promise<number | null> {
+    if (!this.sessionId) await this.authenticate();
+    if (!this.sessionId) throw new Error("Not authenticated with Odoo");
+    
     try {
-      const response = await this.makeRequest('/web/dataset/call_kw', 'POST', {
+      const response = await this.makeRequest('/web/dataset/call_kw', {
         jsonrpc: '2.0',
         method: 'call',
         params: {

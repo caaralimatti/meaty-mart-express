@@ -1,14 +1,14 @@
 
+```typescript
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Database, Settings, RotateCw, BarChart3 } from "lucide-react";
+import { Database, RotateCw, BarChart3 } from "lucide-react";
 
 interface OdooControlPanelProps {
-  onConfigOpen: () => void;
   onSyncOpen: () => void;
 }
 
-const OdooControlPanel = ({ onConfigOpen, onSyncOpen }: OdooControlPanelProps) => {
+const OdooControlPanel = ({ onSyncOpen }: OdooControlPanelProps) => {
   return (
     <Card className="mb-6 border-red-200">
       <CardHeader>
@@ -18,16 +18,7 @@ const OdooControlPanel = ({ onConfigOpen, onSyncOpen }: OdooControlPanelProps) =
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <Button 
-            onClick={onConfigOpen}
-            variant="outline" 
-            className="flex items-center space-x-2 hover:bg-red-50"
-          >
-            <Settings className="w-4 h-4" />
-            <span>Configure</span>
-          </Button>
-          
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <Button 
             onClick={onSyncOpen}
             variant="outline" 
@@ -61,3 +52,4 @@ const OdooControlPanel = ({ onConfigOpen, onSyncOpen }: OdooControlPanelProps) =
 };
 
 export default OdooControlPanel;
+```
