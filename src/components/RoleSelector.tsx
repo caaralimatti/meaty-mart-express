@@ -2,14 +2,22 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingCart, Store, Clock } from "lucide-react";
+import { ShoppingCart, Store, Clock, RotateCcw } from "lucide-react";
 import { UserRole } from "@/hooks/useUserRole";
+import { useOnboarding } from "@/hooks/useOnboarding";
 
 interface RoleSelectorProps {
   onRoleSelect: (role: UserRole) => void;
 }
 
 const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
+  const { resetOnboarding } = useOnboarding();
+
+  const handleResetOnboarding = () => {
+    resetOnboarding();
+    window.location.reload();
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
@@ -100,10 +108,21 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
           </Card>
         </div>
 
-        <div className="text-center mt-8">
+        <div className="text-center mt-8 space-y-4">
           <p className="text-sm text-gray-500">
             Join thousands of satisfied customers and successful sellers
           </p>
+          
+          {/* Reset Onboarding Button for Testing */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleResetOnboarding}
+            className="text-gray-600 hover:text-gray-800"
+          >
+            <RotateCcw className="w-3 h-3 mr-1" />
+            Reset Onboarding (for testing)
+          </Button>
         </div>
       </div>
     </div>
