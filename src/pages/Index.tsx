@@ -1,11 +1,14 @@
 
 import { useUserRole } from "@/hooks/useUserRole";
+import { useOnboarding } from "@/hooks/useOnboarding";
 import RoleSelector from "@/components/RoleSelector";
 import EnhancedCustomerInterface from "@/components/customer/EnhancedCustomerInterface";
 import SellerDashboard from "@/components/seller/SellerDashboard";
+import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
 
 const Index = () => {
   const { userRole, isLoggedIn, login, logout, switchRole } = useUserRole();
+  const { isOnboardingComplete, isLoading, completeOnboarding } = useOnboarding();
 
   const handleRoleSelect = (role: 'customer' | 'seller' | null) => {
     login(role);
@@ -20,8 +23,25 @@ const Index = () => {
     logout();
   };
 
+  // Show loading while checking onboarding status
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!isLoggedIn || !userRole) {
     return <RoleSelector onRoleSelect={handleRoleSelect} />;
+  }
+
+  // Show onboarding flow for first-time customers only
+  if (userRole === 'customer' && !isOnboardingComplete) {
+    return <OnboardingFlow onComplete={completeOnboarding} />;
   }
 
   if (userRole === 'customer') {
