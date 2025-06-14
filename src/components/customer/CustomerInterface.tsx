@@ -24,6 +24,8 @@ const CustomerInterface = ({ onSwitchRole }: CustomerInterfaceProps) => {
   const [cartItems, setCartItems] = useState<{[key: number]: number}>({});
   const [wishlistItems, setWishlistItems] = useState<number[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [selectedProductForReviews, setSelectedProductForReviews] = useState("");
+  const [selectedProductForNutrition, setSelectedProductForNutrition] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({
     category: "all",
     boneType: "all",
@@ -32,6 +34,9 @@ const CustomerInterface = ({ onSwitchRole }: CustomerInterfaceProps) => {
     rating: 0
   });
 
+  const { modals, handlers } = useModalStates();
+
+  // Extract modal states
   const {
     isAuthOpen,
     isCartOpen,
@@ -40,30 +45,48 @@ const CustomerInterface = ({ onSwitchRole }: CustomerInterfaceProps) => {
     isWishlistOpen,
     isProfileOpen,
     isReviewsOpen,
-    isNutritionOpen,
-    selectedProductForReviews,
-    selectedProductForNutrition,
-    openAuth,
-    closeAuth,
-    openCart,
-    closeCart,
-    openNotification,
-    closeNotification,
-    openTracking,
-    closeTracking,
-    openWishlist,
-    closeWishlist,
-    openProfile,
-    closeProfile,
-    openReviews,
-    closeReviews,
-    openNutrition,
-    closeNutrition
-  } = useModalStates();
+    isNutritionOpen
+  } = modals;
+
+  // Extract handlers and create helper functions
+  const {
+    setIsAuthOpen,
+    setIsCartOpen,
+    setIsNotificationOpen,
+    setIsTrackingOpen,
+    setIsWishlistOpen,
+    setIsProfileOpen,
+    setIsReviewsOpen,
+    setIsNutritionOpen
+  } = handlers;
+
+  // Create helper functions for opening/closing modals
+  const openAuth = () => setIsAuthOpen(true);
+  const closeAuth = () => setIsAuthOpen(false);
+  const openCart = () => setIsCartOpen(true);
+  const closeCart = () => setIsCartOpen(false);
+  const openNotification = () => setIsNotificationOpen(true);
+  const closeNotification = () => setIsNotificationOpen(false);
+  const openTracking = () => setIsTrackingOpen(true);
+  const closeTracking = () => setIsTrackingOpen(false);
+  const openWishlist = () => setIsWishlistOpen(true);
+  const closeWishlist = () => setIsWishlistOpen(false);
+  const openProfile = () => setIsProfileOpen(true);
+  const closeProfile = () => setIsProfileOpen(false);
+  const openReviews = (productName: string) => {
+    setSelectedProductForReviews(productName);
+    setIsReviewsOpen(true);
+  };
+  const closeReviews = () => setIsReviewsOpen(false);
+  const openNutrition = (productName: string) => {
+    setSelectedProductForNutrition(productName);
+    setIsNutritionOpen(true);
+  };
+  const closeNutrition = () => setIsNutritionOpen(false);
 
   const { products, isLoading } = useProducts();
 
-  const filteredProducts = products.filter(product => {
+  const filteredProducts = products?.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedFilters.category === "all" || product.category === selectedFilters.category;
     const matchesBoneType = selectedFilters.boneType === "all" || 
@@ -74,7 +97,7 @@ const CustomerInterface = ({ onSwitchRole }: CustomerInterfaceProps) => {
     const matchesRating = product.rating >= selectedFilters.rating;
 
     return matchesSearch && matchesCategory && matchesBoneType && matchesPrice && matchesFreshness && matchesRating;
-  });
+  }) || [];
 
   const addToCart = (product: any) => {
     setCartItems(prev => ({
@@ -188,7 +211,7 @@ const CustomerInterface = ({ onSwitchRole }: CustomerInterfaceProps) => {
         isOpen={isCartOpen}
         onClose={closeCart}
         cartItems={cartItems}
-        products={products}
+        products={products || []}
         onUpdateQuantity={updateQuantity}
         onRemoveItem={removeFromCart}
         onClearCart={clearCart}
