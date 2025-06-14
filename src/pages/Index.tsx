@@ -1,22 +1,13 @@
+
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, MapPin, Clock, Shield, Star, Phone, User, Heart, Package, Bell, MessageCircle, Filter, ChefHat, Calendar } from "lucide-react";
-import ProductCard from "@/components/ProductCard";
-import CartSidebar from "@/components/CartSidebar";
-import AuthModal from "@/components/AuthModal";
-import UserProfile from "@/components/UserProfile";
-import OrderTracking from "@/components/OrderTracking";
-import WishlistModal from "@/components/WishlistModal";
-import PromoBanners from "@/components/PromoBanners";
-import ProductReviews from "@/components/ProductReviews";
-import NotificationCenter from "@/components/NotificationCenter";
-import LiveChat from "@/components/LiveChat";
-import DeliveryScheduler from "@/components/DeliveryScheduler";
-import RecipeSuggestions from "@/components/RecipeSuggestions";
-import AdvancedFilters from "@/components/AdvancedFilters";
+import Header from "@/components/Header";
+import TrustBanner from "@/components/TrustBanner";
+import HeroSection from "@/components/HeroSection";
+import FiltersSection from "@/components/FiltersSection";
+import ProductsGrid from "@/components/ProductsGrid";
+import Footer from "@/components/Footer";
+import ModalsContainer from "@/components/ModalsContainer";
+import LiveChatButton from "@/components/LiveChatButton";
 
 interface FilterOptions {
   priceRange: [number, number];
@@ -149,335 +140,80 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-red-50">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white shadow-md border-b-2 border-red-100">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-r from-red-600 to-orange-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">Q</span>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-red-800">QuickGoat</h1>
-                <p className="text-xs text-gray-600">Farm to Fork in 30 mins</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              {/* Notifications */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsNotificationOpen(true)}
-                className="relative border-red-200 text-red-700 hover:bg-red-50"
-              >
-                <Bell className="w-4 h-4" />
-                {notificationCount > 0 && (
-                  <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-1">
-                    {notificationCount}
-                  </Badge>
-                )}
-              </Button>
-
-              {!isLoggedIn ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsAuthOpen(true)}
-                  className="border-red-200 text-red-700 hover:bg-red-50"
-                >
-                  <Phone className="w-4 h-4 mr-1" />
-                  Login
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsTrackingOpen(true)}
-                    className="border-red-200 text-red-700 hover:bg-red-50"
-                  >
-                    <Package className="w-4 h-4 mr-1" />
-                    Track
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsWishlistOpen(true)}
-                    className="relative border-red-200 text-red-700 hover:bg-red-50"
-                  >
-                    <Heart className="w-4 h-4 mr-1" />
-                    Wishlist
-                    {wishlistItems.length > 0 && (
-                      <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-1">
-                        {wishlistItems.length}
-                      </Badge>
-                    )}
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsProfileOpen(true)}
-                    className="border-red-200 text-red-700 hover:bg-red-50"
-                  >
-                    <User className="w-4 h-4 mr-1" />
-                    Profile
-                  </Button>
-                </>
-              )}
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsCartOpen(true)}
-                className="relative border-red-200 text-red-700 hover:bg-red-50"
-              >
-                Cart ({totalCartItems})
-                {totalCartItems > 0 && (
-                  <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-1">
-                    {totalCartItems}
-                  </Badge>
-                )}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Trust Banner */}
-      <div className="bg-gradient-to-r from-green-600 to-green-700 text-white py-2">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center space-x-6 text-sm">
-            <div className="flex items-center space-x-1">
-              <Shield className="w-4 h-4" />
-              <span>FSSAI Certified</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Clock className="w-4 h-4" />
-              <span>30-Min Delivery</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Star className="w-4 h-4" />
-              <span>Cold Chain Protected</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Hero Section */}
-      <section className="container mx-auto px-4 py-6">
-        <div className="text-center mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-            Fresh Goat Meat Delivered in 30 Minutes
-          </h2>
-          <p className="text-gray-600">Premium quality, hygienically processed, farm-fresh goat meat</p>
-        </div>
-
-        {/* Promotional Banners */}
-        <PromoBanners />
-
-        {/* Location & Search */}
-        <div className="max-w-2xl mx-auto mb-6">
-          <div className="flex items-center space-x-2 mb-4">
-            <MapPin className="w-5 h-5 text-red-600" />
-            <span className="text-sm text-gray-600">Delivering to: </span>
-            <span className="font-semibold text-gray-800">Hubli, Karnataka</span>
-            <Button variant="link" className="text-red-600 p-0 h-auto">Change</Button>
-          </div>
-          
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <Input
-              placeholder="Search for goat meat cuts..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 py-3 text-lg border-red-200 focus:border-red-400"
-            />
-          </div>
-        </div>
-
-        {/* Enhanced Filters and Features */}
-        <div className="flex flex-wrap gap-2 mb-6 justify-center">
-          {[
-            { key: "all", label: "All Items" },
-            { key: "curry-cut", label: "Curry Cut" },
-            { key: "boneless", label: "Boneless" },
-            { key: "marinated", label: "Marinated" },
-          ].map((filter) => (
-            <Button
-              key={filter.key}
-              variant={selectedFilter === filter.key ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedFilter(filter.key)}
-              className={selectedFilter === filter.key 
-                ? "bg-red-600 hover:bg-red-700" 
-                : "border-red-200 text-red-700 hover:bg-red-50"
-              }
-            >
-              {filter.label}
-            </Button>
-          ))}
-          
-          {/* New Feature Buttons */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsFiltersOpen(true)}
-            className="border-red-200 text-red-700 hover:bg-red-50"
-          >
-            <Filter className="w-4 h-4 mr-1" />
-            Filters
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsRecipesOpen(true)}
-            className="border-red-200 text-red-700 hover:bg-red-50"
-          >
-            <ChefHat className="w-4 h-4 mr-1" />
-            Recipes
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsSchedulerOpen(true)}
-            className="border-red-200 text-red-700 hover:bg-red-50"
-          >
-            <Calendar className="w-4 h-4 mr-1" />
-            Schedule
-          </Button>
-        </div>
-
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="relative">
-              <ProductCard
-                product={product}
-                onAddToCart={addToCart}
-              />
-              <div className="flex justify-between items-center mt-2 px-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleWishlist(product.id)}
-                  className={`${
-                    wishlistItems.includes(product.id) 
-                      ? 'text-red-600' 
-                      : 'text-gray-400'
-                  } hover:text-red-600`}
-                >
-                  <Heart className={`w-4 h-4 ${
-                    wishlistItems.includes(product.id) ? 'fill-current' : ''
-                  }`} />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => openReviews(product.name)}
-                  className="text-gray-600 hover:text-red-600"
-                >
-                  <Star className="w-4 h-4 mr-1" />
-                  Reviews
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No products found matching your search.</p>
-          </div>
-        )}
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-8 mt-12">
-        <div className="container mx-auto px-4 text-center">
-          <div className="mb-4">
-            <h3 className="text-xl font-bold mb-2">QuickGoat</h3>
-            <p className="text-gray-300">Premium goat meat delivery in Tier 2 & 3 cities</p>
-          </div>
-          <div className="flex justify-center space-x-6 text-sm">
-            <span>📞 Customer Support: 1800-XXX-XXXX</span>
-            <span>🕐 Available: 6 AM - 10 PM</span>
-          </div>
-        </div>
-      </footer>
-
-      {/* Modals */}
-      <AuthModal 
-        isOpen={isAuthOpen} 
-        onClose={() => {
-          setIsAuthOpen(false);
-          setIsLoggedIn(true);
-        }} 
+      <Header
+        isLoggedIn={isLoggedIn}
+        notificationCount={notificationCount}
+        wishlistItems={wishlistItems}
+        totalCartItems={totalCartItems}
+        onAuthOpen={() => setIsAuthOpen(true)}
+        onNotificationOpen={() => setIsNotificationOpen(true)}
+        onTrackingOpen={() => setIsTrackingOpen(true)}
+        onWishlistOpen={() => setIsWishlistOpen(true)}
+        onProfileOpen={() => setIsProfileOpen(true)}
+        onCartOpen={() => setIsCartOpen(true)}
       />
-      <CartSidebar 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)}
-        items={cartItems}
-        setItems={setCartItems}
+
+      <TrustBanner />
+
+      <HeroSection
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
-      <UserProfile
-        isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
+
+      <FiltersSection
+        selectedFilter={selectedFilter}
+        onFilterChange={setSelectedFilter}
+        onFiltersOpen={() => setIsFiltersOpen(true)}
+        onRecipesOpen={() => setIsRecipesOpen(true)}
+        onSchedulerOpen={() => setIsSchedulerOpen(true)}
       />
-      <OrderTracking
-        isOpen={isTrackingOpen}
-        onClose={() => setIsTrackingOpen(false)}
-      />
-      <WishlistModal
-        isOpen={isWishlistOpen}
-        onClose={() => setIsWishlistOpen(false)}
+
+      <ProductsGrid
+        products={filteredProducts}
+        wishlistItems={wishlistItems}
         onAddToCart={addToCart}
+        onToggleWishlist={toggleWishlist}
+        onOpenReviews={openReviews}
       />
-      <ProductReviews
-        isOpen={isReviewsOpen}
-        onClose={() => setIsReviewsOpen(false)}
-        productName={selectedProductForReview}
-      />
-      <NotificationCenter
-        isOpen={isNotificationOpen}
-        onClose={() => setIsNotificationOpen(false)}
-      />
-      <DeliveryScheduler
-        isOpen={isSchedulerOpen}
-        onClose={() => setIsSchedulerOpen(false)}
-        onSchedule={handleScheduleDelivery}
-      />
-      <RecipeSuggestions
-        isOpen={isRecipesOpen}
-        onClose={() => setIsRecipesOpen(false)}
-        selectedCuts={filters.categories}
-      />
-      <AdvancedFilters
-        isOpen={isFiltersOpen}
-        onClose={() => setIsFiltersOpen(false)}
+
+      <Footer />
+
+      <ModalsContainer
+        isAuthOpen={isAuthOpen}
+        isCartOpen={isCartOpen}
+        isProfileOpen={isProfileOpen}
+        isTrackingOpen={isTrackingOpen}
+        isWishlistOpen={isWishlistOpen}
+        isReviewsOpen={isReviewsOpen}
+        isNotificationOpen={isNotificationOpen}
+        isSchedulerOpen={isSchedulerOpen}
+        isRecipesOpen={isRecipesOpen}
+        isFiltersOpen={isFiltersOpen}
+        selectedProductForReview={selectedProductForReview}
+        cartItems={cartItems}
+        filters={filters}
+        onAuthClose={() => setIsAuthOpen(false)}
+        onCartClose={() => setIsCartOpen(false)}
+        onProfileClose={() => setIsProfileOpen(false)}
+        onTrackingClose={() => setIsTrackingOpen(false)}
+        onWishlistClose={() => setIsWishlistOpen(false)}
+        onReviewsClose={() => setIsReviewsOpen(false)}
+        onNotificationClose={() => setIsNotificationClose(false)}
+        onSchedulerClose={() => setIsSchedulerOpen(false)}
+        onRecipesClose={() => setIsRecipesOpen(false)}
+        onFiltersClose={() => setIsFiltersOpen(false)}
+        onSetCartItems={setCartItems}
+        onAddToCart={addToCart}
+        onScheduleDelivery={handleScheduleDelivery}
         onApplyFilters={handleApplyFilters}
-        currentFilters={filters}
+        onLogin={() => setIsLoggedIn(true)}
       />
-      
-      {/* Live Chat - Always available */}
-      <LiveChat
-        isOpen={isLiveChatOpen}
-        onClose={() => setIsLiveChatOpen(false)}
+
+      <LiveChatButton
+        isLiveChatOpen={isLiveChatOpen}
+        onLiveChatOpen={() => setIsLiveChatOpen(true)}
+        onLiveChatClose={() => setIsLiveChatOpen(false)}
       />
-      
-      {/* Live Chat Toggle Button */}
-      {!isLiveChatOpen && (
-        <Button
-          onClick={() => setIsLiveChatOpen(true)}
-          className="fixed bottom-4 right-4 z-40 bg-red-600 hover:bg-red-700 rounded-full w-14 h-14 shadow-lg"
-        >
-          <MessageCircle className="w-6 h-6" />
-        </Button>
-      )}
     </div>
   );
 };
