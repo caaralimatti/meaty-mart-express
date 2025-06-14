@@ -136,10 +136,10 @@ const Index = () => {
         onProfileClose={() => modalHandlers.setIsProfileOpen(false)}
         onTrackingClose={() => modalHandlers.setIsTrackingOpen(false)}
         onWishlistClose={() => modalHandlers.setIsWishlistOpen(false)}
-        onReviewsClose={() => modalHandlers.setIsReviewsClose(false)}
-        onNotificationClose={() => modalHandlers.setIsNotificationClose(false)}
-        onSchedulerClose={() => modalHandlers.setIsSchedulerClose(false)}
-        onRecipesClose={() => modalHandlers.setIsRecipesClose(false)}
+        onReviewsClose={() => modalHandlers.setIsReviewsOpen(false)}
+        onNotificationClose={() => modalHandlers.setIsNotificationOpen(false)}
+        onSchedulerClose={() => modalHandlers.setIsSchedulerOpen(false)}
+        onRecipesClose={() => modalHandlers.setIsRecipesOpen(false)}
         onFiltersClose={() => modalHandlers.setIsFiltersOpen(false)}
         onSetCartItems={stateHandlers.setCartItems}
         onAddToCart={handleAddToCart}
