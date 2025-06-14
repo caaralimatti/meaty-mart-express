@@ -18,10 +18,10 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
           <p className="text-lg text-gray-600">Choose your experience</p>
         </div>
 
-        <div className="flex gap-x-4 justify-center items-center">
+        <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
           {/* Customer Card */}
           <Card 
-            className="relative w-80 h-96 rounded-2xl shadow-md bg-white cursor-pointer hover:shadow-lg transition-shadow overflow-hidden group"
+            className="relative w-full md:w-80 h-96 rounded-2xl shadow-md bg-white cursor-pointer hover:shadow-lg transition-shadow overflow-hidden group"
             onClick={() => onRoleSelect('customer')}
           >
             <CardContent className="p-4 h-full flex flex-col">
@@ -61,7 +61,7 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
 
           {/* Seller Card */}
           <Card 
-            className="relative w-80 h-96 rounded-2xl shadow-md bg-white cursor-pointer hover:shadow-lg transition-shadow overflow-hidden group"
+            className="relative w-full md:w-80 h-96 rounded-2xl shadow-md bg-white cursor-pointer hover:shadow-lg transition-shadow overflow-hidden group"
             onClick={() => onRoleSelect('seller')}
           >
             <CardContent className="p-4 h-full flex flex-col">
