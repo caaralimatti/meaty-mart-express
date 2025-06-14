@@ -1,14 +1,12 @@
-
 import { Button } from "@/components/ui/button";
 import { Shield, Clock, Truck } from "lucide-react";
-
 interface WelcomeScreenProps {
   onGetStarted: () => void;
 }
-
-const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-red-600 via-orange-500 to-red-700 flex flex-col items-center justify-center p-4 text-white relative overflow-hidden">
+const WelcomeScreen = ({
+  onGetStarted
+}: WelcomeScreenProps) => {
+  return <div className="min-h-screen bg-gradient-to-br from-red-600 via-orange-500 to-red-700 flex flex-col items-center justify-center p-4 text-white relative overflow-hidden">
       {/* Background Animation Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full animate-pulse"></div>
@@ -18,7 +16,8 @@ const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
       <div className="relative z-10 text-center max-w-md mx-auto">
         {/* Main Logo/Brand */}
         <div className="mb-8">
-          <h1 className="text-5xl font-bold mb-2">QuickGoat</h1>
+          <h1 className="text-5xl font-bold mb-2">GOAT GOAT
+        </h1>
           <p className="text-xl opacity-90">Fresh • Fast • Hygienic</p>
         </div>
 
@@ -52,11 +51,7 @@ const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
         </div>
 
         {/* CTA Button */}
-        <Button 
-          onClick={onGetStarted}
-          size="lg"
-          className="w-full bg-white text-red-600 hover:bg-gray-100 font-bold py-4 text-lg rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-200"
-        >
+        <Button onClick={onGetStarted} size="lg" className="w-full bg-white text-red-600 hover:bg-gray-100 font-bold py-4 text-lg rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-200">
           Get Started 🚀
         </Button>
 
@@ -65,8 +60,6 @@ const WelcomeScreen = ({ onGetStarted }: WelcomeScreenProps) => {
           Trusted by 10,000+ customers in Karnataka
         </p>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default WelcomeScreen;
