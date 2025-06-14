@@ -20,6 +20,8 @@ export const useModalStates = () => {
   const [isQuickReorderOpen, setIsQuickReorderOpen] = useState(false);
   const [isReferralOpen, setIsReferralOpen] = useState(false);
   const [isSocialSharingOpen, setIsSocialSharingOpen] = useState(false);
+  const [isOdooConfigOpen, setIsOdooConfigOpen] = useState(false);
+  const [isOdooSyncOpen, setIsOdooSyncOpen] = useState(false);
 
   return {
     modals: {
@@ -41,6 +43,8 @@ export const useModalStates = () => {
       isQuickReorderOpen,
       isReferralOpen,
       isSocialSharingOpen,
+      isOdooConfigOpen,
+      isOdooSyncOpen,
     },
     handlers: {
       setIsAuthOpen,
@@ -61,6 +65,8 @@ export const useModalStates = () => {
       setIsQuickReorderOpen,
       setIsReferralOpen,
       setIsSocialSharingOpen,
+      setIsOdooConfigOpen,
+      setIsOdooSyncOpen,
     }
   };
 };

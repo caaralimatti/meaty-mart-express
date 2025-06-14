@@ -9,6 +9,9 @@ import ModalsContainer from "@/components/ModalsContainer";
 import LiveChatButton from "@/components/LiveChatButton";
 import FeatureButtons from "@/components/FeatureButtons";
 import FeatureModals from "@/components/FeatureModals";
+import OdooControlPanel from "@/components/OdooControlPanel";
+import OdooConfig from "@/components/OdooConfig";
+import OdooSync from "@/components/OdooSync";
 import { useModalStates } from "@/hooks/useModalStates";
 import { useAppState } from "@/hooks/useAppState";
 import { useProducts } from "@/hooks/useProducts";
@@ -44,6 +47,12 @@ const Index = () => {
     stateHandlers.setFilters(newFilters);
   };
 
+  const handleProductsSync = (syncedProducts: any[]) => {
+    console.log("Products synced with Odoo:", syncedProducts);
+    // In a real implementation, you might want to update the products state
+    // or trigger a refresh of the product data
+  };
+
   const filteredProducts = filterProducts(
     mockProducts,
     state.searchQuery,
@@ -74,6 +83,13 @@ const Index = () => {
         searchQuery={state.searchQuery}
         onSearchChange={stateHandlers.setSearchQuery}
       />
+
+      <div className="container mx-auto px-4">
+        <OdooControlPanel
+          onConfigOpen={() => modalHandlers.setIsOdooConfigOpen(true)}
+          onSyncOpen={() => modalHandlers.setIsOdooSyncOpen(true)}
+        />
+      </div>
 
       <FiltersSection
         selectedFilter={state.selectedFilter}
@@ -122,7 +138,7 @@ const Index = () => {
         onProfileClose={() => modalHandlers.setIsProfileOpen(false)}
         onTrackingClose={() => modalHandlers.setIsTrackingOpen(false)}
         onWishlistClose={() => modalHandlers.setIsWishlistOpen(false)}
-        onReviewsClose={() => modalHandlers.setIsReviewsOpen(false)}
+        onReviewsClose={() => modalHandlers.setIsReviewsClose(false)}
         onNotificationClose={() => modalHandlers.setIsNotificationOpen(false)}
         onSchedulerClose={() => modalHandlers.setIsSchedulerOpen(false)}
         onRecipesClose={() => modalHandlers.setIsRecipesOpen(false)}
@@ -151,6 +167,18 @@ const Index = () => {
         onReferralClose={() => modalHandlers.setIsReferralOpen(false)}
         onSocialSharingClose={() => modalHandlers.setIsSocialSharingOpen(false)}
         onAddToCart={handleAddToCart}
+      />
+
+      <OdooConfig
+        isOpen={modals.isOdooConfigOpen}
+        onClose={() => modalHandlers.setIsOdooConfigOpen(false)}
+      />
+
+      <OdooSync
+        isOpen={modals.isOdooSyncOpen}
+        onClose={() => modalHandlers.setIsOdooSyncOpen(false)}
+        products={filteredProducts}
+        onProductsSync={handleProductsSync}
       />
 
       <LiveChatButton
