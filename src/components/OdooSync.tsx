@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { RotateCw, Database, ShoppingCart, Users, Package, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { odooService } from "@/services/odooService";
+import OdooProductsTable from "./OdooProductsTable";
 
 interface OdooSyncProps {
   isOpen: boolean;
@@ -17,9 +19,11 @@ interface OdooSyncProps {
 const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [connectionDetails, setConnectionDetails] = useState<string>('');
+  const [odooProducts, setOdooProducts] = useState<any[]>([]);
   const [syncStats, setSyncStats] = useState({
     productsUpdated: 0,
     ordersCreated: 0,
@@ -65,6 +69,33 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
         description: error.message || "An unexpected error occurred during connection test.",
         variant: "destructive",
       });
+    }
+  };
+
+  const fetchOdooProducts = async () => {
+    setIsLoadingProducts(true);
+    try {
+      const connected = await odooService.authenticate();
+      if (!connected) {
+        throw new Error('Authentication failed. Please test connection first.');
+      }
+
+      const fetchedProducts = await odooService.getProducts();
+      setOdooProducts(fetchedProducts);
+      
+      toast({
+        title: "Products Loaded",
+        description: `Successfully loaded ${fetchedProducts.length} products from Odoo.`,
+      });
+    } catch (error: any) {
+      console.error('Failed to fetch Odoo products:', error);
+      toast({
+        title: "Failed to Load Products",
+        description: error.message || "Could not fetch products from Odoo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingProducts(false);
     }
   };
 
@@ -152,12 +183,12 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Database className="w-5 h-5 text-red-600" />
-              <CardTitle>Odoo Integration</CardTitle>
+              <CardTitle>Odoo Integration - Product Sync</CardTitle>
             </div>
             <Badge variant={isConnected ? "default" : "secondary"}>
               {isConnected ? "Connected" : "Disconnected"}
@@ -170,15 +201,14 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
             <div className="flex items-start space-x-3">
               <Settings className="w-5 h-5 text-yellow-600 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-yellow-800">Configuration Required</h3>
+                <h3 className="font-semibold text-yellow-800">Configuration Status</h3>
                 <p className="text-sm text-yellow-700 mt-1">
-                  Expected configuration:
+                  Syncing from: product.product table
                 </p>
                 <ul className="text-sm text-yellow-700 mt-2 space-y-1">
-                  <li>• ODOO_URL: http://138.91.109.69:8069</li>
-                  <li>• ODOO_DB: ipurvey_staging</li>
-                  <li>• ODOO_USERNAME: admin</li>
-                  <li>• ODOO_PASSWORD: admin</li>
+                  <li>• Fields: name, list_price, uom_id</li>
+                  <li>• Server: http://138.91.109.69:8069</li>
+                  <li>• Database: ipurvey_staging</li>
                 </ul>
               </div>
             </div>
@@ -195,13 +225,6 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
               <Database className="w-4 h-4 mr-2" />
               Test Connection
             </Button>
-          </div>
-
-          {/* Debug section */}
-          <div className="p-3 bg-gray-50 rounded-lg text-xs">
-            <p className="font-medium mb-1">Debug Info:</p>
-            <p>Check console logs for detailed authentication flow</p>
-            <p>Expected Odoo server: http://138.91.109.69:8069</p>
           </div>
 
           {isSyncing && (
@@ -227,8 +250,8 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
             </div>
             <div className="text-center p-4 border rounded-lg">
               <Users className="w-6 h-6 mx-auto mb-2 text-purple-600" />
-              <div className="text-2xl font-bold">{syncStats.customersSync}</div>
-              <div className="text-sm text-gray-600">Customers Synced</div>
+              <div className="text-2xl font-bold">{odooProducts.length}</div>
+              <div className="text-sm text-gray-600">Odoo Products</div>
             </div>
           </div>
 
@@ -241,6 +264,16 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
           )}
 
           <div className="flex space-x-3">
+            <Button 
+              onClick={fetchOdooProducts} 
+              disabled={!isConnected || isLoadingProducts}
+              variant="outline"
+              className="flex-1"
+            >
+              <Package className={`w-4 h-4 mr-2 ${isLoadingProducts ? 'animate-spin' : ''}`} />
+              {isLoadingProducts ? 'Loading...' : 'Load Products'}
+            </Button>
+            
             <Button 
               onClick={syncProducts} 
               disabled={!isConnected || isSyncing}
@@ -260,6 +293,11 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
               Test Order
             </Button>
           </div>
+
+          <OdooProductsTable 
+            products={odooProducts} 
+            isLoading={isLoadingProducts} 
+          />
 
           <Button onClick={onClose} variant="ghost" className="w-full">
             Close

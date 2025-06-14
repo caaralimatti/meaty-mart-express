@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 
 interface OdooConfig {
@@ -13,10 +12,10 @@ interface OdooProduct {
   id: number;
   name: string;
   list_price: number;
-  standard_price: number;
-  qty_available: number;
-  categ_id: [number, string];
-  description: string;
+  uom_id: [number, string]; // Unit of measure as [id, name]
+  qty_available?: number;
+  categ_id?: [number, string];
+  description?: string;
   image_1920?: string;
 }
 
@@ -81,14 +80,13 @@ class OdooService {
     try {
       console.log('Starting Odoo authentication...');
       
-      // Try the web session authenticate endpoint first
       const response = await this.makeRequest('/web/session/authenticate', {
         jsonrpc: '2.0',
         method: 'call',
         params: {
-          db: '', // Will be filled by the edge function
-          login: '', // Will be filled by the edge function  
-          password: '' // Will be filled by the edge function
+          db: '',
+          login: '',
+          password: ''
         },
         id: Math.random(),
       });
@@ -101,14 +99,12 @@ class OdooService {
           console.log('Odoo authentication successful via /web/session/authenticate');
           return true;
         } else if (response.result.uid && response.result.uid !== false) {
-          // Some Odoo versions return uid instead of session_id
           this.sessionId = 'authenticated';
           console.log('Odoo authentication successful via uid');
           return true;
         }
       }
       
-      // Fallback: try the common authenticate endpoint
       console.log('Trying fallback authentication method...');
       const fallbackResponse = await this.makeRequest('/xmlrpc/2/common', {
         jsonrpc: '2.0',
@@ -116,7 +112,7 @@ class OdooService {
         params: {
           service: 'common',
           method: 'authenticate',
-          args: ['', '', ''] // Will be filled by edge function
+          args: ['', '', '']
         },
         id: Math.random(),
       });
@@ -144,6 +140,8 @@ class OdooService {
     }
 
     try {
+      console.log('Fetching products from Odoo with specific fields: name, list_price, uom_id');
+      
       const response = await this.makeRequest('/web/dataset/call_kw', {
         jsonrpc: '2.0',
         method: 'call',
@@ -152,18 +150,49 @@ class OdooService {
           method: 'search_read',
           args: [[]],
           kwargs: {
-            fields: ['name', 'list_price', 'standard_price', 'qty_available', 'categ_id', 'description', 'image_1920'],
+            fields: ['name', 'list_price', 'uom_id'],
             limit: 100,
           },
         },
         id: Math.random(),
       });
 
+      console.log('Products fetched successfully:', response.result?.length || 0, 'products');
       return response.result || [];
     } catch (error) {
       console.error('Failed to fetch products from Odoo:', error);
       return [];
     }
+  }
+
+  async syncProductsToLocal(localProducts: any[]): Promise<any[]> {
+    console.log('Starting product sync with Odoo...');
+    const odooProducts = await this.getProducts();
+    console.log('Fetched', odooProducts.length, 'products from Odoo');
+    
+    return localProducts.map(localProduct => {
+      const odooProduct = odooProducts.find(op => 
+        op.name.toLowerCase().includes(localProduct.name.toLowerCase())
+      );
+      
+      if (odooProduct) {
+        console.log(`Matched local product "${localProduct.name}" with Odoo product "${odooProduct.name}"`);
+        return {
+          ...localProduct,
+          odooId: odooProduct.id,
+          price: odooProduct.list_price,
+          unitOfMeasure: odooProduct.uom_id ? odooProduct.uom_id[1] : 'Unit',
+          odooData: {
+            id: odooProduct.id,
+            name: odooProduct.name,
+            list_price: odooProduct.list_price,
+            uom_id: odooProduct.uom_id,
+          },
+        };
+      }
+      
+      return localProduct;
+    });
   }
 
   async createCustomer(customer: Partial<OdooCustomer>): Promise<number | null> {
@@ -216,28 +245,6 @@ class OdooService {
       console.error('Failed to create order in Odoo:', error);
       return null;
     }
-  }
-
-  async syncProductsToLocal(localProducts: any[]): Promise<any[]> {
-    const odooProducts = await this.getProducts();
-    
-    return localProducts.map(localProduct => {
-      const odooProduct = odooProducts.find(op => 
-        op.name.toLowerCase().includes(localProduct.name.toLowerCase())
-      );
-      
-      if (odooProduct) {
-        return {
-          ...localProduct,
-          odooId: odooProduct.id,
-          price: odooProduct.list_price,
-          inStock: odooProduct.qty_available > 0,
-          odooData: odooProduct,
-        };
-      }
-      
-      return localProduct;
-    });
   }
 }
 
