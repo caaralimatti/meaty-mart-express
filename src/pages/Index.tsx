@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, MapPin, Clock, Shield, Star, Phone, User, Heart, Package, Bell } from "lucide-react";
+import { Search, MapPin, Clock, Shield, Star, Phone, User, Heart, Package, Bell, MessageCircle, Filter, ChefHat, Calendar } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import CartSidebar from "@/components/CartSidebar";
 import AuthModal from "@/components/AuthModal";
@@ -12,6 +12,21 @@ import OrderTracking from "@/components/OrderTracking";
 import WishlistModal from "@/components/WishlistModal";
 import PromoBanners from "@/components/PromoBanners";
 import ProductReviews from "@/components/ProductReviews";
+import NotificationCenter from "@/components/NotificationCenter";
+import LiveChat from "@/components/LiveChat";
+import DeliveryScheduler from "@/components/DeliveryScheduler";
+import RecipeSuggestions from "@/components/RecipeSuggestions";
+import AdvancedFilters from "@/components/AdvancedFilters";
+
+interface FilterOptions {
+  priceRange: [number, number];
+  categories: string[];
+  boneType: string[];
+  freshness: string[];
+  rating: number;
+  inStock: boolean;
+  fastDelivery: boolean;
+}
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -20,12 +35,27 @@ const Index = () => {
   const [isTrackingOpen, setIsTrackingOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isReviewsOpen, setIsReviewsOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isLiveChatOpen, setIsLiveChatOpen] = useState(false);
+  const [isSchedulerOpen, setIsSchedulerOpen] = useState(false);
+  const [isRecipesOpen, setIsRecipesOpen] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [selectedProductForReview, setSelectedProductForReview] = useState("");
   const [cartItems, setCartItems] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([1, 3]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(3);
+  const [filters, setFilters] = useState<FilterOptions>({
+    priceRange: [0, 1000],
+    categories: [],
+    boneType: [],
+    freshness: [],
+    rating: 0,
+    inStock: false,
+    fastDelivery: false
+  });
 
   const mockProducts = [
     {
@@ -96,10 +126,23 @@ const Index = () => {
     setIsReviewsOpen(true);
   };
 
+  const handleScheduleDelivery = (date: string, time: string) => {
+    console.log("Delivery scheduled for:", date, time);
+  };
+
+  const handleApplyFilters = (newFilters: FilterOptions) => {
+    setFilters(newFilters);
+  };
+
   const filteredProducts = mockProducts.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = selectedFilter === "all" || product.category === selectedFilter;
-    return matchesSearch && matchesFilter;
+    const matchesPriceRange = product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1];
+    const matchesCategory = filters.categories.length === 0 || filters.categories.includes(product.category);
+    const matchesRating = product.rating >= filters.rating;
+    const matchesStock = !filters.inStock || product.inStock;
+    
+    return matchesSearch && matchesFilter && matchesPriceRange && matchesCategory && matchesRating && matchesStock;
   });
 
   const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -121,6 +164,21 @@ const Index = () => {
             </div>
             
             <div className="flex items-center space-x-3">
+              {/* Notifications */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsNotificationOpen(true)}
+                className="relative border-red-200 text-red-700 hover:bg-red-50"
+              >
+                <Bell className="w-4 h-4" />
+                {notificationCount > 0 && (
+                  <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-1">
+                    {notificationCount}
+                  </Badge>
+                )}
+              </Button>
+
               {!isLoggedIn ? (
                 <Button
                   variant="outline"
@@ -240,7 +298,7 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Enhanced Filters and Features */}
         <div className="flex flex-wrap gap-2 mb-6 justify-center">
           {[
             { key: "all", label: "All Items" },
@@ -261,6 +319,37 @@ const Index = () => {
               {filter.label}
             </Button>
           ))}
+          
+          {/* New Feature Buttons */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsFiltersOpen(true)}
+            className="border-red-200 text-red-700 hover:bg-red-50"
+          >
+            <Filter className="w-4 h-4 mr-1" />
+            Filters
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsRecipesOpen(true)}
+            className="border-red-200 text-red-700 hover:bg-red-50"
+          >
+            <ChefHat className="w-4 h-4 mr-1" />
+            Recipes
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsSchedulerOpen(true)}
+            className="border-red-200 text-red-700 hover:bg-red-50"
+          >
+            <Calendar className="w-4 h-4 mr-1" />
+            Schedule
+          </Button>
         </div>
 
         {/* Products Grid */}
@@ -353,6 +442,42 @@ const Index = () => {
         onClose={() => setIsReviewsOpen(false)}
         productName={selectedProductForReview}
       />
+      <NotificationCenter
+        isOpen={isNotificationOpen}
+        onClose={() => setIsNotificationOpen(false)}
+      />
+      <DeliveryScheduler
+        isOpen={isSchedulerOpen}
+        onClose={() => setIsSchedulerOpen(false)}
+        onSchedule={handleScheduleDelivery}
+      />
+      <RecipeSuggestions
+        isOpen={isRecipesOpen}
+        onClose={() => setIsRecipesOpen(false)}
+        selectedCuts={filters.categories}
+      />
+      <AdvancedFilters
+        isOpen={isFiltersOpen}
+        onClose={() => setIsFiltersOpen(false)}
+        onApplyFilters={handleApplyFilters}
+        currentFilters={filters}
+      />
+      
+      {/* Live Chat - Always available */}
+      <LiveChat
+        isOpen={isLiveChatOpen}
+        onClose={() => setIsLiveChatOpen(false)}
+      />
+      
+      {/* Live Chat Toggle Button */}
+      {!isLiveChatOpen && (
+        <Button
+          onClick={() => setIsLiveChatOpen(true)}
+          className="fixed bottom-4 right-4 z-40 bg-red-600 hover:bg-red-700 rounded-full w-14 h-14 shadow-lg"
+        >
+          <MessageCircle className="w-6 h-6" />
+        </Button>
+      )}
     </div>
   );
 };
