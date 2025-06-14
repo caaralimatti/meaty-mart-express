@@ -42,7 +42,7 @@ export const useProducts = () => {
     },
   ];
 
-  const addToCart = (product: any, cartItems: any[], setCartItems: (items: any[]) => void) => {
+  const addToCart = (product: any, cartItems: any[], setCartItems: React.Dispatch<React.SetStateAction<any[]>>) => {
     setCartItems(prev => {
       const existingItem = prev.find(item => item.id === product.id);
       if (existingItem) {
@@ -56,7 +56,7 @@ export const useProducts = () => {
     });
   };
 
-  const toggleWishlist = (productId: number, wishlistItems: number[], setWishlistItems: (items: number[]) => void) => {
+  const toggleWishlist = (productId: number, wishlistItems: number[], setWishlistItems: React.Dispatch<React.SetStateAction<number[]>>) => {
     setWishlistItems(prev => 
       prev.includes(productId) 
         ? prev.filter(id => id !== productId)
