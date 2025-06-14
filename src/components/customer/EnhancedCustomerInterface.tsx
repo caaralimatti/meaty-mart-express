@@ -1,3 +1,4 @@
+
 import Header from "@/components/Header";
 import TrustBanner from "@/components/TrustBanner";
 import HeroSection from "@/components/HeroSection";
@@ -11,6 +12,7 @@ import FeatureModals from "@/components/FeatureModals";
 import OdooControlPanel from "@/components/OdooControlPanel";
 import OdooSync from "@/components/OdooSync";
 import CustomerDashboard from "./CustomerDashboard";
+import PromoBanners from "@/components/PromoBanners";
 import { useModalStates } from "@/hooks/useModalStates";
 import { useAppState } from "@/hooks/useAppState";
 import { useProducts } from "@/hooks/useProducts";
@@ -109,6 +111,8 @@ const EnhancedCustomerInterface = ({ onSwitchRole }: EnhancedCustomerInterfacePr
       />
 
       <div className="container mx-auto px-4">
+        <PromoBanners />
+        
         <OdooControlPanel
           onSyncOpen={() => modalHandlers.setIsOdooSyncOpen(true)}
         />
@@ -157,12 +161,12 @@ const EnhancedCustomerInterface = ({ onSwitchRole }: EnhancedCustomerInterfacePr
         cartItems={state.cartItems}
         filters={state.filters}
         onAuthClose={() => modalHandlers.setIsAuthOpen(false)}
-        onCartClose={() => modalHandlers.setIsCartOpen(false)}
+        onCartClose={() => modalHandlers.setIsCartClose(false)}
         onProfileClose={() => modalHandlers.setIsProfileOpen(false)}
         onTrackingClose={() => modalHandlers.setIsTrackingOpen(false)}
         onWishlistClose={() => modalHandlers.setIsWishlistOpen(false)}
         onReviewsClose={() => modalHandlers.setIsReviewsOpen(false)}
-        onNotificationClose={() => modalHandlers.setIsNotificationClose(false)}
+        onNotificationClose={() => modalHandlers.setIsNotificationOpen(false)}
         onSchedulerClose={() => modalHandlers.setIsSchedulerOpen(false)}
         onRecipesClose={() => modalHandlers.setIsRecipesOpen(false)}
         onFiltersClose={() => modalHandlers.setIsFiltersOpen(false)}

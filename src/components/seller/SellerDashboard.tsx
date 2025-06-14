@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import SellerPromoBanners from "./SellerPromoBanners";
 import { 
   TrendingUp, 
   Package, 
@@ -58,6 +58,9 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
       </div>
 
       <div className="container mx-auto p-6">
+        {/* Promotional Banners */}
+        <SellerPromoBanners />
+
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
