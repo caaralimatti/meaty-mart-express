@@ -21,17 +21,20 @@ interface CustomerInterfaceProps {
 const CustomerInterface = ({ onSwitchRole }: CustomerInterfaceProps) => {
   const { resetOnboarding } = useOnboarding();
   const [searchQuery, setSearchQuery] = useState("");
-  const [cartItems, setCartItems] = useState<{[key: number]: number}>({});
+  const [cartItems, setCartItems] = useState<any[]>([]);
   const [wishlistItems, setWishlistItems] = useState<number[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [selectedProductForReviews, setSelectedProductForReviews] = useState("");
-  const [selectedProductForNutrition, setSelectedProductForNutrition] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState({
-    category: "all",
-    boneType: "all",
+  const [selectedProductForReview, setSelectedProductForReview] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("all");
+  
+  const [filters, setFilters] = useState({
     priceRange: [0, 1000] as [number, number],
-    freshness: "all",
-    rating: 0
+    categories: [] as string[],
+    boneType: [] as string[],
+    freshness: [] as string[],
+    rating: 0,
+    inStock: false,
+    fastDelivery: false
   });
 
   const { modals, handlers } = useModalStates();
@@ -45,10 +48,12 @@ const CustomerInterface = ({ onSwitchRole }: CustomerInterfaceProps) => {
     isWishlistOpen,
     isProfileOpen,
     isReviewsOpen,
-    isNutritionOpen
+    isSchedulerOpen,
+    isRecipesOpen,
+    isFiltersOpen
   } = modals;
 
-  // Extract handlers and create helper functions
+  // Extract handlers
   const {
     setIsAuthOpen,
     setIsCartOpen,
@@ -57,76 +62,31 @@ const CustomerInterface = ({ onSwitchRole }: CustomerInterfaceProps) => {
     setIsWishlistOpen,
     setIsProfileOpen,
     setIsReviewsOpen,
-    setIsNutritionOpen
+    setIsSchedulerOpen,
+    setIsRecipesOpen,
+    setIsFiltersOpen
   } = handlers;
-
-  // Create helper functions for opening/closing modals
-  const openAuth = () => setIsAuthOpen(true);
-  const closeAuth = () => setIsAuthOpen(false);
-  const openCart = () => setIsCartOpen(true);
-  const closeCart = () => setIsCartOpen(false);
-  const openNotification = () => setIsNotificationOpen(true);
-  const closeNotification = () => setIsNotificationOpen(false);
-  const openTracking = () => setIsTrackingOpen(true);
-  const closeTracking = () => setIsTrackingOpen(false);
-  const openWishlist = () => setIsWishlistOpen(true);
-  const closeWishlist = () => setIsWishlistOpen(false);
-  const openProfile = () => setIsProfileOpen(true);
-  const closeProfile = () => setIsProfileOpen(false);
-  const openReviews = (productName: string) => {
-    setSelectedProductForReviews(productName);
-    setIsReviewsOpen(true);
-  };
-  const closeReviews = () => setIsReviewsOpen(false);
-  const openNutrition = (productName: string) => {
-    setSelectedProductForNutrition(productName);
-    setIsNutritionOpen(true);
-  };
-  const closeNutrition = () => setIsNutritionOpen(false);
 
   const { products, isLoading } = useProducts();
 
   const filteredProducts = products?.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedFilters.category === "all" || product.category === selectedFilters.category;
-    const matchesBoneType = selectedFilters.boneType === "all" || 
-      (selectedFilters.boneType === "bone-in" && product.boneIn) ||
-      (selectedFilters.boneType === "boneless" && !product.boneIn);
-    const matchesPrice = product.price >= selectedFilters.priceRange[0] && product.price <= selectedFilters.priceRange[1];
-    const matchesFreshness = selectedFilters.freshness === "all" || product.freshness === selectedFilters.freshness;
-    const matchesRating = product.rating >= selectedFilters.rating;
-
-    return matchesSearch && matchesCategory && matchesBoneType && matchesPrice && matchesFreshness && matchesRating;
+    const matchesFilter = selectedFilter === "all" || product.category === selectedFilter;
+    return matchesSearch && matchesFilter;
   }) || [];
 
   const addToCart = (product: any) => {
-    setCartItems(prev => ({
-      ...prev,
-      [product.id]: (prev[product.id] || 0) + 1
-    }));
-  };
-
-  const removeFromCart = (productId: number) => {
     setCartItems(prev => {
-      const newItems = { ...prev };
-      if (newItems[productId] > 1) {
-        newItems[productId]--;
-      } else {
-        delete newItems[productId];
+      const existingItem = prev.find(item => item.id === product.id);
+      if (existingItem) {
+        return prev.map(item => 
+          item.id === product.id 
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
       }
-      return newItems;
+      return [...prev, { ...product, quantity: 1 }];
     });
-  };
-
-  const updateQuantity = (productId: number, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(productId);
-    } else {
-      setCartItems(prev => ({
-        ...prev,
-        [productId]: quantity
-      }));
-    }
   };
 
   const toggleWishlist = (productId: number) => {
@@ -137,22 +97,31 @@ const CustomerInterface = ({ onSwitchRole }: CustomerInterfaceProps) => {
     );
   };
 
-  const clearCart = () => {
-    setCartItems({});
-  };
-
-  const totalCartItems = Object.values(cartItems).reduce((sum, count) => sum + count, 0);
+  const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const notificationCount = 3;
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    closeAuth();
+    setIsAuthOpen(false);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     resetOnboarding();
     window.location.reload();
+  };
+
+  const handleScheduleDelivery = (date: string, time: string) => {
+    console.log("Delivery scheduled for:", date, time);
+  };
+
+  const handleApplyFilters = (newFilters: typeof filters) => {
+    setFilters(newFilters);
+  };
+
+  const handleOpenReviews = (productName: string) => {
+    setSelectedProductForReview(productName);
+    setIsReviewsOpen(true);
   };
 
   if (isLoading) {
@@ -173,12 +142,12 @@ const CustomerInterface = ({ onSwitchRole }: CustomerInterfaceProps) => {
         notificationCount={notificationCount}
         wishlistItems={wishlistItems}
         totalCartItems={totalCartItems}
-        onAuthOpen={openAuth}
-        onNotificationOpen={openNotification}
-        onTrackingOpen={openTracking}
-        onWishlistOpen={openWishlist}
-        onProfileOpen={openProfile}
-        onCartOpen={openCart}
+        onAuthOpen={() => setIsAuthOpen(true)}
+        onNotificationOpen={() => setIsNotificationOpen(true)}
+        onTrackingOpen={() => setIsTrackingOpen(true)}
+        onWishlistOpen={() => setIsWishlistOpen(true)}
+        onProfileOpen={() => setIsProfileOpen(true)}
+        onCartOpen={() => setIsCartOpen(true)}
         onLogout={handleLogout}
       />
       
@@ -191,11 +160,19 @@ const CustomerInterface = ({ onSwitchRole }: CustomerInterfaceProps) => {
       
       <PromoBanners />
       
-      <OdooSync />
+      <OdooSync 
+        isOpen={false}
+        onClose={() => {}}
+        products={products || []}
+        onProductsSync={() => {}}
+      />
       
       <FiltersSection 
-        selectedFilters={selectedFilters}
-        onFiltersChange={setSelectedFilters}
+        selectedFilter={selectedFilter}
+        onFilterChange={setSelectedFilter}
+        onFiltersOpen={() => setIsFiltersOpen(true)}
+        onRecipesOpen={() => setIsRecipesOpen(true)}
+        onSchedulerOpen={() => setIsSchedulerOpen(true)}
       />
       
       <ProductsGrid
@@ -203,41 +180,46 @@ const CustomerInterface = ({ onSwitchRole }: CustomerInterfaceProps) => {
         wishlistItems={wishlistItems}
         onAddToCart={addToCart}
         onToggleWishlist={toggleWishlist}
-        onOpenReviews={openReviews}
-        onOpenNutrition={openNutrition}
+        onOpenReviews={handleOpenReviews}
+        onOpenNutrition={() => {}}
       />
 
       <CartSidebar
         isOpen={isCartOpen}
-        onClose={closeCart}
-        cartItems={cartItems}
-        products={products || []}
-        onUpdateQuantity={updateQuantity}
-        onRemoveItem={removeFromCart}
-        onClearCart={clearCart}
+        onClose={() => setIsCartOpen(false)}
+        items={cartItems}
+        setItems={setCartItems}
       />
 
       <ModalsContainer
         isAuthOpen={isAuthOpen}
-        isNotificationOpen={isNotificationOpen}
+        isCartOpen={isCartOpen}
+        isProfileOpen={isProfileOpen}
         isTrackingOpen={isTrackingOpen}
         isWishlistOpen={isWishlistOpen}
-        isProfileOpen={isProfileOpen}
         isReviewsOpen={isReviewsOpen}
-        isNutritionOpen={isNutritionOpen}
-        selectedProductForReviews={selectedProductForReviews}
-        selectedProductForNutrition={selectedProductForNutrition}
-        onCloseAuth={closeAuth}
-        onCloseNotification={closeNotification}
-        onCloseTracking={closeTracking}
-        onCloseWishlist={closeWishlist}
-        onCloseProfile={closeProfile}
-        onCloseReviews={closeReviews}
-        onCloseNutrition={closeNutrition}
+        isNotificationOpen={isNotificationOpen}
+        isSchedulerOpen={isSchedulerOpen}
+        isRecipesOpen={isRecipesOpen}
+        isFiltersOpen={isFiltersOpen}
+        selectedProductForReview={selectedProductForReview}
+        cartItems={cartItems}
+        filters={filters}
+        onAuthClose={() => setIsAuthOpen(false)}
+        onCartClose={() => setIsCartOpen(false)}
+        onProfileClose={() => setIsProfileOpen(false)}
+        onTrackingClose={() => setIsTrackingOpen(false)}
+        onWishlistClose={() => setIsWishlistOpen(false)}
+        onReviewsClose={() => setIsReviewsOpen(false)}
+        onNotificationClose={() => setIsNotificationOpen(false)}
+        onSchedulerClose={() => setIsSchedulerOpen(false)}
+        onRecipesClose={() => setIsRecipesOpen(false)}
+        onFiltersClose={() => setIsFiltersOpen(false)}
+        onSetCartItems={setCartItems}
+        onAddToCart={addToCart}
+        onScheduleDelivery={handleScheduleDelivery}
+        onApplyFilters={handleApplyFilters}
         onLogin={handleLogin}
-        onSwitchRole={onSwitchRole}
-        wishlistItems={wishlistItems}
-        onToggleWishlist={toggleWishlist}
       />
       
       <Footer />

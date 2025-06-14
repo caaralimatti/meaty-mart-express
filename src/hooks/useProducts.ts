@@ -42,6 +42,9 @@ export const useProducts = () => {
     },
   ];
 
+  const products = mockProducts;
+  const isLoading = false;
+
   const addToCart = (product: any, cartItems: any[], setCartItems: React.Dispatch<React.SetStateAction<any[]>>) => {
     setCartItems(prev => {
       const existingItem = prev.find(item => item.id === product.id);
@@ -78,6 +81,8 @@ export const useProducts = () => {
   };
 
   return {
+    products,
+    isLoading,
     mockProducts,
     addToCart,
     toggleWishlist,
