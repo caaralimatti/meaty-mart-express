@@ -1,20 +1,31 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, MapPin, Clock, Shield, Star, Phone } from "lucide-react";
+import { Search, MapPin, Clock, Shield, Star, Phone, User, Heart, Package, Bell } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import CartSidebar from "@/components/CartSidebar";
 import AuthModal from "@/components/AuthModal";
+import UserProfile from "@/components/UserProfile";
+import OrderTracking from "@/components/OrderTracking";
+import WishlistModal from "@/components/WishlistModal";
+import PromoBanners from "@/components/PromoBanners";
+import ProductReviews from "@/components/ProductReviews";
 
 const Index = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isTrackingOpen, setIsTrackingOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [isReviewsOpen, setIsReviewsOpen] = useState(false);
+  const [selectedProductForReview, setSelectedProductForReview] = useState("");
   const [cartItems, setCartItems] = useState([]);
+  const [wishlistItems, setWishlistItems] = useState([1, 3]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const mockProducts = [
     {
@@ -72,6 +83,19 @@ const Index = () => {
     });
   };
 
+  const toggleWishlist = (productId) => {
+    setWishlistItems(prev => 
+      prev.includes(productId) 
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId]
+    );
+  };
+
+  const openReviews = (productName) => {
+    setSelectedProductForReview(productName);
+    setIsReviewsOpen(true);
+  };
+
   const filteredProducts = mockProducts.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = selectedFilter === "all" || product.category === selectedFilter;
@@ -97,15 +121,54 @@ const Index = () => {
             </div>
             
             <div className="flex items-center space-x-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsAuthOpen(true)}
-                className="border-red-200 text-red-700 hover:bg-red-50"
-              >
-                <Phone className="w-4 h-4 mr-1" />
-                Login
-              </Button>
+              {!isLoggedIn ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsAuthOpen(true)}
+                  className="border-red-200 text-red-700 hover:bg-red-50"
+                >
+                  <Phone className="w-4 h-4 mr-1" />
+                  Login
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsTrackingOpen(true)}
+                    className="border-red-200 text-red-700 hover:bg-red-50"
+                  >
+                    <Package className="w-4 h-4 mr-1" />
+                    Track
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsWishlistOpen(true)}
+                    className="relative border-red-200 text-red-700 hover:bg-red-50"
+                  >
+                    <Heart className="w-4 h-4 mr-1" />
+                    Wishlist
+                    {wishlistItems.length > 0 && (
+                      <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-1">
+                        {wishlistItems.length}
+                      </Badge>
+                    )}
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsProfileOpen(true)}
+                    className="border-red-200 text-red-700 hover:bg-red-50"
+                  >
+                    <User className="w-4 h-4 mr-1" />
+                    Profile
+                  </Button>
+                </>
+              )}
               
               <Button
                 variant="outline"
@@ -154,6 +217,9 @@ const Index = () => {
           <p className="text-gray-600">Premium quality, hygienically processed, farm-fresh goat meat</p>
         </div>
 
+        {/* Promotional Banners */}
+        <PromoBanners />
+
         {/* Location & Search */}
         <div className="max-w-2xl mx-auto mb-6">
           <div className="flex items-center space-x-2 mb-4">
@@ -200,11 +266,37 @@ const Index = () => {
         {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={addToCart}
-            />
+            <div key={product.id} className="relative">
+              <ProductCard
+                product={product}
+                onAddToCart={addToCart}
+              />
+              <div className="flex justify-between items-center mt-2 px-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleWishlist(product.id)}
+                  className={`${
+                    wishlistItems.includes(product.id) 
+                      ? 'text-red-600' 
+                      : 'text-gray-400'
+                  } hover:text-red-600`}
+                >
+                  <Heart className={`w-4 h-4 ${
+                    wishlistItems.includes(product.id) ? 'fill-current' : ''
+                  }`} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => openReviews(product.name)}
+                  className="text-gray-600 hover:text-red-600"
+                >
+                  <Star className="w-4 h-4 mr-1" />
+                  Reviews
+                </Button>
+              </div>
+            </div>
           ))}
         </div>
 
@@ -230,12 +322,36 @@ const Index = () => {
       </footer>
 
       {/* Modals */}
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+      <AuthModal 
+        isOpen={isAuthOpen} 
+        onClose={() => {
+          setIsAuthOpen(false);
+          setIsLoggedIn(true);
+        }} 
+      />
       <CartSidebar 
         isOpen={isCartOpen} 
         onClose={() => setIsCartOpen(false)}
         items={cartItems}
         setItems={setCartItems}
+      />
+      <UserProfile
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+      />
+      <OrderTracking
+        isOpen={isTrackingOpen}
+        onClose={() => setIsTrackingOpen(false)}
+      />
+      <WishlistModal
+        isOpen={isWishlistOpen}
+        onClose={() => setIsWishlistOpen(false)}
+        onAddToCart={addToCart}
+      />
+      <ProductReviews
+        isOpen={isReviewsOpen}
+        onClose={() => setIsReviewsOpen(false)}
+        productName={selectedProductForReview}
       />
     </div>
   );
