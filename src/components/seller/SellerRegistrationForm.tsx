@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
@@ -12,9 +11,11 @@ import { toast } from "sonner";
 interface SellerRegistrationFormProps {
   onBack: () => void;
   onLoginLink: () => void;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormProps) => {
+const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: SellerRegistrationFormProps) => {
   const [type, setType] = useState<string>("");
   const [typeOfSeller, setTypeOfSeller] = useState<string>("");
   const [showOTPForm, setShowOTPForm] = useState(false);
@@ -25,6 +26,7 @@ const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormP
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [address, setAddress] = useState("");
+  const [pincode, setPincode] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [aadhaarNumber, setAadhaarNumber] = useState("");
   const [email, setEmail] = useState("");
@@ -34,6 +36,11 @@ const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormP
   const [registeredAddress, setRegisteredAddress] = useState("");
   const [gstin, setGstin] = useState("");
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleRegister = async () => {
     // Validation
     if (!type || !typeOfSeller) {
@@ -42,12 +49,12 @@ const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormP
     }
 
     if (type === "Individual") {
-      if (!firstName || !address || !mobileNumber || !aadhaarNumber) {
+      if (!firstName || !address || !pincode || !mobileNumber || !aadhaarNumber) {
         toast.error("Please fill in all required fields for Individual registration");
         return;
       }
     } else if (type === "Registered") {
-      if (!entityFullName || !registeredAddress || !mobileNumber) {
+      if (!entityFullName || !registeredAddress || !pincode || !mobileNumber) {
         toast.error("Please fill in all required fields for Registered entity");
         return;
       }
@@ -55,6 +62,11 @@ const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormP
 
     if (!mobileNumber || mobileNumber.length !== 10) {
       toast.error("Please enter a valid 10-digit mobile number");
+      return;
+    }
+
+    if (email && !validateEmail(email)) {
+      toast.error("Please enter a valid email address");
       return;
     }
 
@@ -77,7 +89,17 @@ const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormP
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsLoading(false);
     toast.success("Registration successful! Welcome to QuickGoat Seller Portal");
-    // Here you would typically redirect to seller dashboard
+    
+    // Redirect to seller dashboard
+    if (onSuccess) {
+      onSuccess();
+    }
+  };
+
+  const handleCancelOTP = () => {
+    if (onCancel) {
+      onCancel();
+    }
   };
 
   if (showOTPForm) {
@@ -118,6 +140,14 @@ const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormP
             className="w-full text-red-600"
           >
             Change Mobile Number
+          </Button>
+
+          <Button 
+            variant="outline" 
+            onClick={handleCancelOTP}
+            className="w-full"
+          >
+            Cancel
           </Button>
         </CardContent>
       </Card>
@@ -211,6 +241,19 @@ const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormP
                 className="mt-1"
               />
             </div>
+
+            <div>
+              <Label htmlFor="pincode">Pincode *</Label>
+              <Input
+                id="pincode"
+                type="text"
+                value={pincode}
+                onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                className="mt-1"
+                maxLength={6}
+                placeholder="Enter 6-digit pincode"
+              />
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -230,9 +273,10 @@ const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormP
                   id="aadhaarNumber"
                   type="text"
                   value={aadhaarNumber}
-                  onChange={(e) => setAadhaarNumber(e.target.value.replace(/\D/g, '').slice(0, 12))}
+                  onChange={(e) => setAadhaarNumber(e.target.value.slice(0, 12))}
                   className="mt-1"
                   maxLength={12}
+                  placeholder="Enter 12-digit Aadhaar number"
                 />
               </div>
             </div>
@@ -245,6 +289,7 @@ const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormP
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-1"
+                placeholder="example@email.com"
               />
             </div>
           </div>
@@ -271,6 +316,19 @@ const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormP
                 value={registeredAddress}
                 onChange={(e) => setRegisteredAddress(e.target.value)}
                 className="mt-1"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="pincodeReg">Pincode *</Label>
+              <Input
+                id="pincodeReg"
+                type="text"
+                value={pincode}
+                onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                className="mt-1"
+                maxLength={6}
+                placeholder="Enter 6-digit pincode"
               />
             </div>
             
@@ -306,6 +364,7 @@ const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormP
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-1"
+                placeholder="example@email.com"
               />
             </div>
           </div>

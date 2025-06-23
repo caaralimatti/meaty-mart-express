@@ -29,6 +29,14 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     setCurrentView('dashboard');
   };
 
+  const handleRegistrationSuccess = () => {
+    setCurrentView('dashboard');
+  };
+
+  const handleRegistrationCancel = () => {
+    onBackToMain();
+  };
+
   if (currentView === 'prompt') {
     return (
       <>
@@ -51,6 +59,8 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
           <SellerRegistrationForm 
             onBack={handleBackToPrompt}
             onLoginLink={handleShowLogin}
+            onSuccess={handleRegistrationSuccess}
+            onCancel={handleRegistrationCancel}
           />
         </div>
         <AuthModal 
