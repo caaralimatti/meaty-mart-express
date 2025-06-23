@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Store, UserPlus } from "lucide-react";
+import { Store, UserPlus, LogIn } from "lucide-react";
 
 interface SellerLoginPromptProps {
   onShowRegistration: () => void;
