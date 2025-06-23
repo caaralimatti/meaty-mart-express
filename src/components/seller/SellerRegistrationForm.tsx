@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +22,7 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
   const [typeOfSeller, setTypeOfSeller] = useState<string>("");
   const [showOTPForm, setShowOTPForm] = useState(false);
   const [otp, setOtp] = useState("");
+  const [formData, setFormData] = useState<any>(null);
   
   // Individual fields
   const [firstName, setFirstName] = useState("");
@@ -72,20 +72,7 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
       return;
     }
 
-    // Show OTP form (simulating OTP send)
-    setShowOTPForm(true);
-    toast.success("OTP sent to your mobile number");
-  };
-
-  const handleVerifyOTP = async () => {
-    if (!otp || otp.length !== 4) {
-      toast.error("Please enter a valid 4-digit OTP");
-      return;
-    }
-    
-    // Simulate OTP verification (in real app, verify with SMS service)
-    // For demo purposes, accept any 4-digit OTP
-    
+    // Store form data for OTP verification
     const authData = {
       type: type as 'Individual' | 'Registered',
       typeOfSeller: typeOfSeller as 'Meat' | 'Livestock' | 'Both',
@@ -101,7 +88,27 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
       email
     };
 
-    await registerSeller(authData, () => {
+    setFormData(authData);
+    setShowOTPForm(true);
+    toast.success("OTP sent to your mobile number");
+  };
+
+  const handleVerifyOTP = async () => {
+    if (!otp || otp.length !== 4) {
+      toast.error("Please enter a valid 4-digit OTP");
+      return;
+    }
+    
+    if (!formData) {
+      toast.error("Registration data not found. Please try again.");
+      return;
+    }
+    
+    // Simulate OTP verification (in real app, verify with SMS service)
+    // For demo purposes, accept any 4-digit OTP
+    console.log('OTP verified, proceeding with registration...');
+    
+    await registerSeller(formData, () => {
       if (onSuccess) {
         onSuccess();
       }
@@ -113,6 +120,8 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
       onCancel();
     } else {
       setShowOTPForm(false);
+      setFormData(null);
+      setOtp("");
     }
   };
 
@@ -150,7 +159,11 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
           
           <Button 
             variant="link" 
-            onClick={() => setShowOTPForm(false)}
+            onClick={() => {
+              setShowOTPForm(false);
+              setFormData(null);
+              setOtp("");
+            }}
             className="w-full text-red-600"
           >
             Change Mobile Number

@@ -26,10 +26,12 @@ export const useSellerAuth = () => {
       setIsLoading(true);
       
       // Create email from mobile number if no email provided
-      const email = authData.email || `${authData.mobileNumber}@quickgoat.seller`;
+      const email = authData.email || `${authData.mobileNumber}@quickgoat.com`;
+      
+      console.log('Starting seller registration for:', email);
       
       // First, try to sign up the user
-      const { data: authUser, error: authError } = await supabase.auth.signUp({
+      const { data: authResult, error: authError } = await supabase.auth.signUp({
         email: email,
         password: authData.mobileNumber, // Using mobile as password for simplicity
         options: {
@@ -37,70 +39,74 @@ export const useSellerAuth = () => {
             phone: authData.mobileNumber,
             user_type: 'seller',
             full_name: authData.type === 'Individual' 
-              ? `${authData.firstName} ${authData.lastName || ''}`
+              ? `${authData.firstName} ${authData.lastName || ''}`.trim()
               : authData.entityFullName
           }
         }
       });
 
       if (authError) {
+        console.error('Auth error:', authError);
+        
         // If user already exists, try to sign in instead
-        if (authError.message.includes('already registered')) {
+        if (authError.message.includes('already registered') || authError.message.includes('already been registered')) {
+          console.log('User exists, trying to sign in...');
+          
           const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
             email: email,
             password: authData.mobileNumber
           });
 
-          if (signInError) throw signInError;
+          if (signInError) {
+            console.error('Sign in error:', signInError);
+            throw signInError;
+          }
           
           // Check if seller profile exists
           if (signInData.user) {
-            const { data: seller } = await supabase
+            const { data: seller, error: sellerFetchError } = await supabase
               .from('sellers')
               .select('*')
               .eq('user_id', signInData.user.id)
               .single();
+
+            if (sellerFetchError && sellerFetchError.code !== 'PGRST116') {
+              console.error('Error fetching seller profile:', sellerFetchError);
+            }
 
             if (seller) {
               toast.success('Login successful! Welcome back to QuickGoat');
               onSuccess();
               return;
             }
+            
+            // If no seller profile exists, create one
+            await createSellerProfile(signInData.user.id, authData);
+            toast.success('Registration completed! Welcome to QuickGoat Seller Portal');
+            onSuccess();
+            return;
           }
         } else {
           throw authError;
         }
       }
 
-      const user = authUser?.user || authUser?.user;
+      const user = authResult?.user;
       if (user) {
+        console.log('User created successfully:', user.id);
+        
+        // Wait a moment for the auth to fully process
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         // Create seller profile
-        const sellerName = authData.type === 'Individual' 
-          ? `${authData.firstName} ${authData.lastName || ''}`.trim()
-          : authData.entityFullName;
-
-        const { error: sellerError } = await supabase
-          .from('sellers')
-          .insert({
-            user_id: user.id,
-            seller_name: sellerName,
-            seller_type: authData.typeOfSeller,
-            contact_email: authData.email,
-            contact_phone: authData.mobileNumber,
-            user_type: 'seller'
-          });
-
-        if (sellerError) {
-          console.error('Seller profile creation error:', sellerError);
-          // If seller profile already exists, that's okay
-          if (!sellerError.message.includes('duplicate key')) {
-            throw sellerError;
-          }
-        }
-
+        await createSellerProfile(user.id, authData);
+        
         toast.success('Registration successful! Welcome to QuickGoat Seller Portal');
         onSuccess();
+      } else {
+        throw new Error('User creation failed - no user object returned');
       }
+      
     } catch (error: any) {
       console.error('Registration error:', error);
       toast.error(error.message || 'Registration failed. Please try again.');
@@ -109,18 +115,52 @@ export const useSellerAuth = () => {
     }
   };
 
+  const createSellerProfile = async (userId: string, authData: SellerAuthData) => {
+    const sellerName = authData.type === 'Individual' 
+      ? `${authData.firstName} ${authData.lastName || ''}`.trim()
+      : authData.entityFullName;
+
+    console.log('Creating seller profile for user:', userId);
+
+    const { error: sellerError } = await supabase
+      .from('sellers')
+      .insert({
+        user_id: userId,
+        seller_name: sellerName,
+        seller_type: authData.typeOfSeller,
+        contact_email: authData.email,
+        contact_phone: authData.mobileNumber,
+        user_type: 'seller'
+      });
+
+    if (sellerError) {
+      console.error('Seller profile creation error:', sellerError);
+      // If seller profile already exists, that's okay
+      if (!sellerError.message.includes('duplicate key')) {
+        throw sellerError;
+      }
+    } else {
+      console.log('Seller profile created successfully');
+    }
+  };
+
   const loginSeller = async (phoneNumber: string, onSuccess: () => void) => {
     try {
       setIsLoading(true);
       
       // Try to sign in with phone number as email and password
-      const email = `${phoneNumber}@quickgoat.seller`;
+      const email = `${phoneNumber}@quickgoat.com`;
+      console.log('Attempting seller login for:', email);
+      
       const { data: authUser, error: authError } = await supabase.auth.signInWithPassword({
         email: email,
         password: phoneNumber
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        console.error('Login error:', authError);
+        throw authError;
+      }
 
       if (authUser.user) {
         // Check if user is a seller
@@ -130,12 +170,18 @@ export const useSellerAuth = () => {
           .eq('user_id', authUser.user.id)
           .single();
 
-        if (sellerError || !seller) {
+        if (sellerError && sellerError.code !== 'PGRST116') {
+          console.error('Error fetching seller:', sellerError);
+          throw sellerError;
+        }
+
+        if (!seller) {
           toast.error('Seller account not found. Please register first.');
           await supabase.auth.signOut();
           return;
         }
 
+        console.log('Seller login successful');
         toast.success('Login successful! Welcome back to QuickGoat');
         onSuccess();
       }
