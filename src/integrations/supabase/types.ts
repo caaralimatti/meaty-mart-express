@@ -9,7 +9,325 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      districts: {
+        Row: {
+          id: number
+          name: string
+          state_id: number
+        }
+        Insert: {
+          id?: number
+          name: string
+          state_id: number
+        }
+        Update: {
+          id?: number
+          name?: string
+          state_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "districts_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      livestock_images: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          image_url: string
+          is_live_capture: boolean | null
+          livestock_listing_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          image_url: string
+          is_live_capture?: boolean | null
+          livestock_listing_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          image_url?: string
+          is_live_capture?: boolean | null
+          livestock_listing_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "livestock_images_livestock_listing_id_fkey"
+            columns: ["livestock_listing_id"]
+            isOneToOne: false
+            referencedRelation: "livestock_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      livestock_listings: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          district_id: number
+          id: string
+          name: string
+          pricing_type: Database["public"]["Enums"]["pricing_type_enum"]
+          seller_id: string
+          state_id: number
+          status: Database["public"]["Enums"]["listing_status_enum"] | null
+          transportation_type: Database["public"]["Enums"]["transportation_type_enum"]
+          unit_of_measure: string | null
+          unit_price: number | null
+          updated_at: string
+          vaccination_report_url: string | null
+          video_url: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          district_id: number
+          id?: string
+          name: string
+          pricing_type: Database["public"]["Enums"]["pricing_type_enum"]
+          seller_id: string
+          state_id: number
+          status?: Database["public"]["Enums"]["listing_status_enum"] | null
+          transportation_type: Database["public"]["Enums"]["transportation_type_enum"]
+          unit_of_measure?: string | null
+          unit_price?: number | null
+          updated_at?: string
+          vaccination_report_url?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          district_id?: number
+          id?: string
+          name?: string
+          pricing_type?: Database["public"]["Enums"]["pricing_type_enum"]
+          seller_id?: string
+          state_id?: number
+          status?: Database["public"]["Enums"]["listing_status_enum"] | null
+          transportation_type?: Database["public"]["Enums"]["transportation_type_enum"]
+          unit_of_measure?: string | null
+          unit_price?: number | null
+          updated_at?: string
+          vaccination_report_url?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "livestock_listings_district_id_fkey"
+            columns: ["district_id"]
+            isOneToOne: false
+            referencedRelation: "districts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "livestock_listings_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "livestock_listings_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "states"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meat_product_images: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          image_url: string
+          meat_product_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          image_url: string
+          meat_product_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          image_url?: string
+          meat_product_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meat_product_images_meat_product_id_fkey"
+            columns: ["meat_product_id"]
+            isOneToOne: false
+            referencedRelation: "meat_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meat_products: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          nutritional_info_id: string | null
+          price: number
+          seller_id: string
+          stock: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          nutritional_info_id?: string | null
+          price: number
+          seller_id: string
+          stock?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          nutritional_info_id?: string | null
+          price?: number
+          seller_id?: string
+          stock?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meat_products_nutritional_info_id_fkey"
+            columns: ["nutritional_info_id"]
+            isOneToOne: false
+            referencedRelation: "nutritional_info"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meat_products_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nutritional_info: {
+        Row: {
+          calories_kcal_per_100g: number | null
+          carbohydrates_g_per_100g: number | null
+          created_at: string
+          fat_g_per_100g: number | null
+          id: string
+          meat_type: string
+          other_nutrients_json: Json | null
+          protein_g_per_100g: number | null
+        }
+        Insert: {
+          calories_kcal_per_100g?: number | null
+          carbohydrates_g_per_100g?: number | null
+          created_at?: string
+          fat_g_per_100g?: number | null
+          id?: string
+          meat_type: string
+          other_nutrients_json?: Json | null
+          protein_g_per_100g?: number | null
+        }
+        Update: {
+          calories_kcal_per_100g?: number | null
+          carbohydrates_g_per_100g?: number | null
+          created_at?: string
+          fat_g_per_100g?: number | null
+          id?: string
+          meat_type?: string
+          other_nutrients_json?: Json | null
+          protein_g_per_100g?: number | null
+        }
+        Relationships: []
+      }
+      sellers: {
+        Row: {
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          id: string
+          livestock_status: boolean | null
+          meat_shop_status: boolean | null
+          seller_name: string
+          seller_type: Database["public"]["Enums"]["seller_type_enum"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          livestock_status?: boolean | null
+          meat_shop_status?: boolean | null
+          seller_name: string
+          seller_type: Database["public"]["Enums"]["seller_type_enum"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          livestock_status?: boolean | null
+          meat_shop_status?: boolean | null
+          seller_name?: string
+          seller_type?: Database["public"]["Enums"]["seller_type_enum"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      states: {
+        Row: {
+          id: number
+          name: string
+        }
+        Insert: {
+          id?: number
+          name: string
+        }
+        Update: {
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +336,15 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      listing_status_enum:
+        | "Pending Approval"
+        | "Approved"
+        | "Rejected"
+        | "Sold"
+        | "Inactive"
+      pricing_type_enum: "Fixed" | "Negotiable"
+      seller_type_enum: "Meat" | "Livestock" | "Both"
+      transportation_type_enum: "Aggregator" | "Seller"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +459,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      listing_status_enum: [
+        "Pending Approval",
+        "Approved",
+        "Rejected",
+        "Sold",
+        "Inactive",
+      ],
+      pricing_type_enum: ["Fixed", "Negotiable"],
+      seller_type_enum: ["Meat", "Livestock", "Both"],
+      transportation_type_enum: ["Aggregator", "Seller"],
+    },
   },
 } as const
