@@ -1,0 +1,341 @@
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
+
+interface SellerRegistrationFormProps {
+  onBack: () => void;
+  onLoginLink: () => void;
+}
+
+const SellerRegistrationForm = ({ onBack, onLoginLink }: SellerRegistrationFormProps) => {
+  const [type, setType] = useState<string>("");
+  const [typeOfSeller, setTypeOfSeller] = useState<string>("");
+  const [showOTPForm, setShowOTPForm] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Individual fields
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [address, setAddress] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [aadhaarNumber, setAadhaarNumber] = useState("");
+  const [email, setEmail] = useState("");
+  
+  // Registered entity fields
+  const [entityFullName, setEntityFullName] = useState("");
+  const [registeredAddress, setRegisteredAddress] = useState("");
+  const [gstin, setGstin] = useState("");
+
+  const handleRegister = async () => {
+    // Validation
+    if (!type || !typeOfSeller) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    if (type === "Individual") {
+      if (!firstName || !address || !mobileNumber || !aadhaarNumber) {
+        toast.error("Please fill in all required fields for Individual registration");
+        return;
+      }
+    } else if (type === "Registered") {
+      if (!entityFullName || !registeredAddress || !mobileNumber) {
+        toast.error("Please fill in all required fields for Registered entity");
+        return;
+      }
+    }
+
+    if (!mobileNumber || mobileNumber.length !== 10) {
+      toast.error("Please enter a valid 10-digit mobile number");
+      return;
+    }
+
+    setIsLoading(true);
+    // Simulate API call to send OTP
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setIsLoading(false);
+    setShowOTPForm(true);
+    toast.success("OTP sent to your mobile number");
+  };
+
+  const handleVerifyOTP = async () => {
+    if (!otp || otp.length !== 4) {
+      toast.error("Please enter a valid 4-digit OTP");
+      return;
+    }
+    
+    setIsLoading(true);
+    // Simulate API call to verify OTP
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setIsLoading(false);
+    toast.success("Registration successful! Welcome to QuickGoat Seller Portal");
+    // Here you would typically redirect to seller dashboard
+  };
+
+  if (showOTPForm) {
+    return (
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl text-red-700">Verify OTP</CardTitle>
+          <p className="text-gray-600">
+            We've sent an OTP to +91 {mobileNumber}
+          </p>
+        </CardHeader>
+        
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="otp">Enter OTP</Label>
+            <Input
+              id="otp"
+              type="text"
+              placeholder="Enter 4-digit OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              className="text-center text-2xl tracking-wider"
+              maxLength={4}
+            />
+          </div>
+          
+          <Button 
+            onClick={handleVerifyOTP}
+            disabled={isLoading || otp.length !== 4}
+            className="w-full bg-red-600 hover:bg-red-700"
+          >
+            {isLoading ? "Verifying..." : "Verify & Complete Registration"}
+          </Button>
+          
+          <Button 
+            variant="link" 
+            onClick={() => setShowOTPForm(false)}
+            className="w-full text-red-600"
+          >
+            Change Mobile Number
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardHeader>
+        <div className="flex items-center mb-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onBack}
+            className="mr-3"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <CardTitle className="text-2xl text-red-700">Seller Registration Form</CardTitle>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="space-y-6">
+        {/* Type Selection */}
+        <div className="space-y-3">
+          <Label className="text-base font-medium">Type *</Label>
+          <RadioGroup value={type} onValueChange={setType}>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Individual" id="individual" />
+              <Label htmlFor="individual">Individual</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Registered" id="registered" />
+              <Label htmlFor="registered">Registered</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {/* Type of Seller - Always visible */}
+        <div className="space-y-3">
+          <Label className="text-base font-medium">Type of Seller *</Label>
+          <RadioGroup value={typeOfSeller} onValueChange={setTypeOfSeller}>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Meat" id="meat" />
+              <Label htmlFor="meat">Meat</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Livestock" id="livestock" />
+              <Label htmlFor="livestock">Livestock</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Both" id="both" />
+              <Label htmlFor="both">Both</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {/* Conditional Fields Based on Type */}
+        {type === "Individual" && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="firstName">First Name *</Label>
+                <Input
+                  id="firstName"
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <Label htmlFor="address">Address *</Label>
+              <Input
+                id="address"
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="mobileNumber">Mobile Number *</Label>
+                <Input
+                  id="mobileNumber"
+                  type="tel"
+                  value={mobileNumber}
+                  onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  className="mt-1"
+                  maxLength={10}
+                />
+              </div>
+              <div>
+                <Label htmlFor="aadhaarNumber">Aadhaar Number *</Label>
+                <Input
+                  id="aadhaarNumber"
+                  type="text"
+                  value={aadhaarNumber}
+                  onChange={(e) => setAadhaarNumber(e.target.value.replace(/\D/g, '').slice(0, 12))}
+                  className="mt-1"
+                  maxLength={12}
+                />
+              </div>
+            </div>
+            
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+          </div>
+        )}
+
+        {type === "Registered" && (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="entityFullName">Entity Full Name *</Label>
+              <Input
+                id="entityFullName"
+                type="text"
+                value={entityFullName}
+                onChange={(e) => setEntityFullName(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="registeredAddress">Registered Address *</Label>
+              <Input
+                id="registeredAddress"
+                type="text"
+                value={registeredAddress}
+                onChange={(e) => setRegisteredAddress(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="gstin">GSTIN (if applicable)</Label>
+                <Input
+                  id="gstin"
+                  type="text"
+                  value={gstin}
+                  onChange={(e) => setGstin(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="mobileNumberReg">Mobile Number *</Label>
+                <Input
+                  id="mobileNumberReg"
+                  type="tel"
+                  value={mobileNumber}
+                  onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  className="mt-1"
+                  maxLength={10}
+                />
+              </div>
+            </div>
+            
+            <div>
+              <Label htmlFor="emailReg">Email</Label>
+              <Input
+                id="emailReg"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Registration Actions */}
+        {type && (
+          <div className="space-y-4 pt-4">
+            <p className="text-sm text-center text-gray-600">
+              Already Registered?{" "}
+              <button
+                onClick={onLoginLink}
+                className="text-red-600 hover:text-red-700 underline"
+              >
+                Login Here
+              </button>
+            </p>
+            
+            <Button
+              onClick={handleRegister}
+              disabled={isLoading}
+              className="w-full bg-red-600 hover:bg-red-700"
+            >
+              {isLoading ? "Sending OTP..." : "Register"}
+            </Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default SellerRegistrationForm;
