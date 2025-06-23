@@ -25,30 +25,64 @@ export const useSellerAuth = () => {
     try {
       setIsLoading(true);
       
-      // First, authenticate the user with Supabase
+      // Create email from mobile number if no email provided
+      const email = authData.email || `${authData.mobileNumber}@quickgoat.seller`;
+      
+      // First, try to sign up the user
       const { data: authUser, error: authError } = await supabase.auth.signUp({
-        email: authData.email || `${authData.mobileNumber}@quickgoat.com`,
-        password: authData.mobileNumber, // Using mobile as password for now
+        email: email,
+        password: authData.mobileNumber, // Using mobile as password for simplicity
         options: {
           data: {
             phone: authData.mobileNumber,
-            user_type: 'seller'
+            user_type: 'seller',
+            full_name: authData.type === 'Individual' 
+              ? `${authData.firstName} ${authData.lastName || ''}`
+              : authData.entityFullName
           }
         }
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        // If user already exists, try to sign in instead
+        if (authError.message.includes('already registered')) {
+          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: authData.mobileNumber
+          });
 
-      if (authUser.user) {
+          if (signInError) throw signInError;
+          
+          // Check if seller profile exists
+          if (signInData.user) {
+            const { data: seller } = await supabase
+              .from('sellers')
+              .select('*')
+              .eq('user_id', signInData.user.id)
+              .single();
+
+            if (seller) {
+              toast.success('Login successful! Welcome back to QuickGoat');
+              onSuccess();
+              return;
+            }
+          }
+        } else {
+          throw authError;
+        }
+      }
+
+      const user = authUser?.user || authUser?.user;
+      if (user) {
         // Create seller profile
         const sellerName = authData.type === 'Individual' 
-          ? `${authData.firstName} ${authData.lastName || ''}`
+          ? `${authData.firstName} ${authData.lastName || ''}`.trim()
           : authData.entityFullName;
 
         const { error: sellerError } = await supabase
           .from('sellers')
           .insert({
-            user_id: authUser.user.id,
+            user_id: user.id,
             seller_name: sellerName,
             seller_type: authData.typeOfSeller,
             contact_email: authData.email,
@@ -56,14 +90,20 @@ export const useSellerAuth = () => {
             user_type: 'seller'
           });
 
-        if (sellerError) throw sellerError;
+        if (sellerError) {
+          console.error('Seller profile creation error:', sellerError);
+          // If seller profile already exists, that's okay
+          if (!sellerError.message.includes('duplicate key')) {
+            throw sellerError;
+          }
+        }
 
         toast.success('Registration successful! Welcome to QuickGoat Seller Portal');
         onSuccess();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
-      toast.error('Registration failed. Please try again.');
+      toast.error(error.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -74,8 +114,9 @@ export const useSellerAuth = () => {
       setIsLoading(true);
       
       // Try to sign in with phone number as email and password
+      const email = `${phoneNumber}@quickgoat.seller`;
       const { data: authUser, error: authError } = await supabase.auth.signInWithPassword({
-        email: `${phoneNumber}@quickgoat.com`,
+        email: email,
         password: phoneNumber
       });
 
@@ -98,9 +139,9 @@ export const useSellerAuth = () => {
         toast.success('Login successful! Welcome back to QuickGoat');
         onSuccess();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
-      toast.error('Login failed. Please check your credentials.');
+      toast.error('Login failed. Please check your credentials or register first.');
     } finally {
       setIsLoading(false);
     }

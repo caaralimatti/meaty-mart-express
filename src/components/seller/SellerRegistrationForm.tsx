@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,7 +83,9 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
       return;
     }
     
-    // Simulate OTP verification, then register seller
+    // Simulate OTP verification (in real app, verify with SMS service)
+    // For demo purposes, accept any 4-digit OTP
+    
     const authData = {
       type: type as 'Individual' | 'Registered',
       typeOfSeller: typeOfSeller as 'Meat' | 'Livestock' | 'Both',
@@ -108,6 +111,8 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
   const handleCancelOTP = () => {
     if (onCancel) {
       onCancel();
+    } else {
+      setShowOTPForm(false);
     }
   };
 
