@@ -31,10 +31,12 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
 
   const handleAuthModalClose = () => {
     setShowAuthModal(false);
+    // After login, go directly to dashboard
     setCurrentView('dashboard');
   };
 
   const handleRegistrationSuccess = () => {
+    // After registration, go directly to dashboard
     setCurrentView('dashboard');
   };
 
@@ -54,42 +56,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     );
   }
 
-  // If no seller profile exists, show registration flow
-  if (!sellerProfile && currentView === 'prompt') {
-    return (
-      <>
-        <SellerLoginPrompt 
-          onShowRegistration={handleShowRegistration}
-          onShowLogin={handleShowLogin}
-        />
-        <AuthModal 
-          isOpen={showAuthModal}
-          onClose={handleAuthModalClose}
-        />
-      </>
-    );
-  }
-
-  if (currentView === 'registration') {
-    return (
-      <>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 flex items-center justify-center p-4">
-          <SellerRegistrationForm 
-            onBack={handleBackToPrompt}
-            onLoginLink={handleShowLogin}
-            onSuccess={handleRegistrationSuccess}
-            onCancel={handleRegistrationCancel}
-          />
-        </div>
-        <AuthModal 
-          isOpen={showAuthModal}
-          onClose={handleAuthModalClose}
-        />
-      </>
-    );
-  }
-
-  // Show enhanced seller dashboard
+  // If we have a seller profile, show dashboard directly
   if (sellerProfile) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -157,7 +124,44 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     );
   }
 
-  // Fallback - should not reach here normally
+  // If no seller profile exists, show registration/login flow
+  if (currentView === 'prompt') {
+    return (
+      <>
+        <SellerLoginPrompt 
+          onShowRegistration={handleShowRegistration}
+          onShowLogin={handleShowLogin}
+        />
+        <AuthModal 
+          isOpen={showAuthModal}
+          onClose={handleAuthModalClose}
+          userType="seller"
+        />
+      </>
+    );
+  }
+
+  if (currentView === 'registration') {
+    return (
+      <>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 flex items-center justify-center p-4">
+          <SellerRegistrationForm 
+            onBack={handleBackToPrompt}
+            onLoginLink={handleShowLogin}
+            onSuccess={handleRegistrationSuccess}
+            onCancel={handleRegistrationCancel}
+          />
+        </div>
+        <AuthModal 
+          isOpen={showAuthModal}
+          onClose={handleAuthModalClose}
+          userType="seller"
+        />
+      </>
+    );
+  }
+
+  // If we reach here and currentView is 'dashboard' but no sellerProfile, show prompt again
   return (
     <>
       <SellerLoginPrompt 
@@ -167,6 +171,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
       <AuthModal 
         isOpen={showAuthModal}
         onClose={handleAuthModalClose}
+        userType="seller"
       />
     </>
   );

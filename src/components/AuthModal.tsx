@@ -6,17 +6,19 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { useSellerAuth } from "@/hooks/useSellerAuth";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
+  userType?: 'seller' | 'customer';
 }
 
-const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
+const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) => {
+  const { loginSeller, isLoading } = useSellerAuth();
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
 
@@ -26,10 +28,6 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       return;
     }
     
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
     setStep("otp");
     toast.success("OTP sent to your mobile number");
   };
@@ -40,16 +38,24 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       return;
     }
     
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    toast.success("Login successful! Welcome to QuickGoat");
-    onClose();
-    // Reset state
-    setStep("phone");
-    setPhoneNumber("");
-    setOtp("");
+    if (userType === 'seller') {
+      // Use seller login flow
+      await loginSeller(phoneNumber, () => {
+        onClose();
+        // Reset state
+        setStep("phone");
+        setPhoneNumber("");
+        setOtp("");
+      });
+    } else {
+      // Customer login flow (existing)
+      toast.success("Login successful! Welcome to QuickGoat");
+      onClose();
+      // Reset state
+      setStep("phone");
+      setPhoneNumber("");
+      setOtp("");
+    }
   };
 
   return (
@@ -57,7 +63,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl text-red-700">
-            {step === "phone" ? "Login to QuickGoat" : "Verify OTP"}
+            {step === "phone" ? `Login to QuickGoat ${userType === 'seller' ? 'Seller' : ''}` : "Verify OTP"}
           </CardTitle>
           <p className="text-gray-600">
             {step === "phone" 

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { useSellerAuth } from "@/hooks/useSellerAuth";
 
 interface SellerRegistrationFormProps {
   onBack: () => void;
@@ -16,11 +16,12 @@ interface SellerRegistrationFormProps {
 }
 
 const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: SellerRegistrationFormProps) => {
+  const { registerSeller, isLoading } = useSellerAuth();
+  
   const [type, setType] = useState<string>("");
   const [typeOfSeller, setTypeOfSeller] = useState<string>("");
   const [showOTPForm, setShowOTPForm] = useState(false);
   const [otp, setOtp] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   
   // Individual fields
   const [firstName, setFirstName] = useState("");
@@ -70,10 +71,7 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
       return;
     }
 
-    setIsLoading(true);
-    // Simulate API call to send OTP
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
+    // Show OTP form (simulating OTP send)
     setShowOTPForm(true);
     toast.success("OTP sent to your mobile number");
   };
@@ -84,16 +82,27 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
       return;
     }
     
-    setIsLoading(true);
-    // Simulate API call to verify OTP
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    toast.success("Registration successful! Welcome to QuickGoat Seller Portal");
-    
-    // Redirect to seller dashboard
-    if (onSuccess) {
-      onSuccess();
-    }
+    // Simulate OTP verification, then register seller
+    const authData = {
+      type: type as 'Individual' | 'Registered',
+      typeOfSeller: typeOfSeller as 'Meat' | 'Livestock' | 'Both',
+      firstName,
+      lastName,
+      entityFullName,
+      address: type === 'Individual' ? address : registeredAddress,
+      registeredAddress,
+      pincode,
+      mobileNumber,
+      aadhaarNumber,
+      gstin,
+      email
+    };
+
+    await registerSeller(authData, () => {
+      if (onSuccess) {
+        onSuccess();
+      }
+    });
   };
 
   const handleCancelOTP = () => {
@@ -388,7 +397,7 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
               disabled={isLoading}
               className="w-full bg-red-600 hover:bg-red-700"
             >
-              {isLoading ? "Sending OTP..." : "Register"}
+              {isLoading ? "Processing..." : "Register"}
             </Button>
           </div>
         )}

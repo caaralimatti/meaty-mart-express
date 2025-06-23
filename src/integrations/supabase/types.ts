@@ -286,6 +286,7 @@ export type Database = {
           seller_type: Database["public"]["Enums"]["seller_type_enum"]
           updated_at: string
           user_id: string
+          user_type: Database["public"]["Enums"]["user_type_enum"] | null
         }
         Insert: {
           contact_email?: string | null
@@ -298,6 +299,7 @@ export type Database = {
           seller_type: Database["public"]["Enums"]["seller_type_enum"]
           updated_at?: string
           user_id: string
+          user_type?: Database["public"]["Enums"]["user_type_enum"] | null
         }
         Update: {
           contact_email?: string | null
@@ -310,6 +312,7 @@ export type Database = {
           seller_type?: Database["public"]["Enums"]["seller_type_enum"]
           updated_at?: string
           user_id?: string
+          user_type?: Database["public"]["Enums"]["user_type_enum"] | null
         }
         Relationships: []
       }
@@ -345,6 +348,7 @@ export type Database = {
       pricing_type_enum: "Fixed" | "Negotiable"
       seller_type_enum: "Meat" | "Livestock" | "Both"
       transportation_type_enum: "Aggregator" | "Seller"
+      user_type_enum: "customer" | "seller"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -470,6 +474,7 @@ export const Constants = {
       pricing_type_enum: ["Fixed", "Negotiable"],
       seller_type_enum: ["Meat", "Livestock", "Both"],
       transportation_type_enum: ["Aggregator", "Seller"],
+      user_type_enum: ["customer", "seller"],
     },
   },
 } as const
