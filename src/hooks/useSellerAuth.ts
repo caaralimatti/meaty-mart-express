@@ -21,6 +21,32 @@ export interface SellerAuthData {
 export const useSellerAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const createSellerProfile = async (userId: string, authData: SellerAuthData) => {
+    const sellerName = authData.type === 'Individual' 
+      ? `${authData.firstName} ${authData.lastName || ''}`.trim()
+      : authData.entityFullName;
+
+    console.log('Creating seller profile for user:', userId);
+
+    const { error: sellerError } = await supabase
+      .from('sellers')
+      .insert({
+        user_id: userId,
+        seller_name: sellerName,
+        seller_type: authData.typeOfSeller,
+        contact_email: authData.email,
+        contact_phone: authData.mobileNumber,
+        user_type: 'seller'
+      });
+
+    if (sellerError) {
+      console.error('Seller profile creation error:', sellerError);
+      throw sellerError;
+    }
+    
+    console.log('Seller profile created successfully');
+  };
+
   const registerSeller = async (authData: SellerAuthData, onSuccess: () => void) => {
     try {
       setIsLoading(true);
@@ -62,6 +88,9 @@ export const useSellerAuth = () => {
             throw signInError;
           }
           
+          // Wait for session to be established
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
           // Check if seller profile exists
           if (signInData.user) {
             const { data: seller, error: sellerFetchError } = await supabase
@@ -91,15 +120,24 @@ export const useSellerAuth = () => {
         }
       }
 
-      const user = authResult?.user;
-      if (user) {
-        console.log('User created successfully:', user.id);
+      if (authResult?.user) {
+        console.log('User created successfully:', authResult.user.id);
         
-        // Wait a moment for the auth to fully process
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Wait for the auth session to be fully established
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
-        // Create seller profile
-        await createSellerProfile(user.id, authData);
+        // Verify the session is active before creating seller profile
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError || !session) {
+          console.error('Session not established properly:', sessionError);
+          throw new Error('Authentication session not established');
+        }
+        
+        console.log('Session established, creating seller profile...');
+        
+        // Create seller profile with established session
+        await createSellerProfile(authResult.user.id, authData);
         
         toast.success('Registration successful! Welcome to QuickGoat Seller Portal');
         onSuccess();
@@ -112,35 +150,6 @@ export const useSellerAuth = () => {
       toast.error(error.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const createSellerProfile = async (userId: string, authData: SellerAuthData) => {
-    const sellerName = authData.type === 'Individual' 
-      ? `${authData.firstName} ${authData.lastName || ''}`.trim()
-      : authData.entityFullName;
-
-    console.log('Creating seller profile for user:', userId);
-
-    const { error: sellerError } = await supabase
-      .from('sellers')
-      .insert({
-        user_id: userId,
-        seller_name: sellerName,
-        seller_type: authData.typeOfSeller,
-        contact_email: authData.email,
-        contact_phone: authData.mobileNumber,
-        user_type: 'seller'
-      });
-
-    if (sellerError) {
-      console.error('Seller profile creation error:', sellerError);
-      // If seller profile already exists, that's okay
-      if (!sellerError.message.includes('duplicate key')) {
-        throw sellerError;
-      }
-    } else {
-      console.log('Seller profile created successfully');
     }
   };
 
@@ -163,6 +172,9 @@ export const useSellerAuth = () => {
       }
 
       if (authUser.user) {
+        // Wait for session to be established
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         // Check if user is a seller
         const { data: seller, error: sellerError } = await supabase
           .from('sellers')
