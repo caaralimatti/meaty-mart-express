@@ -219,7 +219,7 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
               <Input
                 type="file"
                 accept="image/*"
-                capture="camera"
+                capture="environment"
                 multiple
                 onChange={handleLivePhotoCapture}
               />
