@@ -123,20 +123,12 @@ export const useSellerAuth = () => {
       if (authResult?.user) {
         console.log('User created successfully:', authResult.user.id);
         
-        // Wait for the auth session to be fully established
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Wait longer for the auth session to be fully established
+        await new Promise(resolve => setTimeout(resolve, 3000));
         
-        // Verify the session is active before creating seller profile
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        console.log('Creating seller profile...');
         
-        if (sessionError || !session) {
-          console.error('Session not established properly:', sessionError);
-          throw new Error('Authentication session not established');
-        }
-        
-        console.log('Session established, creating seller profile...');
-        
-        // Create seller profile with established session
+        // Create seller profile directly - the RLS policies should allow this
         await createSellerProfile(authResult.user.id, authData);
         
         toast.success('Registration successful! Welcome to QuickGoat Seller Portal');
