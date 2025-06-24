@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSellerData } from "@/hooks/useSellerData";
 import SellerLoginPrompt from "./SellerLoginPrompt";
 import SellerRegistrationForm from "./SellerRegistrationForm";
@@ -15,7 +15,15 @@ interface SellerDashboardProps {
 const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
   const [currentView, setCurrentView] = useState<'prompt' | 'registration' | 'dashboard'>('prompt');
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { sellerProfile, loading, updateShopStatus } = useSellerData();
+  const { sellerProfile, loading, updateShopStatus, refreshSellerData } = useSellerData();
+
+  // Check if we should show dashboard after auth changes
+  useEffect(() => {
+    if (sellerProfile && currentView !== 'dashboard') {
+      console.log('Seller profile found, switching to dashboard');
+      setCurrentView('dashboard');
+    }
+  }, [sellerProfile, currentView]);
 
   const handleShowRegistration = () => {
     setCurrentView('registration');
@@ -31,12 +39,13 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
 
   const handleAuthModalClose = () => {
     setShowAuthModal(false);
-    // After login, go directly to dashboard
-    setCurrentView('dashboard');
+    // Force refresh seller data after login
+    refreshSellerData();
   };
 
   const handleRegistrationSuccess = () => {
-    // After registration, go directly to dashboard
+    // Force refresh seller data and go to dashboard
+    refreshSellerData();
     setCurrentView('dashboard');
   };
 
@@ -57,7 +66,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
   }
 
   // If we have a seller profile, show dashboard directly
-  if (sellerProfile) {
+  if (sellerProfile || currentView === 'dashboard') {
     return (
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
@@ -73,7 +82,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
               <h1 className="text-2xl font-bold text-gray-800">Seller Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-gray-600">Welcome, {sellerProfile.seller_name}!</span>
+              <span className="text-gray-600">Welcome, {sellerProfile?.seller_name || 'Seller'}!</span>
             </div>
           </div>
         </header>
@@ -81,42 +90,52 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
         {/* Main Content */}
         <main className="p-6">
           <div className="max-w-7xl mx-auto">
-            {/* Conditional rendering based on seller type */}
-            {sellerProfile.seller_type === 'Meat' && (
-              <MeatShopManagement 
-                sellerProfile={sellerProfile}
-                onStatusToggle={(status) => updateShopStatus('meat', status)}
-              />
-            )}
-
-            {sellerProfile.seller_type === 'Livestock' && (
-              <LivestockManagement 
-                sellerProfile={sellerProfile}
-                onStatusToggle={(status) => updateShopStatus('livestock', status)}
-              />
-            )}
-
-            {sellerProfile.seller_type === 'Both' && (
-              <Tabs defaultValue="meat" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="meat">Meat Shop</TabsTrigger>
-                  <TabsTrigger value="livestock">Livestock</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="meat" className="mt-6">
+            {/* Show message if still loading seller profile */}
+            {!sellerProfile ? (
+              <div className="text-center py-8">
+                <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-600">Setting up your dashboard...</p>
+              </div>
+            ) : (
+              <>
+                {/* Conditional rendering based on seller type */}
+                {sellerProfile.seller_type === 'Meat' && (
                   <MeatShopManagement 
                     sellerProfile={sellerProfile}
                     onStatusToggle={(status) => updateShopStatus('meat', status)}
                   />
-                </TabsContent>
-                
-                <TabsContent value="livestock" className="mt-6">
+                )}
+
+                {sellerProfile.seller_type === 'Livestock' && (
                   <LivestockManagement 
                     sellerProfile={sellerProfile}
                     onStatusToggle={(status) => updateShopStatus('livestock', status)}
                   />
-                </TabsContent>
-              </Tabs>
+                )}
+
+                {sellerProfile.seller_type === 'Both' && (
+                  <Tabs defaultValue="meat" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="meat">Meat Shop</TabsTrigger>
+                      <TabsTrigger value="livestock">Livestock</TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="meat" className="mt-6">
+                      <MeatShopManagement 
+                        sellerProfile={sellerProfile}
+                        onStatusToggle={(status) => updateShopStatus('meat', status)}
+                      />
+                    </TabsContent>
+                    
+                    <TabsContent value="livestock" className="mt-6">
+                      <LivestockManagement 
+                        sellerProfile={sellerProfile}
+                        onStatusToggle={(status) => updateShopStatus('livestock', status)}
+                      />
+                    </TabsContent>
+                  </Tabs>
+                )}
+              </>
             )}
           </div>
         </main>
@@ -161,7 +180,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     );
   }
 
-  // If we reach here and currentView is 'dashboard' but no sellerProfile, show prompt again
+  // Fallback
   return (
     <>
       <SellerLoginPrompt 
