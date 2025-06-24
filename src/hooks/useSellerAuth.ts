@@ -28,6 +28,11 @@ export const useSellerAuth = () => {
 
     console.log('Creating seller profile for user:', userId);
 
+    // Ensure we have a valid user ID
+    if (!userId) {
+      throw new Error('User ID is required to create seller profile');
+    }
+
     const { error: sellerError } = await supabase
       .from('sellers')
       .insert({
@@ -123,12 +128,33 @@ export const useSellerAuth = () => {
       if (authResult?.user) {
         console.log('User created successfully:', authResult.user.id);
         
-        // Wait longer for the auth session to be fully established
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        // Wait for authentication session to be fully established
+        let sessionEstablished = false;
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        while (!sessionEstablished && attempts < maxAttempts) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+          
+          if (!sessionError && session && session.user.id === authResult.user.id) {
+            sessionEstablished = true;
+            console.log('Session established successfully');
+            break;
+          }
+          
+          attempts++;
+          console.log(`Waiting for session... attempt ${attempts}/${maxAttempts}`);
+        }
+        
+        if (!sessionEstablished) {
+          console.warn('Session not established within timeout, proceeding anyway');
+        }
         
         console.log('Creating seller profile...');
         
-        // Create seller profile directly - the RLS policies should allow this
+        // Create seller profile with the authenticated user ID
         await createSellerProfile(authResult.user.id, authData);
         
         toast.success('Registration successful! Welcome to QuickGoat Seller Portal');
