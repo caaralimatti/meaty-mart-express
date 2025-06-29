@@ -59,7 +59,7 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
               <div className="absolute right-0 top-0 w-4 h-full bg-white/30 animate-pulse"></div>
             </div>
           </div>
-          <p className="text-off-white/60 text-sm mt-4 animate-bounce-subtle">Loading {progress}%</p>
+          <p className="text-vibrant-orange text-sm mt-4 animate-bounce-subtle font-semibold">Loading {progress}%</p>
         </div>
       </div>
     </div>
