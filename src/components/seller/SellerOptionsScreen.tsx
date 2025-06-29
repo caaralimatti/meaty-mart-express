@@ -52,29 +52,17 @@ const SellerOptionsScreen = ({ onShowRegistration, onShowLogin, onBack }: Seller
               <CardTitle className="text-2xl font-bold text-off-white">NEW SELLER</CardTitle>
               <p className="text-sm text-off-white/60">Join our platform</p>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center space-x-2 text-sm text-off-white/70">
-                  <div className="w-2 h-2 bg-vibrant-orange rounded-full"></div>
-                  <span>Quick registration process</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-off-white/70">
-                  <div className="w-2 h-2 bg-vibrant-orange rounded-full"></div>
-                  <span>Advanced analytics tools</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-off-white/70">
-                  <div className="w-2 h-2 bg-vibrant-orange rounded-full"></div>
-                  <span>Inventory management</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-off-white/70">
-                  <div className="w-2 h-2 bg-vibrant-orange rounded-full"></div>
-                  <span>24/7 support</span>
-                </div>
+            <CardContent className="px-6 pb-6 flex flex-col h-full">
+              <div className="space-y-2 mb-6 flex-1">
+                <div className="text-sm text-off-white/70">Quick registration process</div>
+                <div className="text-sm text-off-white/70">Advanced analytics tools</div>
+                <div className="text-sm text-off-white/70">Inventory management</div>
+                <div className="text-sm text-off-white/70">24/7 support</div>
               </div>
               
               <Button 
                 onClick={onShowRegistration}
-                className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black font-bold text-lg h-12 transition-all duration-300"
+                className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black font-bold text-lg h-12 transition-all duration-300 mt-auto"
               >
                 Register Now
               </Button>
@@ -92,29 +80,17 @@ const SellerOptionsScreen = ({ onShowRegistration, onShowLogin, onBack }: Seller
               <CardTitle className="text-2xl font-bold text-off-white">EXISTING SELLER</CardTitle>
               <p className="text-sm text-off-white/60">Welcome back</p>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center space-x-2 text-sm text-off-white/70">
-                  <div className="w-2 h-2 bg-vibrant-orange rounded-full"></div>
-                  <span>Access your dashboard</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-off-white/70">
-                  <div className="w-2 h-2 bg-vibrant-orange rounded-full"></div>
-                  <span>Manage your listings</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-off-white/70">
-                  <div className="w-2 h-2 bg-vibrant-orange rounded-full"></div>
-                  <span>View analytics</span>
-                </div>
-                <div className="flex items-center space-x-2 text-sm text-off-white/70">
-                  <div className="w-2 h-2 bg-vibrant-orange rounded-full"></div>
-                  <span>Process orders</span>
-                </div>
+            <CardContent className="px-6 pb-6 flex flex-col h-full">
+              <div className="space-y-2 mb-6 flex-1">
+                <div className="text-sm text-off-white/70">Access your dashboard</div>
+                <div className="text-sm text-off-white/70">Manage your listings</div>
+                <div className="text-sm text-off-white/70">View analytics</div>
+                <div className="text-sm text-off-white/70">Process orders</div>
               </div>
               
               <Button 
                 onClick={onShowLogin}
-                className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black font-bold text-lg h-12 transition-all duration-300"
+                className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black font-bold text-lg h-12 transition-all duration-300 mt-auto"
               >
                 Login
               </Button>
