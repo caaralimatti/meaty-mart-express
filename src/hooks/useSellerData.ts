@@ -28,8 +28,11 @@ export const useSellerData = () => {
       if (!session?.user) {
         console.log('No authenticated user found');
         setSellerProfile(null);
+        setLoading(false);
         return;
       }
+
+      console.log('User authenticated, fetching seller profile for:', session.user.id);
 
       const { data: seller, error } = await supabase
         .from('sellers')
@@ -66,14 +69,14 @@ export const useSellerData = () => {
   useEffect(() => {
     fetchSellerData();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event);
+      console.log('Auth state changed:', event, 'Session exists:', !!session);
+      
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        // Small delay to ensure everything is ready
+        // Delay to ensure everything is ready
         setTimeout(() => {
           fetchSellerData();
-        }, 500);
+        }, 1000);
       } else if (event === 'SIGNED_OUT') {
         setSellerProfile(null);
         setLoading(false);
@@ -96,7 +99,6 @@ export const useSellerData = () => {
 
       if (error) throw error;
 
-      // Update local state
       setSellerProfile(prev => prev ? {
         ...prev,
         [updateField]: status

@@ -17,39 +17,54 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { sellerProfile, loading, updateShopStatus, refreshSellerData } = useSellerData();
 
-  // Check if we should show dashboard after auth changes
+  // Automatically switch to dashboard when seller profile is available
   useEffect(() => {
-    if (sellerProfile && currentView !== 'dashboard') {
-      console.log('Seller profile found, switching to dashboard');
+    console.log('SellerDashboard effect - sellerProfile:', !!sellerProfile, 'loading:', loading, 'currentView:', currentView);
+    
+    if (!loading && sellerProfile && currentView !== 'dashboard') {
+      console.log('Switching to dashboard view');
       setCurrentView('dashboard');
+    } else if (!loading && !sellerProfile && currentView === 'dashboard') {
+      console.log('No seller profile, switching to prompt');
+      setCurrentView('prompt');
     }
-  }, [sellerProfile, currentView]);
+  }, [sellerProfile, loading, currentView]);
 
   const handleShowRegistration = () => {
+    console.log('Showing registration form');
     setCurrentView('registration');
   };
 
   const handleShowLogin = () => {
+    console.log('Showing login modal');
     setShowAuthModal(true);
   };
 
   const handleBackToPrompt = () => {
+    console.log('Going back to prompt');
     setCurrentView('prompt');
   };
 
   const handleAuthModalClose = () => {
+    console.log('Auth modal closed');
     setShowAuthModal(false);
     // Force refresh seller data after login
-    refreshSellerData();
+    setTimeout(() => {
+      refreshSellerData();
+    }, 500);
   };
 
   const handleRegistrationSuccess = () => {
-    // Force refresh seller data and go to dashboard
-    refreshSellerData();
-    setCurrentView('dashboard');
+    console.log('Registration successful, refreshing data');
+    // Force refresh seller data and switch to dashboard
+    setTimeout(() => {
+      refreshSellerData();
+      setCurrentView('dashboard');
+    }, 1000);
   };
 
   const handleRegistrationCancel = () => {
+    console.log('Registration cancelled');
     onBackToMain();
   };
 
@@ -59,14 +74,14 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">Loading seller dashboard...</p>
         </div>
       </div>
     );
   }
 
-  // If we have a seller profile, show dashboard directly
-  if (sellerProfile || currentView === 'dashboard') {
+  // Show dashboard if we have a seller profile
+  if (sellerProfile && currentView === 'dashboard') {
     return (
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
@@ -79,10 +94,10 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
               >
                 ← Back to Main
               </button>
-              <h1 className="text-2xl font-bold text-gray-800">Seller Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gray-800">Seller Dashboard 📊</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-gray-600">Welcome, {sellerProfile?.seller_name || 'Seller'}!</span>
+              <span className="text-gray-600">Welcome back, {sellerProfile.seller_name}!</span>
             </div>
           </div>
         </header>
@@ -90,52 +105,42 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
         {/* Main Content */}
         <main className="p-6">
           <div className="max-w-7xl mx-auto">
-            {/* Show message if still loading seller profile */}
-            {!sellerProfile ? (
-              <div className="text-center py-8">
-                <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-600">Setting up your dashboard...</p>
-              </div>
-            ) : (
-              <>
-                {/* Conditional rendering based on seller type */}
-                {sellerProfile.seller_type === 'Meat' && (
+            {/* Conditional rendering based on seller type */}
+            {sellerProfile.seller_type === 'Meat' && (
+              <MeatShopManagement 
+                sellerProfile={sellerProfile}
+                onStatusToggle={(status) => updateShopStatus('meat', status)}
+              />
+            )}
+
+            {sellerProfile.seller_type === 'Livestock' && (
+              <LivestockManagement 
+                sellerProfile={sellerProfile}
+                onStatusToggle={(status) => updateShopStatus('livestock', status)}
+              />
+            )}
+
+            {sellerProfile.seller_type === 'Both' && (
+              <Tabs defaultValue="meat" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="meat">Meat Shop</TabsTrigger>
+                  <TabsTrigger value="livestock">Livestock</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="meat" className="mt-6">
                   <MeatShopManagement 
                     sellerProfile={sellerProfile}
                     onStatusToggle={(status) => updateShopStatus('meat', status)}
                   />
-                )}
-
-                {sellerProfile.seller_type === 'Livestock' && (
+                </TabsContent>
+                
+                <TabsContent value="livestock" className="mt-6">
                   <LivestockManagement 
                     sellerProfile={sellerProfile}
                     onStatusToggle={(status) => updateShopStatus('livestock', status)}
                   />
-                )}
-
-                {sellerProfile.seller_type === 'Both' && (
-                  <Tabs defaultValue="meat" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="meat">Meat Shop</TabsTrigger>
-                      <TabsTrigger value="livestock">Livestock</TabsTrigger>
-                    </TabsList>
-                    
-                    <TabsContent value="meat" className="mt-6">
-                      <MeatShopManagement 
-                        sellerProfile={sellerProfile}
-                        onStatusToggle={(status) => updateShopStatus('meat', status)}
-                      />
-                    </TabsContent>
-                    
-                    <TabsContent value="livestock" className="mt-6">
-                      <LivestockManagement 
-                        sellerProfile={sellerProfile}
-                        onStatusToggle={(status) => updateShopStatus('livestock', status)}
-                      />
-                    </TabsContent>
-                  </Tabs>
-                )}
-              </>
+                </TabsContent>
+              </Tabs>
             )}
           </div>
         </main>
@@ -143,23 +148,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     );
   }
 
-  // If no seller profile exists, show registration/login flow
-  if (currentView === 'prompt') {
-    return (
-      <>
-        <SellerLoginPrompt 
-          onShowRegistration={handleShowRegistration}
-          onShowLogin={handleShowLogin}
-        />
-        <AuthModal 
-          isOpen={showAuthModal}
-          onClose={handleAuthModalClose}
-          userType="seller"
-        />
-      </>
-    );
-  }
-
+  // Show registration form
   if (currentView === 'registration') {
     return (
       <>
@@ -180,7 +169,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     );
   }
 
-  // Fallback
+  // Default to showing the login prompt
   return (
     <>
       <SellerLoginPrompt 
