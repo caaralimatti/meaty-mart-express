@@ -41,17 +41,13 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
     if (userType === 'seller') {
       // Use seller login flow with proper success callback
       await loginSeller(phoneNumber, () => {
-        // Close modal and reset state
-        onClose();
+        console.log('Login successful, closing modal and resetting state');
+        // Reset modal state first
         setStep("phone");
         setPhoneNumber("");
         setOtp("");
-        
-        // Force a small delay to ensure state updates are processed
-        setTimeout(() => {
-          // The dashboard should automatically show due to useEffect in SellerDashboard
-          console.log('Seller login completed, dashboard should appear');
-        }, 100);
+        // Close modal
+        onClose();
       });
     } else {
       // Customer login flow (existing)
@@ -74,8 +70,18 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
               <img 
                 src="/lovable-uploads/8f9753cb-0f1b-4875-8ffd-8cf77fcf2eff.png" 
                 alt="QuickGoat Logo" 
-                className="w-full h-full object-contain filter brightness-0 invert"
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  console.error('Logo failed to load:', e);
+                  // Fallback to a simple text logo
+                  e.currentTarget.style.display = 'none';
+                }}
+                onLoad={() => console.log('Logo loaded successfully')}
               />
+              {/* Fallback text logo */}
+              <div className="absolute inset-0 flex items-center justify-center text-vibrant-orange font-bold text-lg">
+                QG
+              </div>
             </div>
           </div>
           

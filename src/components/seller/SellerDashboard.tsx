@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSellerData } from "@/hooks/useSellerData";
 import SellerOptionsScreen from "./SellerOptionsScreen";
@@ -38,11 +37,22 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     if (!loading && sellerProfile && currentView !== 'dashboard') {
       console.log('Switching to dashboard view');
       setCurrentView('dashboard');
+      setShowAuthModal(false); // Ensure auth modal is closed
     } else if (!loading && !sellerProfile && currentView === 'dashboard') {
       console.log('No seller profile, switching to options');
       setCurrentView('options');
     }
   }, [sellerProfile, loading, currentView]);
+
+  // Force refresh when modal closes after login
+  useEffect(() => {
+    if (!showAuthModal && currentView === 'options') {
+      console.log('Auth modal closed, refreshing seller data');
+      setTimeout(() => {
+        refreshSellerData();
+      }, 100);
+    }
+  }, [showAuthModal, currentView, refreshSellerData]);
 
   const handleShowRegistration = () => {
     console.log('Showing registration form');
@@ -60,12 +70,12 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
   };
 
   const handleAuthModalClose = () => {
-    console.log('Auth modal closed');
+    console.log('Auth modal closed, refreshing data');
     setShowAuthModal(false);
     // Force refresh seller data after login
     setTimeout(() => {
       refreshSellerData();
-    }, 500);
+    }, 200);
   };
 
   const handleRegistrationSuccess = () => {
