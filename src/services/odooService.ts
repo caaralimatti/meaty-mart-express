@@ -202,6 +202,8 @@ class OdooService {
     }
 
     try {
+      console.log('Creating customer in Odoo res.partner table:', customer);
+      
       const response = await this.makeRequest('/web/dataset/call_kw', {
         jsonrpc: '2.0',
         method: 'call',
@@ -214,10 +216,15 @@ class OdooService {
         id: Math.random(),
       });
 
-      return response.result;
+      if (response.result) {
+        console.log('Odoo customer created successfully with ID:', response.result);
+        return response.result;
+      }
+      
+      return null;
     } catch (error) {
       console.error('Failed to create customer in Odoo:', error);
-      return null;
+      throw error;
     }
   }
 

@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { odooService } from '@/services/odooService';
 import { toast } from 'sonner';
 
 export interface SellerAuthData {
@@ -11,6 +12,7 @@ export interface SellerAuthData {
   entityFullName?: string;
   address?: string;
   registeredAddress?: string;
+  city?: string;
   pincode: string;
   mobileNumber: string;
   aadhaarNumber?: string;
@@ -21,7 +23,56 @@ export interface SellerAuthData {
 export const useSellerAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const createSellerDirectly = async (authData: SellerAuthData) => {
+  const createOdooCustomer = async (authData: SellerAuthData) => {
+    try {
+      console.log('Starting Odoo authentication and customer creation...');
+      
+      // First authenticate with Odoo
+      const isAuthenticated = await odooService.authenticate();
+      if (!isAuthenticated) {
+        throw new Error('Failed to authenticate with Odoo');
+      }
+      
+      console.log('Odoo authentication successful, creating customer...');
+      
+      // Prepare customer data for Odoo res.partner table
+      const customerData = {
+        company_type: authData.type === 'Individual' ? 'person' : 'company',
+        name: authData.type === 'Individual' 
+          ? `${authData.firstName} ${authData.lastName || ''}`.trim()
+          : authData.entityFullName,
+        phone: authData.mobileNumber,
+        email: authData.email || false,
+        street: authData.address || authData.registeredAddress,
+        zip: authData.pincode,
+        city: authData.city || '',
+        is_company: authData.type === 'Registered',
+        supplier_rank: 1, // Mark as vendor/supplier
+        customer_rank: 0, // Not a customer by default
+      };
+      
+      console.log('Creating Odoo customer with data:', customerData);
+      
+      // Create customer in Odoo
+      const odooCustomerId = await odooService.createCustomer(customerData);
+      
+      if (odooCustomerId) {
+        console.log('Odoo customer created successfully with ID:', odooCustomerId);
+        toast.success('Odoo integration successful!');
+        return odooCustomerId;
+      } else {
+        console.warn('Failed to create Odoo customer, but continuing with local registration');
+        toast.warning('Local registration successful, but Odoo sync failed');
+        return null;
+      }
+    } catch (error: any) {
+      console.error('Odoo integration error:', error);
+      toast.warning(`Local registration successful, but Odoo sync failed: ${error.message}`);
+      return null;
+    }
+  };
+
+  const createSellerDirectly = async (authData: SellerAuthData, odooCustomerId?: number | null) => {
     const sellerName = authData.type === 'Individual' 
       ? `${authData.firstName} ${authData.lastName || ''}`.trim()
       : authData.entityFullName;
@@ -46,17 +97,20 @@ export const useSellerAuth = () => {
     }
 
     // Create new seller without user_id since we removed the constraint
+    const sellerData = {
+      seller_name: sellerName,
+      seller_type: authData.typeOfSeller,
+      contact_email: authData.email,
+      contact_phone: authData.mobileNumber,
+      user_type: 'seller',
+      meat_shop_status: authData.typeOfSeller === 'Meat' || authData.typeOfSeller === 'Both',
+      livestock_status: authData.typeOfSeller === 'Livestock' || authData.typeOfSeller === 'Both',
+      ...(odooCustomerId && { odoo_customer_id: odooCustomerId }) // Add Odoo ID if available
+    };
+
     const { data: newSeller, error: sellerError } = await supabase
       .from('sellers')
-      .insert({
-        seller_name: sellerName,
-        seller_type: authData.typeOfSeller,
-        contact_email: authData.email,
-        contact_phone: authData.mobileNumber,
-        user_type: 'seller',
-        meat_shop_status: authData.typeOfSeller === 'Meat' || authData.typeOfSeller === 'Both',
-        livestock_status: authData.typeOfSeller === 'Livestock' || authData.typeOfSeller === 'Both'
-      })
+      .insert(sellerData)
       .select()
       .single();
 
@@ -74,8 +128,11 @@ export const useSellerAuth = () => {
       setIsLoading(true);
       console.log('Starting phone-only seller registration for:', authData.mobileNumber);
       
-      // Create seller profile directly without Supabase auth
-      const sellerProfile = await createSellerDirectly(authData);
+      // First, create Odoo customer (this includes authentication)
+      const odooCustomerId = await createOdooCustomer(authData);
+      
+      // Create seller profile with optional Odoo ID
+      const sellerProfile = await createSellerDirectly(authData, odooCustomerId);
       
       // Store seller session in localStorage for our custom session management
       const customSession = {
@@ -85,9 +142,11 @@ export const useSellerAuth = () => {
         additionalData: {
           type: authData.type,
           address: authData.address || authData.registeredAddress,
+          city: authData.city,
           pincode: authData.pincode,
           aadhaarNumber: authData.aadhaarNumber,
-          gstin: authData.gstin
+          gstin: authData.gstin,
+          odooCustomerId: odooCustomerId
         }
       };
       
