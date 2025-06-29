@@ -6,8 +6,17 @@ import SellerRegistrationForm from "./SellerRegistrationForm";
 import AuthModal from "@/components/AuthModal";
 import MeatShopManagement from "./MeatShopManagement";
 import LivestockManagement from "./LivestockManagement";
+import LovablePrompt from "./LovablePrompt";
+import KPISnapshot from "./KPISnapshot";
+import LiveOrders from "./LiveOrders";
+import OrderStatusOverview from "./OrderStatusOverview";
+import TodaysPerformanceChart from "./TodaysPerformanceChart";
+import InventoryAlerts from "./InventoryAlerts";
+import CustomerInsights from "./CustomerInsights";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface SellerDashboardProps {
   onBackToMain: () => void;
@@ -86,7 +95,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     );
   }
 
-  // Show dashboard if we have a seller profile
+  // Show enhanced dashboard if we have a seller profile
   if (sellerProfile && currentView === 'dashboard') {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -119,7 +128,59 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
         {/* Main Content */}
         <main className="p-6">
           <div className="max-w-7xl mx-auto">
-            {/* Conditional rendering based on seller type */}
+            {/* Lovable Prompt */}
+            <LovablePrompt sellerProfile={sellerProfile} />
+
+            {/* KPI Snapshot */}
+            <KPISnapshot sellerType={sellerProfile.seller_type} />
+
+            {/* Live Orders and Order Status */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              <div>
+                <LiveOrders sellerType={sellerProfile.seller_type} />
+              </div>
+              <div>
+                <OrderStatusOverview sellerType={sellerProfile.seller_type} />
+              </div>
+            </div>
+
+            {/* Today's Performance Chart */}
+            <TodaysPerformanceChart sellerType={sellerProfile.seller_type} />
+
+            {/* Inventory Alerts */}
+            <InventoryAlerts sellerType={sellerProfile.seller_type} />
+
+            {/* Growth Chart */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Monthly Growth & Historical Data</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={[
+                      { month: 'Jan', revenue: 8400, orders: 124 },
+                      { month: 'Feb', revenue: 9200, orders: 142 },
+                      { month: 'Mar', revenue: 10800, orders: 168 },
+                      { month: 'Apr', revenue: 12400, orders: 195 },
+                      { month: 'May', revenue: 11600, orders: 178 },
+                      { month: 'Jun', revenue: 13200, orders: 210 }
+                    ]}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="revenue" fill="#dc2626" name="Revenue ($)" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Customer Insights */}
+            <CustomerInsights sellerType={sellerProfile.seller_type} />
+
+            {/* Management Sections - Conditional rendering based on seller type */}
             {sellerProfile.seller_type === 'Meat' && (
               <MeatShopManagement 
                 sellerProfile={sellerProfile}
@@ -137,8 +198,8 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
             {sellerProfile.seller_type === 'Both' && (
               <Tabs defaultValue="meat" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="meat">Meat Shop</TabsTrigger>
-                  <TabsTrigger value="livestock">Livestock</TabsTrigger>
+                  <TabsTrigger value="meat">Meat Shop Management</TabsTrigger>
+                  <TabsTrigger value="livestock">Livestock Management</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="meat" className="mt-6">
