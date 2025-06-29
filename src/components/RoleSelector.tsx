@@ -42,9 +42,7 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
                   <h3 className="text-2xl sm:text-3xl font-bold text-off-white">CUSTOMER</h3>
                   <ShoppingCart className="w-8 h-8 text-vibrant-orange" />
                 </div>
-                <p className="text-sm text-off-white/60 mb-4 uppercase tracking-wide">Fresh Delivery Specials</p>
-                <p className="text-2xl sm:text-3xl font-bold text-vibrant-orange mb-6">FLAT ₹200 OFF</p>
-                <p className="text-base text-off-white/80 mb-6">Premium quality goat meat delivered fresh to your doorstep in just 30 minutes</p>
+                <p className="text-sm text-off-white/60 mb-6 uppercase tracking-wide">Fresh Delivery Specials</p>
                 
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center space-x-2 text-sm text-off-white/70">
