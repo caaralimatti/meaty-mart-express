@@ -88,6 +88,18 @@
   }
 }
 
+/* Custom animations for loading screen */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Custom scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
@@ -103,4 +115,9 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-vibrant-orange/80;
+}
+
+/* Animation utilities */
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out;
 }
