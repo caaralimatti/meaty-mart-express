@@ -45,23 +45,20 @@ export const useSellerAuth = () => {
       return existingSeller;
     }
 
-    // Create new seller without user_id (direct approach)
+    // Create new seller using a dummy user_id since we're not using Supabase auth
+    const dummyUserId = crypto.randomUUID();
+    
     const { data: newSeller, error: sellerError } = await supabase
       .from('sellers')
       .insert({
+        user_id: dummyUserId,
         seller_name: sellerName,
         seller_type: authData.typeOfSeller,
         contact_email: authData.email,
         contact_phone: authData.mobileNumber,
         user_type: 'seller',
-        // Store additional data in a custom field if needed
-        metadata: {
-          type: authData.type,
-          address: authData.address || authData.registeredAddress,
-          pincode: authData.pincode,
-          aadhaarNumber: authData.aadhaarNumber,
-          gstin: authData.gstin
-        }
+        meat_shop_status: authData.typeOfSeller === 'Meat' || authData.typeOfSeller === 'Both',
+        livestock_status: authData.typeOfSeller === 'Livestock' || authData.typeOfSeller === 'Both'
       })
       .select()
       .single();
@@ -87,7 +84,14 @@ export const useSellerAuth = () => {
       const customSession = {
         seller: sellerProfile,
         phone: authData.mobileNumber,
-        loginTime: new Date().toISOString()
+        loginTime: new Date().toISOString(),
+        additionalData: {
+          type: authData.type,
+          address: authData.address || authData.registeredAddress,
+          pincode: authData.pincode,
+          aadhaarNumber: authData.aadhaarNumber,
+          gstin: authData.gstin
+        }
       };
       
       localStorage.setItem('quickgoat_seller_session', JSON.stringify(customSession));
