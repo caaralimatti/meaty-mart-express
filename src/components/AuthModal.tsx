@@ -39,13 +39,19 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
     }
     
     if (userType === 'seller') {
-      // Use seller login flow
+      // Use seller login flow with proper success callback
       await loginSeller(phoneNumber, () => {
+        // Close modal and reset state
         onClose();
-        // Reset state
         setStep("phone");
         setPhoneNumber("");
         setOtp("");
+        
+        // Force a small delay to ensure state updates are processed
+        setTimeout(() => {
+          // The dashboard should automatically show due to useEffect in SellerDashboard
+          console.log('Seller login completed, dashboard should appear');
+        }, 100);
       });
     } else {
       // Customer login flow (existing)
