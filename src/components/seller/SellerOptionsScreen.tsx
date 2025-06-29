@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Store, UserPlus, LogIn, ArrowLeft } from "lucide-react";
+import { Store, UserPlus, LogIn, ArrowLeft, Zap, BarChart3, Package, Headphones, Layout, FileText, TrendingUp, ShoppingCart } from "lucide-react";
 
 interface SellerOptionsScreenProps {
   onShowRegistration: () => void;
@@ -42,7 +42,7 @@ const SellerOptionsScreen = ({ onShowRegistration, onShowLogin, onBack }: Seller
         {/* Options Cards */}
         <div className="flex flex-col lg:flex-row gap-6 justify-center items-center">
           {/* Registration Card */}
-          <Card className="w-full lg:w-80 h-[350px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105">
+          <Card className="w-full lg:w-80 h-[400px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105">
             <CardHeader className="text-center pb-4">
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 bg-vibrant-orange/10 rounded-full flex items-center justify-center">
@@ -53,11 +53,31 @@ const SellerOptionsScreen = ({ onShowRegistration, onShowLogin, onBack }: Seller
               <p className="text-sm text-off-white/60">Join our platform</p>
             </CardHeader>
             <CardContent className="px-6 pb-6 flex flex-col h-full">
-              <div className="space-y-2 mb-6 flex-1">
-                <div className="text-sm text-off-white/70">Quick registration process</div>
-                <div className="text-sm text-off-white/70">Advanced analytics tools</div>
-                <div className="text-sm text-off-white/70">Inventory management</div>
-                <div className="text-sm text-off-white/70">24/7 support</div>
+              <div className="space-y-4 mb-6 flex-1">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Zap className="w-4 h-4 text-vibrant-orange" />
+                  </div>
+                  <span className="text-sm text-off-white/80">Quick registration process</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <BarChart3 className="w-4 h-4 text-vibrant-orange" />
+                  </div>
+                  <span className="text-sm text-off-white/80">Advanced analytics tools</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Package className="w-4 h-4 text-vibrant-orange" />
+                  </div>
+                  <span className="text-sm text-off-white/80">Inventory management</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Headphones className="w-4 h-4 text-vibrant-orange" />
+                  </div>
+                  <span className="text-sm text-off-white/80">24/7 support</span>
+                </div>
               </div>
               
               <Button 
@@ -70,7 +90,7 @@ const SellerOptionsScreen = ({ onShowRegistration, onShowLogin, onBack }: Seller
           </Card>
 
           {/* Login Card */}
-          <Card className="w-full lg:w-80 h-[350px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105">
+          <Card className="w-full lg:w-80 h-[400px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105">
             <CardHeader className="text-center pb-4">
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 bg-vibrant-orange/10 rounded-full flex items-center justify-center">
@@ -81,11 +101,31 @@ const SellerOptionsScreen = ({ onShowRegistration, onShowLogin, onBack }: Seller
               <p className="text-sm text-off-white/60">Welcome back</p>
             </CardHeader>
             <CardContent className="px-6 pb-6 flex flex-col h-full">
-              <div className="space-y-2 mb-6 flex-1">
-                <div className="text-sm text-off-white/70">Access your dashboard</div>
-                <div className="text-sm text-off-white/70">Manage your listings</div>
-                <div className="text-sm text-off-white/70">View analytics</div>
-                <div className="text-sm text-off-white/70">Process orders</div>
+              <div className="space-y-4 mb-6 flex-1">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Layout className="w-4 h-4 text-vibrant-orange" />
+                  </div>
+                  <span className="text-sm text-off-white/80">Access your dashboard</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <FileText className="w-4 h-4 text-vibrant-orange" />
+                  </div>
+                  <span className="text-sm text-off-white/80">Manage your listings</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="w-4 h-4 text-vibrant-orange" />
+                  </div>
+                  <span className="text-sm text-off-white/80">View analytics</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <ShoppingCart className="w-4 h-4 text-vibrant-orange" />
+                  </div>
+                  <span className="text-sm text-off-white/80">Process orders</span>
+                </div>
               </div>
               
               <Button 
