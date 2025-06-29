@@ -114,7 +114,7 @@ const SellerOptionsScreen = ({ onShowRegistration, onShowLogin, onBack }: Seller
               
               <Button 
                 onClick={onShowLogin}
-                className="w-full bg-transparent border-2 border-vibrant-orange text-vibrant-orange hover:bg-vibrant-orange hover:text-charcoal-black font-bold text-lg h-12 transition-all duration-300"
+                className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black font-bold text-lg h-12 transition-all duration-300"
               >
                 Login
               </Button>
