@@ -205,16 +205,16 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
                 }`}>
                   {showMeatOverview && (
                     <TabsTrigger value="meat-overview" className="text-xs sm:text-sm p-2 sm:p-3">
-                      <span className="hidden sm:inline">Meat </span>Overview
+                      Meat Overview
                     </TabsTrigger>
                   )}
                   {showLivestockOverview && (
                     <TabsTrigger value="livestock-overview" className="text-xs sm:text-sm p-2 sm:p-3">
-                      <span className="hidden sm:inline">Livestock </span>Overview
+                      Livestock Overview
                     </TabsTrigger>
                   )}
                   <TabsTrigger value="shop-management" className="text-xs sm:text-sm p-2 sm:p-3">
-                    <span className="hidden sm:inline">Shop </span>Management
+                    Shop Management
                   </TabsTrigger>
                   <TabsTrigger value="account-details" className="text-xs sm:text-sm p-2 sm:p-3">
                     Account Details
