@@ -285,7 +285,7 @@ export type Database = {
           seller_name: string
           seller_type: Database["public"]["Enums"]["seller_type_enum"]
           updated_at: string
-          user_id: string
+          user_id: string | null
           user_type: Database["public"]["Enums"]["user_type_enum"] | null
         }
         Insert: {
@@ -298,7 +298,7 @@ export type Database = {
           seller_name: string
           seller_type: Database["public"]["Enums"]["seller_type_enum"]
           updated_at?: string
-          user_id: string
+          user_id?: string | null
           user_type?: Database["public"]["Enums"]["user_type_enum"] | null
         }
         Update: {
@@ -311,7 +311,7 @@ export type Database = {
           seller_name?: string
           seller_type?: Database["public"]["Enums"]["seller_type_enum"]
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
           user_type?: Database["public"]["Enums"]["user_type_enum"] | null
         }
         Relationships: []

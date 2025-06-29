@@ -45,13 +45,10 @@ export const useSellerAuth = () => {
       return existingSeller;
     }
 
-    // Create new seller using a dummy user_id since we're not using Supabase auth
-    const dummyUserId = crypto.randomUUID();
-    
+    // Create new seller without user_id since we removed the constraint
     const { data: newSeller, error: sellerError } = await supabase
       .from('sellers')
       .insert({
-        user_id: dummyUserId,
         seller_name: sellerName,
         seller_type: authData.typeOfSeller,
         contact_email: authData.email,
