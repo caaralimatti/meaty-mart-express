@@ -7,6 +7,7 @@ import AuthModal from "@/components/AuthModal";
 import MeatShopManagement from "./MeatShopManagement";
 import LivestockManagement from "./LivestockManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 interface SellerDashboardProps {
   onBackToMain: () => void;
@@ -15,7 +16,7 @@ interface SellerDashboardProps {
 const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
   const [currentView, setCurrentView] = useState<'prompt' | 'registration' | 'dashboard'>('prompt');
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { sellerProfile, loading, updateShopStatus, refreshSellerData } = useSellerData();
+  const { sellerProfile, loading, updateShopStatus, refreshSellerData, logoutSeller } = useSellerData();
 
   // Automatically switch to dashboard when seller profile is available
   useEffect(() => {
@@ -60,12 +61,17 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     setTimeout(() => {
       refreshSellerData();
       setCurrentView('dashboard');
-    }, 1000);
+    }, 500);
   };
 
   const handleRegistrationCancel = () => {
     console.log('Registration cancelled');
     onBackToMain();
+  };
+
+  const handleLogout = () => {
+    logoutSeller();
+    setCurrentView('prompt');
   };
 
   // Show loading while checking seller profile
@@ -98,6 +104,14 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-gray-600">Welcome back, {sellerProfile.seller_name}!</span>
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                size="sm"
+                className="text-red-600 border-red-600 hover:bg-red-50"
+              >
+                Logout
+              </Button>
             </div>
           </div>
         </header>

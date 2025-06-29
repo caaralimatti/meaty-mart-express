@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 export interface SellerProfile {
   id: string;
-  user_id: string;
+  user_id?: string;
   seller_name: string;
   seller_type: 'Meat' | 'Livestock' | 'Both';
   contact_email?: string;
@@ -14,6 +14,7 @@ export interface SellerProfile {
   livestock_status: boolean;
   created_at: string;
   updated_at: string;
+  metadata?: any;
 }
 
 export const useSellerData = () => {
@@ -22,22 +23,25 @@ export const useSellerData = () => {
 
   const fetchSellerData = async () => {
     try {
-      console.log('Fetching seller data...');
-      const { data: { session } } = await supabase.auth.getSession();
+      console.log('Fetching seller data from custom session...');
       
-      if (!session?.user) {
-        console.log('No authenticated user found');
+      // Check for custom seller session
+      const sessionData = localStorage.getItem('quickgoat_seller_session');
+      if (!sessionData) {
+        console.log('No seller session found');
         setSellerProfile(null);
         setLoading(false);
         return;
       }
 
-      console.log('User authenticated, fetching seller profile for:', session.user.id);
+      const customSession = JSON.parse(sessionData);
+      console.log('Custom session found:', customSession);
 
+      // Fetch latest seller data from database
       const { data: seller, error } = await supabase
         .from('sellers')
         .select('*')
-        .eq('user_id', session.user.id)
+        .eq('id', customSession.seller.id)
         .single();
 
       if (error && error.code !== 'PGRST116') {
@@ -49,12 +53,14 @@ export const useSellerData = () => {
         console.log('Seller profile found:', seller);
         setSellerProfile(seller as SellerProfile);
       } else {
-        console.log('No seller profile found');
+        console.log('Seller profile not found, clearing session');
+        localStorage.removeItem('quickgoat_seller_session');
         setSellerProfile(null);
       }
     } catch (error: any) {
       console.error('Error in fetchSellerData:', error);
       toast.error('Failed to load seller profile');
+      localStorage.removeItem('quickgoat_seller_session');
       setSellerProfile(null);
     } finally {
       setLoading(false);
@@ -66,24 +72,14 @@ export const useSellerData = () => {
     await fetchSellerData();
   };
 
+  const logoutSeller = () => {
+    localStorage.removeItem('quickgoat_seller_session');
+    setSellerProfile(null);
+    console.log('Seller logged out');
+  };
+
   useEffect(() => {
     fetchSellerData();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, 'Session exists:', !!session);
-      
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        // Delay to ensure everything is ready
-        setTimeout(() => {
-          fetchSellerData();
-        }, 1000);
-      } else if (event === 'SIGNED_OUT') {
-        setSellerProfile(null);
-        setLoading(false);
-      }
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   const updateShopStatus = async (shopType: 'meat' | 'livestock', status: boolean) => {
@@ -115,6 +111,7 @@ export const useSellerData = () => {
     sellerProfile,
     loading,
     updateShopStatus,
-    refreshSellerData
+    refreshSellerData,
+    logoutSeller
   };
 };
