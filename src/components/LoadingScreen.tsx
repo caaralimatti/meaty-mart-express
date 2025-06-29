@@ -29,39 +29,14 @@ const LoadingScreen = ({ onComplete }: { onComplete: () => void }) => {
   return (
     <div className="fixed inset-0 bg-charcoal-black flex items-center justify-center z-50">
       <div className="text-center">
-        {/* Animated Goat Logo */}
+        {/* Company Logo */}
         <div className={`mb-8 flex justify-center transition-all duration-1000 ${showLogo ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
           <div className="w-32 h-32 sm:w-40 sm:h-40 relative animate-pulse">
-            <svg
-              viewBox="0 0 100 100"
-              className="w-full h-full text-vibrant-orange"
-              fill="currentColor"
-            >
-              {/* Goat Head */}
-              <ellipse cx="50" cy="40" rx="25" ry="20" />
-              
-              {/* Horns */}
-              <path d="M30 25 L25 15 L35 20 Z" />
-              <path d="M70 25 L75 15 L65 20 Z" />
-              
-              {/* Eyes */}
-              <circle cx="42" cy="38" r="3" fill="#1A1D21" />
-              <circle cx="58" cy="38" r="3" fill="#1A1D21" />
-              
-              {/* Nose */}
-              <ellipse cx="50" cy="45" rx="4" ry="2" fill="#1A1D21" />
-              
-              {/* Beard */}
-              <path d="M50 55 Q48 65 45 70 Q50 72 55 70 Q52 65 50 55 Z" />
-              
-              {/* Body */}
-              <ellipse cx="50" cy="70" rx="15" ry="12" />
-              
-              {/* Legs */}
-              <rect x="38" y="78" width="4" height="12" rx="2" />
-              <rect x="48" y="78" width="4" height="12" rx="2" />
-              <rect x="58" y="78" width="4" height="12" rx="2" />
-            </svg>
+            <img
+              src="/lovable-uploads/8f9753cb-0f1b-4875-8ffd-8cf77fcf2eff.png"
+              alt="QuickGoat Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
         </div>
         

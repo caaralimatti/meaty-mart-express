@@ -78,7 +78,7 @@ const CartSidebar = ({ isOpen, onClose, items, setItems }: CartSidebarProps) => 
         </div>
 
         {items.length > 0 && (
-          <div className="border-t p-4 space-y-4">
+          <div className="border-t p-4 space-y-4 bg-charcoal-black">
             <DeliveryOptions
               deliveryType={deliveryType}
               onDeliveryTypeChange={setDeliveryType}
