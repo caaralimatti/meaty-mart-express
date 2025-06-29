@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSellerData } from "@/hooks/useSellerData";
 import SellerLoginPrompt from "./SellerLoginPrompt";
@@ -131,92 +130,113 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
             {/* Lovable Prompt */}
             <LovablePrompt sellerProfile={sellerProfile} />
 
-            {/* KPI Snapshot */}
-            <KPISnapshot sellerType={sellerProfile.seller_type} />
+            {/* Navigation Tabs */}
+            <Tabs defaultValue="overview" className="w-full">
+              <TabsList className="grid w-full grid-cols-4 mb-6">
+                <TabsTrigger value="overview">Dashboard Overview</TabsTrigger>
+                <TabsTrigger value="account">Account Details</TabsTrigger>
+                <TabsTrigger value="livestock">Livestock Listings</TabsTrigger>
+                <TabsTrigger value="management">Shop Management</TabsTrigger>
+              </TabsList>
 
-            {/* Live Orders and Order Status */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              <div>
-                <LiveOrders sellerType={sellerProfile.seller_type} />
-              </div>
-              <div>
-                <OrderStatusOverview sellerType={sellerProfile.seller_type} />
-              </div>
-            </div>
+              {/* Dashboard Overview Tab */}
+              <TabsContent value="overview" className="space-y-6">
+                {/* KPI Snapshot */}
+                <KPISnapshot sellerType={sellerProfile.seller_type} />
 
-            {/* Today's Performance Chart */}
-            <TodaysPerformanceChart sellerType={sellerProfile.seller_type} />
-
-            {/* Inventory Alerts */}
-            <InventoryAlerts sellerType={sellerProfile.seller_type} />
-
-            {/* Growth Chart */}
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>Monthly Growth & Historical Data</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={[
-                      { month: 'Jan', revenue: 8400, orders: 124 },
-                      { month: 'Feb', revenue: 9200, orders: 142 },
-                      { month: 'Mar', revenue: 10800, orders: 168 },
-                      { month: 'Apr', revenue: 12400, orders: 195 },
-                      { month: 'May', revenue: 11600, orders: 178 },
-                      { month: 'Jun', revenue: 13200, orders: 210 }
-                    ]}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="revenue" fill="#dc2626" name="Revenue ($)" />
-                    </BarChart>
-                  </ResponsiveContainer>
+                {/* Live Orders and Order Status */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <LiveOrders sellerType={sellerProfile.seller_type} />
+                  <OrderStatusOverview sellerType={sellerProfile.seller_type} />
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Customer Insights */}
-            <CustomerInsights sellerType={sellerProfile.seller_type} />
+                {/* Today's Performance Chart */}
+                <TodaysPerformanceChart sellerType={sellerProfile.seller_type} />
 
-            {/* Management Sections - Conditional rendering based on seller type */}
-            {sellerProfile.seller_type === 'Meat' && (
-              <MeatShopManagement 
-                sellerProfile={sellerProfile}
-                onStatusToggle={(status) => updateShopStatus('meat', status)}
-              />
-            )}
+                {/* Inventory Alerts */}
+                <InventoryAlerts sellerType={sellerProfile.seller_type} />
 
-            {sellerProfile.seller_type === 'Livestock' && (
-              <LivestockManagement 
-                sellerProfile={sellerProfile}
-                onStatusToggle={(status) => updateShopStatus('livestock', status)}
-              />
-            )}
+                {/* Growth Chart */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Monthly Growth & Historical Data</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={[
+                          { month: 'Jan', revenue: 8400, orders: 124 },
+                          { month: 'Feb', revenue: 9200, orders: 142 },
+                          { month: 'Mar', revenue: 10800, orders: 168 },
+                          { month: 'Apr', revenue: 12400, orders: 195 },
+                          { month: 'May', revenue: 11600, orders: 178 },
+                          { month: 'Jun', revenue: 13200, orders: 210 }
+                        ]}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Bar dataKey="revenue" fill="#dc2626" name="Revenue ($)" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
 
-            {sellerProfile.seller_type === 'Both' && (
-              <Tabs defaultValue="meat" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="meat">Meat Shop Management</TabsTrigger>
-                  <TabsTrigger value="livestock">Livestock Management</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="meat" className="mt-6">
+                {/* Customer Insights */}
+                <CustomerInsights sellerType={sellerProfile.seller_type} />
+              </TabsContent>
+
+              {/* Account Details Tab */}
+              <TabsContent value="account">
+                <AccountDetails sellerProfile={sellerProfile} />
+              </TabsContent>
+
+              {/* Livestock Listings Tab */}
+              <TabsContent value="livestock">
+                <LivestockListingsManager sellerType={sellerProfile.seller_type} />
+              </TabsContent>
+
+              {/* Shop Management Tab */}
+              <TabsContent value="management">
+                {sellerProfile.seller_type === 'Meat' && (
                   <MeatShopManagement 
                     sellerProfile={sellerProfile}
                     onStatusToggle={(status) => updateShopStatus('meat', status)}
                   />
-                </TabsContent>
-                
-                <TabsContent value="livestock" className="mt-6">
+                )}
+
+                {sellerProfile.seller_type === 'Livestock' && (
                   <LivestockManagement 
                     sellerProfile={sellerProfile}
                     onStatusToggle={(status) => updateShopStatus('livestock', status)}
                   />
-                </TabsContent>
-              </Tabs>
-            )}
+                )}
+
+                {sellerProfile.seller_type === 'Both' && (
+                  <Tabs defaultValue="meat" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="meat">Meat Shop Management</TabsTrigger>
+                      <TabsTrigger value="livestock">Livestock Management</TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="meat" className="mt-6">
+                      <MeatShopManagement 
+                        sellerProfile={sellerProfile}
+                        onStatusToggle={(status) => updateShopStatus('meat', status)}
+                      />
+                    </TabsContent>
+                    
+                    <TabsContent value="livestock" className="mt-6">
+                      <LivestockManagement 
+                        sellerProfile={sellerProfile}
+                        onStatusToggle={(status) => updateShopStatus('livestock', status)}
+                      />
+                    </TabsContent>
+                  </Tabs>
+                )}
+              </TabsContent>
+            </Tabs>
           </div>
         </main>
       </div>
