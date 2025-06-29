@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useSellerData } from "@/hooks/useSellerData";
 import SellerLoginPrompt from "./SellerLoginPrompt";
@@ -12,6 +13,8 @@ import OrderStatusOverview from "./OrderStatusOverview";
 import TodaysPerformanceChart from "./TodaysPerformanceChart";
 import InventoryAlerts from "./InventoryAlerts";
 import CustomerInsights from "./CustomerInsights";
+import AccountDetails from "./AccountDetails";
+import LivestockListingsManager from "./LivestockListingsManager";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
