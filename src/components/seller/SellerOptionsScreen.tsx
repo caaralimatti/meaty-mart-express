@@ -17,10 +17,12 @@ const SellerOptionsScreen = ({ onShowRegistration, onShowLogin, onBack }: Seller
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleShowRegistration = () => {
+    console.log('Registration clicked');
     setCurrentView('registration');
   };
 
   const handleShowLogin = () => {
+    console.log('Login clicked');
     setShowAuthModal(true);
   };
 
@@ -87,7 +89,10 @@ const SellerOptionsScreen = ({ onShowRegistration, onShowLogin, onBack }: Seller
           {/* Options Cards */}
           <div className="flex flex-col lg:flex-row gap-6 justify-center items-center">
             {/* Registration Card */}
-            <Card className="w-full lg:w-80 h-[400px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105">
+            <Card 
+              className="w-full lg:w-80 h-[400px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105"
+              onClick={handleShowRegistration}
+            >
               <CardHeader className="text-center pb-4">
                 <div className="flex justify-center mb-4">
                   <div className="w-16 h-16 bg-vibrant-orange/10 rounded-full flex items-center justify-center">
@@ -99,34 +104,37 @@ const SellerOptionsScreen = ({ onShowRegistration, onShowLogin, onBack }: Seller
               </CardHeader>
               <CardContent className="px-6 pb-6 flex flex-col h-full">
                 <div className="space-y-4 mb-6 flex-1">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Zap className="w-4 h-4 text-vibrant-orange" />
                     </div>
-                    <span className="text-sm text-off-white/80 leading-relaxed">Quick registration process</span>
+                    <span className="text-sm text-off-white/80">Quick registration process</span>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
                       <BarChart3 className="w-4 h-4 text-vibrant-orange" />
                     </div>
-                    <span className="text-sm text-off-white/80 leading-relaxed">Advanced analytics tools</span>
+                    <span className="text-sm text-off-white/80">Advanced analytics tools</span>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Package className="w-4 h-4 text-vibrant-orange" />
                     </div>
-                    <span className="text-sm text-off-white/80 leading-relaxed">Inventory management</span>
+                    <span className="text-sm text-off-white/80">Inventory management</span>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Headphones className="w-4 h-4 text-vibrant-orange" />
                     </div>
-                    <span className="text-sm text-off-white/80 leading-relaxed">24/7 support</span>
+                    <span className="text-sm text-off-white/80">24/7 support</span>
                   </div>
                 </div>
                 
                 <Button 
-                  onClick={handleShowRegistration}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleShowRegistration();
+                  }}
                   className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black font-bold text-lg h-12 transition-all duration-300 mt-auto"
                 >
                   Register Now
@@ -135,7 +143,10 @@ const SellerOptionsScreen = ({ onShowRegistration, onShowLogin, onBack }: Seller
             </Card>
 
             {/* Login Card */}
-            <Card className="w-full lg:w-80 h-[400px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105">
+            <Card 
+              className="w-full lg:w-80 h-[400px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105"
+              onClick={handleShowLogin}
+            >
               <CardHeader className="text-center pb-4">
                 <div className="flex justify-center mb-4">
                   <div className="w-16 h-16 bg-vibrant-orange/10 rounded-full flex items-center justify-center">
@@ -147,34 +158,37 @@ const SellerOptionsScreen = ({ onShowRegistration, onShowLogin, onBack }: Seller
               </CardHeader>
               <CardContent className="px-6 pb-6 flex flex-col h-full">
                 <div className="space-y-4 mb-6 flex-1">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Layout className="w-4 h-4 text-vibrant-orange" />
                     </div>
-                    <span className="text-sm text-off-white/80 leading-relaxed">Access your dashboard</span>
+                    <span className="text-sm text-off-white/80">Access your dashboard</span>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
                       <FileText className="w-4 h-4 text-vibrant-orange" />
                     </div>
-                    <span className="text-sm text-off-white/80 leading-relaxed">Manage your listings</span>
+                    <span className="text-sm text-off-white/80">Manage your listings</span>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
                       <TrendingUp className="w-4 h-4 text-vibrant-orange" />
                     </div>
-                    <span className="text-sm text-off-white/80 leading-relaxed">View analytics</span>
+                    <span className="text-sm text-off-white/80">View analytics</span>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-vibrant-orange/10 rounded-lg flex items-center justify-center flex-shrink-0">
                       <ShoppingCart className="w-4 h-4 text-vibrant-orange" />
                     </div>
-                    <span className="text-sm text-off-white/80 leading-relaxed">Process orders</span>
+                    <span className="text-sm text-off-white/80">Process orders</span>
                   </div>
                 </div>
                 
                 <Button 
-                  onClick={handleShowLogin}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleShowLogin();
+                  }}
                   className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black font-bold text-lg h-12 transition-all duration-300 mt-auto"
                 >
                   Login
