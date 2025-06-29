@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { odooService } from '@/services/odooService';
@@ -42,7 +41,7 @@ export const useSellerAuth = () => {
           ? `${authData.firstName} ${authData.lastName || ''}`.trim()
           : authData.entityFullName,
         phone: authData.mobileNumber,
-        email: authData.email || undefined, // Changed from false to undefined
+        email: authData.email || '', // Use empty string instead of undefined
         street: authData.address || authData.registeredAddress,
         zip: authData.pincode,
         city: authData.city || '',

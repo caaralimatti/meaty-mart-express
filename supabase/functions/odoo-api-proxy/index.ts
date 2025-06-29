@@ -99,8 +99,22 @@ serve(async (req) => {
     if (setCookieHeader) {
       console.log('Set-Cookie header:', setCookieHeader);
       const sessionMatch = setCookieHeader.match(/session_id=([^;]+)/);
-      if (sessionMatch && odooResponseData.result) {
-        odooResponseData.result.session_id = sessionMatch[1];
+      if (sessionMatch) {
+        // Only add session_id to result if result is an object, not a primitive
+        if (odooResponseData.result && typeof odooResponseData.result === 'object' && !Array.isArray(odooResponseData.result)) {
+          odooResponseData.result.session_id = sessionMatch[1];
+        } else {
+          // For primitive results (like customer creation returning just an ID), 
+          // wrap the result in an object with session info
+          if (odoo_endpoint === '/web/session/authenticate') {
+            // Only for authentication endpoints, preserve the session_id in result
+            if (typeof odooResponseData.result === 'object') {
+              odooResponseData.result.session_id = sessionMatch[1];
+            }
+          }
+          // For other endpoints like customer creation, don't modify the result
+          // The session_id will be available for subsequent requests via the stored sessionId
+        }
       }
     }
 
