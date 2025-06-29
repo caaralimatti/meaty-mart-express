@@ -55,13 +55,16 @@ export const useSellerAuth = () => {
     try {
       setIsLoading(true);
       
+      // Create a simple email based on phone number (no email confirmation needed)
       const email = authData.email || `${authData.mobileNumber}@quickgoat.com`;
+      const password = authData.mobileNumber; // Use phone as password for simplicity
       
       console.log('Starting seller registration for:', email);
       
+      // First, try to sign up without email confirmation
       const { data: authResult, error: authError } = await supabase.auth.signUp({
         email: email,
-        password: authData.mobileNumber,
+        password: password,
         options: {
           data: {
             phone: authData.mobileNumber,
@@ -69,19 +72,21 @@ export const useSellerAuth = () => {
             full_name: authData.type === 'Individual' 
               ? `${authData.firstName} ${authData.lastName || ''}`.trim()
               : authData.entityFullName
-          }
+          },
+          emailRedirectTo: undefined // Disable email confirmation
         }
       });
 
       if (authError) {
         console.error('Auth error:', authError);
         
+        // If user already exists, try to sign in
         if (authError.message.includes('already registered') || authError.message.includes('already been registered')) {
           console.log('User exists, trying to sign in...');
           
           const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
             email: email,
-            password: authData.mobileNumber
+            password: password
           });
 
           if (signInError) {
@@ -90,27 +95,18 @@ export const useSellerAuth = () => {
           }
           
           if (signInData.user) {
-            // Wait for session to be established
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            const { data: seller, error: sellerFetchError } = await supabase
+            // Check if seller profile exists
+            const { data: seller } = await supabase
               .from('sellers')
               .select('*')
               .eq('user_id', signInData.user.id)
               .single();
-
-            if (sellerFetchError && sellerFetchError.code !== 'PGRST116') {
-              console.error('Error fetching seller profile:', sellerFetchError);
-              // If seller profile doesn't exist, create it
-              await createSellerProfile(signInData.user.id, authData);
-            }
 
             if (!seller) {
               await createSellerProfile(signInData.user.id, authData);
             }
             
             toast.success('Registration completed! Welcome to QuickGoat Seller Portal');
-            // Add small delay before calling onSuccess to ensure state is updated
             setTimeout(() => {
               onSuccess();
             }, 500);
@@ -124,31 +120,10 @@ export const useSellerAuth = () => {
       if (authResult?.user) {
         console.log('User created successfully:', authResult.user.id);
         
-        // Wait for authentication session to be fully established
-        let sessionEstablished = false;
-        let attempts = 0;
-        const maxAttempts = 15;
-        
-        while (!sessionEstablished && attempts < maxAttempts) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          
-          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-          
-          if (!sessionError && session && session.user.id === authResult.user.id) {
-            sessionEstablished = true;
-            console.log('Session established successfully');
-            break;
-          }
-          
-          attempts++;
-          console.log(`Waiting for session... attempt ${attempts}/${maxAttempts}`);
-        }
-        
-        console.log('Creating seller profile...');
+        // Create seller profile immediately
         await createSellerProfile(authResult.user.id, authData);
         
         toast.success('Registration successful! Welcome to QuickGoat Seller Portal');
-        // Add delay before calling onSuccess to ensure everything is ready
         setTimeout(() => {
           onSuccess();
         }, 1000);
@@ -158,7 +133,13 @@ export const useSellerAuth = () => {
       
     } catch (error: any) {
       console.error('Registration error:', error);
-      toast.error(error.message || 'Registration failed. Please try again.');
+      
+      // Handle specific error cases
+      if (error.message?.includes('rate limit')) {
+        toast.error('Too many registration attempts. Please wait a few minutes and try again.');
+      } else {
+        toast.error(error.message || 'Registration failed. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -182,9 +163,6 @@ export const useSellerAuth = () => {
       }
 
       if (authUser.user) {
-        // Wait for session to be established
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
         // Check if user is a seller
         const { data: seller, error: sellerError } = await supabase
           .from('sellers')
@@ -205,14 +183,18 @@ export const useSellerAuth = () => {
 
         console.log('Seller login successful');
         toast.success('Login successful! Welcome back to QuickGoat');
-        // Add delay before calling onSuccess
         setTimeout(() => {
           onSuccess();
         }, 500);
       }
     } catch (error: any) {
       console.error('Login error:', error);
-      toast.error('Login failed. Please check your credentials or register first.');
+      
+      if (error.message?.includes('Invalid login credentials')) {
+        toast.error('Phone number not found. Please register first or check your phone number.');
+      } else {
+        toast.error('Login failed. Please check your credentials or register first.');
+      }
     } finally {
       setIsLoading(false);
     }

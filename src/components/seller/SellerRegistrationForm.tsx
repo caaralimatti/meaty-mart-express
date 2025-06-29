@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useSellerAuth } from "@/hooks/useSellerAuth";
+import { usePhoneOTP } from "@/hooks/usePhoneOTP";
 
 interface SellerRegistrationFormProps {
   onBack: () => void;
@@ -17,10 +18,10 @@ interface SellerRegistrationFormProps {
 
 const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: SellerRegistrationFormProps) => {
   const { registerSeller, isLoading } = useSellerAuth();
+  const { otpState, isLoading: otpLoading, sendOTP, verifyOTP, resetOTP } = usePhoneOTP();
   
   const [type, setType] = useState<string>("");
   const [typeOfSeller, setTypeOfSeller] = useState<string>("");
-  const [showOTPForm, setShowOTPForm] = useState(false);
   const [otp, setOtp] = useState("");
   const [formData, setFormData] = useState<any>(null);
   
@@ -89,8 +90,12 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
     };
 
     setFormData(authData);
-    setShowOTPForm(true);
-    toast.success("OTP sent to your mobile number");
+    
+    // Send OTP
+    const result = await sendOTP(mobileNumber);
+    if (!result.success) {
+      setFormData(null);
+    }
   };
 
   const handleVerifyOTP = async () => {
@@ -104,34 +109,38 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
       return;
     }
     
-    // Simulate OTP verification (in real app, verify with SMS service)
-    // For demo purposes, accept any 4-digit OTP
-    console.log('OTP verified, proceeding with registration...');
-    
-    await registerSeller(formData, () => {
-      if (onSuccess) {
-        onSuccess();
-      }
-    });
+    // Verify OTP
+    const result = await verifyOTP(otp);
+    if (result.success) {
+      // Proceed with registration using Supabase auth
+      await registerSeller(formData, () => {
+        if (onSuccess) {
+          onSuccess();
+        }
+      });
+    }
   };
 
   const handleCancelOTP = () => {
     if (onCancel) {
       onCancel();
     } else {
-      setShowOTPForm(false);
+      resetOTP();
       setFormData(null);
       setOtp("");
     }
   };
 
-  if (showOTPForm) {
+  if (otpState.otpSent && !otpState.otpVerified) {
     return (
       <Card className="w-full max-w-md mx-auto">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl text-red-700">Verify OTP</CardTitle>
           <p className="text-gray-600">
-            We've sent an OTP to +91 {mobileNumber}
+            We've sent an OTP to +91 {otpState.phoneNumber}
+          </p>
+          <p className="text-sm text-blue-600 mt-2">
+            Demo OTP: Check browser console for the OTP
           </p>
         </CardHeader>
         
@@ -151,16 +160,16 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
           
           <Button 
             onClick={handleVerifyOTP}
-            disabled={isLoading || otp.length !== 4}
+            disabled={isLoading || otpLoading || otp.length !== 4}
             className="w-full bg-red-600 hover:bg-red-700"
           >
-            {isLoading ? "Verifying..." : "Verify & Complete Registration"}
+            {isLoading ? "Registering..." : "Verify & Complete Registration"}
           </Button>
           
           <Button 
             variant="link" 
             onClick={() => {
-              setShowOTPForm(false);
+              resetOTP();
               setFormData(null);
               setOtp("");
             }}
@@ -412,10 +421,10 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
             
             <Button
               onClick={handleRegister}
-              disabled={isLoading}
+              disabled={isLoading || otpLoading}
               className="w-full bg-red-600 hover:bg-red-700"
             >
-              {isLoading ? "Processing..." : "Register"}
+              {otpLoading ? "Sending OTP..." : "Send OTP"}
             </Button>
           </div>
         )}
