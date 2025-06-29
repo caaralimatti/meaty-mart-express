@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ShoppingCart, Store, Clock } from "lucide-react";
+import { ShoppingCart, Store } from "lucide-react";
 import { UserRole } from "@/hooks/useUserRole";
 
 interface RoleSelectorProps {
@@ -36,24 +36,23 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
             className="relative w-full lg:w-96 h-[400px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105"
             onClick={() => onRoleSelect('customer')}
           >
-            <CardContent className="p-6 h-full flex flex-col">
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-4">
+            <CardContent className="p-6 h-full flex flex-col justify-center text-center">
+              <div className="flex-1 flex flex-col justify-center">
+                <div className="flex items-center justify-center mb-6">
+                  <ShoppingCart className="w-8 h-8 text-vibrant-orange mr-3" />
                   <h3 className="text-2xl sm:text-3xl font-bold text-off-white">CUSTOMER</h3>
-                  <ShoppingCart className="w-8 h-8 text-vibrant-orange" />
                 </div>
-                <p className="text-sm text-off-white/60 mb-6 uppercase tracking-wide">Fresh Delivery Specials</p>
                 
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center space-x-2 text-sm text-off-white/70">
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-center justify-center space-x-2 text-sm text-off-white/70">
                     <div className="w-2 h-2 bg-vibrant-orange rounded-full"></div>
                     <span>Fresh, premium quality meat</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-sm text-off-white/70">
+                  <div className="flex items-center justify-center space-x-2 text-sm text-off-white/70">
                     <div className="w-2 h-2 bg-vibrant-orange rounded-full"></div>
                     <span>30-minute delivery guarantee</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-sm text-off-white/70">
+                  <div className="flex items-center justify-center space-x-2 text-sm text-off-white/70">
                     <div className="w-2 h-2 bg-vibrant-orange rounded-full"></div>
                     <span>Competitive pricing</span>
                   </div>
