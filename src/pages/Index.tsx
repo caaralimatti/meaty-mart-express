@@ -1,14 +1,21 @@
 
+import { useState, useEffect } from "react";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useOnboarding } from "@/hooks/useOnboarding";
+import LoadingScreen from "@/components/LoadingScreen";
 import RoleSelector from "@/components/RoleSelector";
 import EnhancedCustomerInterface from "@/components/customer/EnhancedCustomerInterface";
 import SellerDashboard from "@/components/seller/SellerDashboard";
 import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
 
 const Index = () => {
+  const [showLoading, setShowLoading] = useState(true);
   const { userRole, isLoggedIn, login, logout, switchRole } = useUserRole();
   const { isOnboardingComplete, isLoading, completeOnboarding } = useOnboarding();
+
+  const handleLoadingComplete = () => {
+    setShowLoading(false);
+  };
 
   const handleRoleSelect = (role: 'customer' | 'seller' | null) => {
     login(role);
@@ -23,13 +30,18 @@ const Index = () => {
     logout();
   };
 
+  // Show loading screen first
+  if (showLoading) {
+    return <LoadingScreen onComplete={handleLoadingComplete} />;
+  }
+
   // Show loading while checking onboarding status
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-charcoal-black flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="w-8 h-8 border-4 border-vibrant-orange border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-off-white/70">Loading...</p>
         </div>
       </div>
     );

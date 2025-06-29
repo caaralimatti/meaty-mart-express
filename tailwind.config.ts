@@ -19,48 +19,55 @@ export default {
 		},
 		extend: {
 			colors: {
+				// Modern Tech Palette - Black & Orange
+				'charcoal-black': '#1A1D21',
+				'vibrant-orange': '#FF7A00',
+				'dark-slate': '#2D333A',
+				'off-white': '#F0F2F5',
+				
+				// Keep existing shadcn colors for compatibility
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					DEFAULT: '#FF7A00', // Vibrant Orange
+					foreground: '#F0F2F5' // Off White
 				},
 				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					DEFAULT: '#2D333A', // Dark Slate
+					foreground: '#F0F2F5' // Off White
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
 				},
 				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))'
+					DEFAULT: '#2D333A', // Dark Slate
+					foreground: '#F0F2F5' // Off White
 				},
 				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
+					DEFAULT: '#FF7A00', // Vibrant Orange
+					foreground: '#F0F2F5' // Off White
 				},
 				popover: {
-					DEFAULT: 'hsl(var(--popover))',
-					foreground: 'hsl(var(--popover-foreground))'
+					DEFAULT: '#2D333A', // Dark Slate
+					foreground: '#F0F2F5' // Off White
 				},
 				card: {
-					DEFAULT: 'hsl(var(--card))',
-					foreground: 'hsl(var(--card-foreground))'
+					DEFAULT: '#2D333A', // Dark Slate
+					foreground: '#F0F2F5' // Off White
 				},
 				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
+					DEFAULT: '#1A1D21', // Charcoal Black
+					foreground: '#F0F2F5', // Off White
+					primary: '#FF7A00', // Vibrant Orange
+					'primary-foreground': '#F0F2F5', // Off White
+					accent: '#2D333A', // Dark Slate
+					'accent-foreground': '#F0F2F5', // Off White
+					border: '#2D333A', // Dark Slate
+					ring: '#FF7A00' // Vibrant Orange
 				}
 			},
 			borderRadius: {
