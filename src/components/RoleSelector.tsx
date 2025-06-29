@@ -71,7 +71,7 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
             </CardContent>
           </Card>
 
-          {/* Seller Card */}
+          {/* Seller Card - Now directly goes to seller dashboard */}
           <Card 
             className="relative w-full lg:w-96 h-[400px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105"
             onClick={() => onRoleSelect('seller')}

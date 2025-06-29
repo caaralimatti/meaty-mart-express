@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useSellerData } from "@/hooks/useSellerData";
-import SellerLoginPrompt from "./SellerLoginPrompt";
+import SellerOptionsScreen from "./SellerOptionsScreen";
 import SellerRegistrationForm from "./SellerRegistrationForm";
 import AuthModal from "@/components/AuthModal";
 import MeatShopManagement from "./MeatShopManagement";
@@ -26,7 +26,7 @@ interface SellerDashboardProps {
 }
 
 const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'prompt' | 'registration' | 'dashboard'>('prompt');
+  const [currentView, setCurrentView] = useState<'options' | 'registration' | 'dashboard'>('options');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { sellerProfile, loading, updateShopStatus, refreshSellerData, logoutSeller } = useSellerData();
@@ -39,8 +39,8 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
       console.log('Switching to dashboard view');
       setCurrentView('dashboard');
     } else if (!loading && !sellerProfile && currentView === 'dashboard') {
-      console.log('No seller profile, switching to prompt');
-      setCurrentView('prompt');
+      console.log('No seller profile, switching to options');
+      setCurrentView('options');
     }
   }, [sellerProfile, loading, currentView]);
 
@@ -54,9 +54,9 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     setShowAuthModal(true);
   };
 
-  const handleBackToPrompt = () => {
-    console.log('Going back to prompt');
-    setCurrentView('prompt');
+  const handleBackToOptions = () => {
+    console.log('Going back to options');
+    setCurrentView('options');
   };
 
   const handleAuthModalClose = () => {
@@ -84,7 +84,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
 
   const handleLogout = () => {
     logoutSeller();
-    setCurrentView('prompt');
+    setCurrentView('options');
   };
 
   // Show loading while checking seller profile
@@ -293,7 +293,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     return (
       <>
         <SellerRegistrationForm 
-          onBack={handleBackToPrompt}
+          onBack={handleBackToOptions}
           onLoginLink={handleShowLogin}
           onSuccess={handleRegistrationSuccess}
           onCancel={handleRegistrationCancel}
@@ -307,12 +307,13 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     );
   }
 
-  // Default to showing the login prompt
+  // Default to showing the seller options screen
   return (
     <>
-      <SellerLoginPrompt 
+      <SellerOptionsScreen 
         onShowRegistration={handleShowRegistration}
         onShowLogin={handleShowLogin}
+        onBack={onBackToMain}
       />
       <AuthModal 
         isOpen={showAuthModal}

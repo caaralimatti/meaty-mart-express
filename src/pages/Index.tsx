@@ -26,6 +26,7 @@ const Index = () => {
     switchRole(newRole);
   };
 
+  // Updated to go back to RoleSelector instead of loading screen
   const handleBackToMain = () => {
     logout();
   };
