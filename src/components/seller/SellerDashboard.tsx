@@ -111,6 +111,17 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
 
   // Show enhanced dashboard if we have a seller profile
   if (sellerProfile && currentView === 'dashboard') {
+    // Determine which tabs to show based on seller type
+    const showMeatOverview = sellerProfile.seller_type === 'Meat' || sellerProfile.seller_type === 'Both';
+    const showLivestockOverview = sellerProfile.seller_type === 'Livestock' || sellerProfile.seller_type === 'Both';
+    
+    // Set default tab based on seller type
+    const getDefaultTab = () => {
+      if (showMeatOverview) return 'meat-overview';
+      if (showLivestockOverview) return 'livestock-overview';
+      return 'shop-management';
+    };
+
     return (
       <div className="min-h-screen bg-gray-50">
         {/* Mobile-first Header */}
@@ -185,75 +196,122 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
             </div>
 
             {/* Navigation Tabs - Mobile Optimized */}
-            <Tabs defaultValue="overview" className="w-full">
+            <Tabs defaultValue={getDefaultTab()} className="w-full">
               <div className="sticky top-16 sm:top-20 bg-gray-50 z-30 -mx-3 sm:-mx-6 px-3 sm:px-6 pb-4">
-                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
-                  <TabsTrigger value="overview" className="text-xs sm:text-sm p-2 sm:p-3">
-                    <span className="hidden sm:inline">Dashboard </span>Overview
+                <TabsList className={`grid w-full h-auto ${
+                  sellerProfile.seller_type === 'Both' ? 'grid-cols-2 sm:grid-cols-4' : 
+                  sellerProfile.seller_type === 'Meat' ? 'grid-cols-2 sm:grid-cols-3' :
+                  'grid-cols-2 sm:grid-cols-3'
+                }`}>
+                  {showMeatOverview && (
+                    <TabsTrigger value="meat-overview" className="text-xs sm:text-sm p-2 sm:p-3">
+                      <span className="hidden sm:inline">Meat </span>Overview
+                    </TabsTrigger>
+                  )}
+                  {showLivestockOverview && (
+                    <TabsTrigger value="livestock-overview" className="text-xs sm:text-sm p-2 sm:p-3">
+                      <span className="hidden sm:inline">Livestock </span>Overview
+                    </TabsTrigger>
+                  )}
+                  <TabsTrigger value="shop-management" className="text-xs sm:text-sm p-2 sm:p-3">
+                    <span className="hidden sm:inline">Shop </span>Management
                   </TabsTrigger>
-                  <TabsTrigger value="account" className="text-xs sm:text-sm p-2 sm:p-3">
-                    Account
-                  </TabsTrigger>
-                  <TabsTrigger value="livestock" className="text-xs sm:text-sm p-2 sm:p-3">
-                    Livestock
-                  </TabsTrigger>
-                  <TabsTrigger value="management" className="text-xs sm:text-sm p-2 sm:p-3">
-                    <span className="hidden sm:inline">Shop </span>Mgmt
+                  <TabsTrigger value="account-details" className="text-xs sm:text-sm p-2 sm:p-3">
+                    Account Details
                   </TabsTrigger>
                 </TabsList>
               </div>
 
-              {/* Dashboard Overview Tab */}
-              <TabsContent value="overview" className="space-y-4 sm:space-y-6 mt-4">
-                <KPISnapshot sellerType={sellerProfile.seller_type} />
+              {/* Meat Overview Tab */}
+              {showMeatOverview && (
+                <TabsContent value="meat-overview" className="space-y-4 sm:space-y-6 mt-4">
+                  <KPISnapshot sellerType="Meat" />
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                  <LiveOrders sellerType={sellerProfile.seller_type} />
-                  <OrderStatusOverview sellerType={sellerProfile.seller_type} />
-                </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    <LiveOrders sellerType="Meat" />
+                    <OrderStatusOverview sellerType="Meat" />
+                  </div>
 
-                <TodaysPerformanceChart sellerType={sellerProfile.seller_type} />
+                  <TodaysPerformanceChart sellerType="Meat" />
 
-                <InventoryAlerts sellerType={sellerProfile.seller_type} />
+                  <InventoryAlerts sellerType="Meat" />
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base sm:text-lg">Monthly Growth & Historical Data</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-48 sm:h-64">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={[
-                          { month: 'Jan', revenue: 8400, orders: 124 },
-                          { month: 'Feb', revenue: 9200, orders: 142 },
-                          { month: 'Mar', revenue: 10800, orders: 168 },
-                          { month: 'Apr', revenue: 12400, orders: 195 },
-                          { month: 'May', revenue: 11600, orders: 178 },
-                          { month: 'Jun', revenue: 13200, orders: 210 }
-                        ]}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                          <YAxis tick={{ fontSize: 12 }} />
-                          <Tooltip />
-                          <Bar dataKey="revenue" fill="#dc2626" name="Revenue ($)" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </CardContent>
-                </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-base sm:text-lg">Meat Sales - Monthly Growth</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="h-48 sm:h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={[
+                            { month: 'Jan', revenue: 8400, orders: 124 },
+                            { month: 'Feb', revenue: 9200, orders: 142 },
+                            { month: 'Mar', revenue: 10800, orders: 168 },
+                            { month: 'Apr', revenue: 12400, orders: 195 },
+                            { month: 'May', revenue: 11600, orders: 178 },
+                            { month: 'Jun', revenue: 13200, orders: 210 }
+                          ]}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                            <YAxis tick={{ fontSize: 12 }} />
+                            <Tooltip />
+                            <Bar dataKey="revenue" fill="#dc2626" name="Revenue ($)" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                <CustomerInsights sellerType={sellerProfile.seller_type} />
-              </TabsContent>
+                  <CustomerInsights sellerType="Meat" />
+                </TabsContent>
+              )}
 
-              <TabsContent value="account" className="mt-4">
-                <AccountDetails sellerProfile={sellerProfile} />
-              </TabsContent>
+              {/* Livestock Overview Tab */}
+              {showLivestockOverview && (
+                <TabsContent value="livestock-overview" className="space-y-4 sm:space-y-6 mt-4">
+                  <KPISnapshot sellerType="Livestock" />
 
-              <TabsContent value="livestock" className="mt-4">
-                <LivestockListingsManager sellerType={sellerProfile.seller_type} />
-              </TabsContent>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    <LiveOrders sellerType="Livestock" />
+                    <OrderStatusOverview sellerType="Livestock" />
+                  </div>
 
-              <TabsContent value="management" className="mt-4">
+                  <TodaysPerformanceChart sellerType="Livestock" />
+
+                  <LivestockListingsManager sellerType="Livestock" />
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-base sm:text-lg">Livestock Sales - Monthly Growth</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="h-48 sm:h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={[
+                            { month: 'Jan', revenue: 45000, orders: 12 },
+                            { month: 'Feb', revenue: 52000, orders: 15 },
+                            { month: 'Mar', revenue: 48000, orders: 14 },
+                            { month: 'Apr', revenue: 67000, orders: 18 },
+                            { month: 'May', revenue: 71000, orders: 21 },
+                            { month: 'Jun', revenue: 83000, orders: 24 }
+                          ]}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                            <YAxis tick={{ fontSize: 12 }} />
+                            <Tooltip />
+                            <Bar dataKey="revenue" fill="#dc2626" name="Revenue ($)" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <CustomerInsights sellerType="Livestock" />
+                </TabsContent>
+              )}
+
+              {/* Shop Management Tab */}
+              <TabsContent value="shop-management" className="mt-4">
                 {sellerProfile.seller_type === 'Meat' && (
                   <MeatShopManagement 
                     sellerProfile={sellerProfile}
@@ -290,6 +348,11 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
                     </TabsContent>
                   </Tabs>
                 )}
+              </TabsContent>
+
+              {/* Account Details Tab */}
+              <TabsContent value="account-details" className="mt-4">
+                <AccountDetails sellerProfile={sellerProfile} />
               </TabsContent>
             </Tabs>
           </div>
