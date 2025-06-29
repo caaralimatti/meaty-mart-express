@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 interface OdooConfig {
@@ -20,13 +21,18 @@ interface OdooProduct {
 }
 
 interface OdooCustomer {
-  id: number;
+  id?: number;
   name: string;
-  email: string;
+  email?: string;
   phone?: string;
   street?: string;
   city?: string;
   country_id?: [number, string];
+  company_type?: string;
+  zip?: string;
+  is_company?: boolean;
+  supplier_rank?: number;
+  customer_rank?: number;
 }
 
 interface OdooOrder {

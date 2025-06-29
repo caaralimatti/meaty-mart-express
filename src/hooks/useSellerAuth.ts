@@ -42,7 +42,7 @@ export const useSellerAuth = () => {
           ? `${authData.firstName} ${authData.lastName || ''}`.trim()
           : authData.entityFullName,
         phone: authData.mobileNumber,
-        email: authData.email || false,
+        email: authData.email || undefined, // Changed from false to undefined
         street: authData.address || authData.registeredAddress,
         zip: authData.pincode,
         city: authData.city || '',
@@ -102,10 +102,9 @@ export const useSellerAuth = () => {
       seller_type: authData.typeOfSeller,
       contact_email: authData.email,
       contact_phone: authData.mobileNumber,
-      user_type: 'seller',
+      user_type: 'seller' as 'seller', // Explicitly type as 'seller'
       meat_shop_status: authData.typeOfSeller === 'Meat' || authData.typeOfSeller === 'Both',
       livestock_status: authData.typeOfSeller === 'Livestock' || authData.typeOfSeller === 'Both',
-      ...(odooCustomerId && { odoo_customer_id: odooCustomerId }) // Add Odoo ID if available
     };
 
     const { data: newSeller, error: sellerError } = await supabase
