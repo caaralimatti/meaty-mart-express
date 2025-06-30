@@ -11,9 +11,10 @@ import LivestockListingForm from './LivestockListingForm';
 interface LivestockManagementProps {
   sellerProfile: SellerProfile;
   onStatusToggle: (status: boolean) => void;
+  canAddProducts?: boolean;
 }
 
-const LivestockManagement = ({ sellerProfile, onStatusToggle }: LivestockManagementProps) => {
+const LivestockManagement = ({ sellerProfile, onStatusToggle, canAddProducts = true }: LivestockManagementProps) => {
   const [showListingForm, setShowListingForm] = useState(false);
 
   return (
@@ -49,13 +50,23 @@ const LivestockManagement = ({ sellerProfile, onStatusToggle }: LivestockManagem
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Livestock Listings
-            <Button onClick={() => setShowListingForm(true)}>
+            <Button 
+              onClick={() => setShowListingForm(true)}
+              disabled={!canAddProducts}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add Listing
             </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {!canAddProducts && (
+            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+              <p className="text-sm text-yellow-800">
+                Livestock listing is disabled until your seller account is approved.
+              </p>
+            </div>
+          )}
           {showListingForm ? (
             <LivestockListingForm 
               sellerId={sellerProfile.id}

@@ -11,9 +11,10 @@ import MeatProductForm from './MeatProductForm';
 interface MeatShopManagementProps {
   sellerProfile: SellerProfile;
   onStatusToggle: (status: boolean) => void;
+  canAddProducts?: boolean;
 }
 
-const MeatShopManagement = ({ sellerProfile, onStatusToggle }: MeatShopManagementProps) => {
+const MeatShopManagement = ({ sellerProfile, onStatusToggle, canAddProducts = true }: MeatShopManagementProps) => {
   const [showProductForm, setShowProductForm] = useState(false);
 
   return (
@@ -49,13 +50,23 @@ const MeatShopManagement = ({ sellerProfile, onStatusToggle }: MeatShopManagemen
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Meat Products
-            <Button onClick={() => setShowProductForm(true)}>
+            <Button 
+              onClick={() => setShowProductForm(true)}
+              disabled={!canAddProducts}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add Product
             </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {!canAddProducts && (
+            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+              <p className="text-sm text-yellow-800">
+                Product addition is disabled until your seller account is approved.
+              </p>
+            </div>
+          )}
           {showProductForm ? (
             <MeatProductForm 
               sellerId={sellerProfile.id}

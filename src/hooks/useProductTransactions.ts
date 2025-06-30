@@ -33,7 +33,20 @@ export const useProductTransactions = (productId?: string) => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setTransactions(data || []);
+      
+      // Type-safe transformation of the data
+      const typedTransactions: ProductTransaction[] = (data || []).map(item => ({
+        id: item.id,
+        meat_product_id: item.meat_product_id,
+        transaction_type: item.transaction_type as ProductTransaction['transaction_type'],
+        old_value: item.old_value,
+        new_value: item.new_value,
+        change_reason: item.change_reason,
+        changed_by: item.changed_by,
+        created_at: item.created_at
+      }));
+      
+      setTransactions(typedTransactions);
     } catch (error: any) {
       console.error('Error fetching transactions:', error);
       toast.error('Failed to load transaction history');
