@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { odooService } from '@/services/odooService';
@@ -22,11 +23,10 @@ export interface SellerAuthData {
 export const useSellerAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const createOdooCustomer = async (authData: SellerAuthData) => {
+  const createOdooCustomerAndApproval = async (authData: SellerAuthData, sellerId: string) => {
     try {
       console.log('Starting Odoo authentication and customer creation...');
       
-      // First authenticate with Odoo
       const isAuthenticated = await odooService.authenticate();
       if (!isAuthenticated) {
         throw new Error('Failed to authenticate with Odoo');
@@ -34,39 +34,54 @@ export const useSellerAuth = () => {
       
       console.log('Odoo authentication successful, creating customer...');
       
-      // Prepare customer data for Odoo res.partner table
       const customerData = {
         company_type: authData.type === 'Individual' ? 'person' : 'company',
         name: authData.type === 'Individual' 
           ? `${authData.firstName} ${authData.lastName || ''}`.trim()
           : authData.entityFullName,
         phone: authData.mobileNumber,
-        email: authData.email || '', // Use empty string instead of undefined
+        email: authData.email || '',
         street: authData.address || authData.registeredAddress,
         zip: authData.pincode,
         city: authData.city || '',
         is_company: authData.type === 'Registered',
-        supplier_rank: 1, // Mark as vendor/supplier
-        customer_rank: 0, // Not a customer by default
+        supplier_rank: 1,
+        customer_rank: 0,
       };
       
       console.log('Creating Odoo customer with data:', customerData);
       
-      // Create customer in Odoo
       const odooCustomerId = await odooService.createCustomer(customerData);
       
       if (odooCustomerId) {
-        console.log('Odoo customer created successfully with ID:', odooCustomerId);
-        toast.success('Odoo integration successful!');
+        // Create seller approval record with unique webhook ID
+        const webhookId = `seller_${sellerId}_${Date.now()}`;
+        
+        const { error: approvalError } = await supabase
+          .from('seller_approvals')
+          .insert({
+            seller_id: sellerId,
+            odoo_partner_id: odooCustomerId,
+            webhook_id: webhookId,
+            submitted_at: new Date().toISOString()
+          });
+
+        if (approvalError) {
+          console.error('Error creating seller approval record:', approvalError);
+        } else {
+          console.log('Seller approval record created with webhook ID:', webhookId);
+        }
+        
+        toast.success('Registration submitted for approval!');
         return odooCustomerId;
       } else {
-        console.warn('Failed to create Odoo customer, but continuing with local registration');
-        toast.warning('Local registration successful, but Odoo sync failed');
+        console.warn('Failed to create Odoo customer');
+        toast.warning('Registration successful locally, but pending Odoo integration');
         return null;
       }
     } catch (error: any) {
       console.error('Odoo integration error:', error);
-      toast.warning(`Local registration successful, but Odoo sync failed: ${error.message}`);
+      toast.warning(`Registration successful locally: ${error.message}`);
       return null;
     }
   };
@@ -78,7 +93,6 @@ export const useSellerAuth = () => {
 
     console.log('Creating seller profile directly without Supabase auth');
 
-    // Check if seller already exists by phone number
     const { data: existingSeller, error: checkError } = await supabase
       .from('sellers')
       .select('*')
@@ -95,15 +109,15 @@ export const useSellerAuth = () => {
       return existingSeller;
     }
 
-    // Create new seller without user_id since we removed the constraint
     const sellerData = {
       seller_name: sellerName,
       seller_type: authData.typeOfSeller,
       contact_email: authData.email,
       contact_phone: authData.mobileNumber,
-      user_type: 'seller' as 'seller', // Explicitly type as 'seller'
+      user_type: 'seller' as 'seller',
       meat_shop_status: authData.typeOfSeller === 'Meat' || authData.typeOfSeller === 'Both',
       livestock_status: authData.typeOfSeller === 'Livestock' || authData.typeOfSeller === 'Both',
+      approval_status: 'pending' as 'pending'
     };
 
     const { data: newSeller, error: sellerError } = await supabase
@@ -126,13 +140,11 @@ export const useSellerAuth = () => {
       setIsLoading(true);
       console.log('Starting phone-only seller registration for:', authData.mobileNumber);
       
-      // First, create Odoo customer (this includes authentication)
-      const odooCustomerId = await createOdooCustomer(authData);
+      const sellerProfile = await createSellerDirectly(authData);
       
-      // Create seller profile with optional Odoo ID
-      const sellerProfile = await createSellerDirectly(authData, odooCustomerId);
+      // Create Odoo customer and approval record
+      await createOdooCustomerAndApproval(authData, sellerProfile.id);
       
-      // Store seller session in localStorage for our custom session management
       const customSession = {
         seller: sellerProfile,
         phone: authData.mobileNumber,
@@ -143,17 +155,16 @@ export const useSellerAuth = () => {
           city: authData.city,
           pincode: authData.pincode,
           aadhaarNumber: authData.aadhaarNumber,
-          gstin: authData.gstin,
-          odooCustomerId: odooCustomerId
+          gstin: authData.gstin
         }
       };
       
       localStorage.setItem('quickgoat_seller_session', JSON.stringify(customSession));
       
-      toast.success('Registration successful! Welcome to QuickGoat Seller Portal');
+      toast.success('Registration successful! Redirecting to dashboard...');
       setTimeout(() => {
         onSuccess();
-      }, 500);
+      }, 1500);
       
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -168,7 +179,6 @@ export const useSellerAuth = () => {
       setIsLoading(true);
       console.log('Attempting seller login for phone:', phoneNumber);
       
-      // Find seller by phone number
       const { data: seller, error: sellerError } = await supabase
         .from('sellers')
         .select('*')
@@ -181,7 +191,6 @@ export const useSellerAuth = () => {
         return;
       }
 
-      // Create custom session
       const customSession = {
         seller: seller,
         phone: phoneNumber,
@@ -191,10 +200,10 @@ export const useSellerAuth = () => {
       localStorage.setItem('quickgoat_seller_session', JSON.stringify(customSession));
       
       console.log('Seller login successful');
-      toast.success('Login successful! Welcome back to QuickGoat');
+      toast.success('Login successful! Redirecting to dashboard...');
       setTimeout(() => {
         onSuccess();
-      }, 500);
+      }, 1500);
       
     } catch (error: any) {
       console.error('Login error:', error);

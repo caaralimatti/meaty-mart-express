@@ -12,6 +12,8 @@ export interface SellerProfile {
   contact_phone?: string;
   meat_shop_status: boolean;
   livestock_status: boolean;
+  approval_status: 'pending' | 'approved' | 'rejected';
+  approved_at?: string;
   created_at: string;
   updated_at: string;
   metadata?: any;
@@ -25,7 +27,6 @@ export const useSellerData = () => {
     try {
       console.log('Fetching seller data from custom session...');
       
-      // Check for custom seller session
       const sessionData = localStorage.getItem('quickgoat_seller_session');
       if (!sessionData) {
         console.log('No seller session found');
@@ -37,7 +38,6 @@ export const useSellerData = () => {
       const customSession = JSON.parse(sessionData);
       console.log('Custom session found:', customSession);
 
-      // Fetch latest seller data from database
       const { data: seller, error } = await supabase
         .from('sellers')
         .select('*')

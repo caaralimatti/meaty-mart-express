@@ -35,6 +35,60 @@ export type Database = {
           },
         ]
       }
+      livestock_approvals: {
+        Row: {
+          approval_status: Database["public"]["Enums"]["approval_status"] | null
+          approved_at: string | null
+          created_at: string | null
+          id: string
+          livestock_listing_id: string | null
+          odoo_product_id: number | null
+          rejected_at: string | null
+          rejection_reason: string | null
+          submitted_at: string | null
+          updated_at: string | null
+          webhook_id: string | null
+        }
+        Insert: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          approved_at?: string | null
+          created_at?: string | null
+          id?: string
+          livestock_listing_id?: string | null
+          odoo_product_id?: number | null
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          webhook_id?: string | null
+        }
+        Update: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          approved_at?: string | null
+          created_at?: string | null
+          id?: string
+          livestock_listing_id?: string | null
+          odoo_product_id?: number | null
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          webhook_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "livestock_approvals_livestock_listing_id_fkey"
+            columns: ["livestock_listing_id"]
+            isOneToOne: false
+            referencedRelation: "livestock_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       livestock_images: {
         Row: {
           created_at: string
@@ -75,6 +129,8 @@ export type Database = {
       }
       livestock_listings: {
         Row: {
+          approval_status: Database["public"]["Enums"]["approval_status"] | null
+          approved_at: string | null
           category: string
           created_at: string
           description: string | null
@@ -93,6 +149,10 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          approved_at?: string | null
           category: string
           created_at?: string
           description?: string | null
@@ -111,6 +171,10 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          approved_at?: string | null
           category?: string
           created_at?: string
           description?: string | null
@@ -189,6 +253,8 @@ export type Database = {
       }
       meat_products: {
         Row: {
+          approval_status: Database["public"]["Enums"]["approval_status"] | null
+          approved_at: string | null
           created_at: string
           description: string | null
           id: string
@@ -201,6 +267,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          approved_at?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -213,6 +283,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          approved_at?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -274,8 +348,166 @@ export type Database = {
         }
         Relationships: []
       }
+      product_approvals: {
+        Row: {
+          approval_status: Database["public"]["Enums"]["approval_status"] | null
+          approved_at: string | null
+          created_at: string | null
+          id: string
+          meat_product_id: string | null
+          odoo_product_id: number | null
+          rejected_at: string | null
+          rejection_reason: string | null
+          submitted_at: string | null
+          updated_at: string | null
+          webhook_id: string | null
+        }
+        Insert: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          approved_at?: string | null
+          created_at?: string | null
+          id?: string
+          meat_product_id?: string | null
+          odoo_product_id?: number | null
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          webhook_id?: string | null
+        }
+        Update: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          approved_at?: string | null
+          created_at?: string | null
+          id?: string
+          meat_product_id?: string | null
+          odoo_product_id?: number | null
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          webhook_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_approvals_meat_product_id_fkey"
+            columns: ["meat_product_id"]
+            isOneToOne: false
+            referencedRelation: "meat_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_transactions: {
+        Row: {
+          change_reason: string | null
+          changed_by: string | null
+          created_at: string | null
+          id: string
+          meat_product_id: string | null
+          new_value: Json | null
+          old_value: Json | null
+          transaction_type: string
+        }
+        Insert: {
+          change_reason?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          meat_product_id?: string | null
+          new_value?: Json | null
+          old_value?: Json | null
+          transaction_type: string
+        }
+        Update: {
+          change_reason?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          meat_product_id?: string | null
+          new_value?: Json | null
+          old_value?: Json | null
+          transaction_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_transactions_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_transactions_meat_product_id_fkey"
+            columns: ["meat_product_id"]
+            isOneToOne: false
+            referencedRelation: "meat_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seller_approvals: {
+        Row: {
+          approval_status: Database["public"]["Enums"]["approval_status"] | null
+          approved_at: string | null
+          created_at: string | null
+          id: string
+          odoo_partner_id: number | null
+          rejected_at: string | null
+          rejection_reason: string | null
+          seller_id: string | null
+          submitted_at: string | null
+          updated_at: string | null
+          webhook_id: string | null
+        }
+        Insert: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          approved_at?: string | null
+          created_at?: string | null
+          id?: string
+          odoo_partner_id?: number | null
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          seller_id?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          webhook_id?: string | null
+        }
+        Update: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          approved_at?: string | null
+          created_at?: string | null
+          id?: string
+          odoo_partner_id?: number | null
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          seller_id?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          webhook_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_approvals_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sellers: {
         Row: {
+          approval_status: Database["public"]["Enums"]["approval_status"] | null
+          approved_at: string | null
           contact_email: string | null
           contact_phone: string | null
           created_at: string
@@ -289,6 +521,10 @@ export type Database = {
           user_type: Database["public"]["Enums"]["user_type_enum"] | null
         }
         Insert: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          approved_at?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
@@ -302,6 +538,10 @@ export type Database = {
           user_type?: Database["public"]["Enums"]["user_type_enum"] | null
         }
         Update: {
+          approval_status?:
+            | Database["public"]["Enums"]["approval_status"]
+            | null
+          approved_at?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
@@ -339,6 +579,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      approval_status: "pending" | "approved" | "rejected"
       listing_status_enum:
         | "Pending Approval"
         | "Approved"
@@ -464,6 +705,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      approval_status: ["pending", "approved", "rejected"],
       listing_status_enum: [
         "Pending Approval",
         "Approved",

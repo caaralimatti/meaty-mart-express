@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useSellerData } from "@/hooks/useSellerData";
 import SellerOptionsScreen from "./SellerOptionsScreen";
@@ -14,6 +15,7 @@ import InventoryAlerts from "./InventoryAlerts";
 import CustomerInsights from "./CustomerInsights";
 import AccountDetails from "./AccountDetails";
 import LivestockListingsManager from "./LivestockListingsManager";
+import ApprovalStatusBanner from "./ApprovalStatusBanner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -115,6 +117,9 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     const showMeatOverview = sellerProfile.seller_type === 'Meat' || sellerProfile.seller_type === 'Both';
     const showLivestockOverview = sellerProfile.seller_type === 'Livestock' || sellerProfile.seller_type === 'Both';
     
+    // Check if seller is approved for adding products/listings
+    const canAddProducts = sellerProfile.approval_status === 'approved';
+    
     // Set default tab based on seller type
     const getDefaultTab = () => {
       if (showMeatOverview) return 'meat-overview';
@@ -190,6 +195,16 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
         {/* Main Content */}
         <main className="p-3 sm:p-6">
           <div className="max-w-7xl mx-auto">
+            {/* Approval Status Banner */}
+            {sellerProfile.approval_status !== 'approved' && (
+              <div className="mb-4 sm:mb-6">
+                <ApprovalStatusBanner 
+                  status={sellerProfile.approval_status}
+                  approvedAt={sellerProfile.approved_at}
+                />
+              </div>
+            )}
+
             {/* Lovable Prompt */}
             <div className="mb-4 sm:mb-6">
               <LovablePrompt sellerProfile={sellerProfile} />
@@ -312,10 +327,20 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
 
               {/* Shop Management Tab */}
               <TabsContent value="shop-management" className="mt-4">
+                {!canAddProducts && (
+                  <div className="mb-6">
+                    <ApprovalStatusBanner 
+                      status={sellerProfile.approval_status}
+                      approvedAt={sellerProfile.approved_at}
+                    />
+                  </div>
+                )}
+
                 {sellerProfile.seller_type === 'Meat' && (
                   <MeatShopManagement 
                     sellerProfile={sellerProfile}
                     onStatusToggle={(status) => updateShopStatus('meat', status)}
+                    canAddProducts={canAddProducts}
                   />
                 )}
 
@@ -323,6 +348,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
                   <LivestockManagement 
                     sellerProfile={sellerProfile}
                     onStatusToggle={(status) => updateShopStatus('livestock', status)}
+                    canAddProducts={canAddProducts}
                   />
                 )}
 
@@ -337,6 +363,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
                       <MeatShopManagement 
                         sellerProfile={sellerProfile}
                         onStatusToggle={(status) => updateShopStatus('meat', status)}
+                        canAddProducts={canAddProducts}
                       />
                     </TabsContent>
                     
@@ -344,6 +371,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
                       <LivestockManagement 
                         sellerProfile={sellerProfile}
                         onStatusToggle={(status) => updateShopStatus('livestock', status)}
+                        canAddProducts={canAddProducts}
                       />
                     </TabsContent>
                   </Tabs>
