@@ -50,8 +50,8 @@ const SellerOptionsScreen = ({
           {/* Header */}
           <div className="text-center mb-8">
             <button onClick={onBack} className="absolute top-4 left-4 sm:top-6 sm:left-6 text-off-white/70 hover:text-off-white flex items-center space-x-2 transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-              <span className="text-sm">Back</span>
+              <ArrowLeft className="w-5 h-5 bg-green-900" />
+              <span className="text-sm text-green-900">Back</span>
             </button>
             
             <div className="mb-6 flex justify-center">
