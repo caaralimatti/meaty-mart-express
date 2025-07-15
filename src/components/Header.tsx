@@ -30,7 +30,8 @@ const Header = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-gradient-to-r from-red-600 to-orange-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">Q</span>
+              <span className="text-white font-bold text-lg">G
+            </span>
             </div>
             <div>
               <h1 className="text-xl font-bold text-red-800">GoatGoat</h1>
