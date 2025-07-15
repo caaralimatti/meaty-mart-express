@@ -80,38 +80,38 @@ const ProductReviews = ({ isOpen, onClose, productName }: ProductReviewsProps) =
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-xl text-red-700">Reviews for {productName}</CardTitle>
-          <Button variant="ghost" onClick={onClose}>
+      <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden bg-gradient-to-br from-emerald-50 to-green-100 border-emerald-200 shadow-xl">
+        <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-emerald-500 to-green-600 text-white border-b border-emerald-300">
+          <CardTitle className="text-xl font-semibold">Reviews for {productName}</CardTitle>
+          <Button variant="ghost" onClick={onClose} className="text-white hover:bg-white/20 transition-all duration-300">
             <X className="w-5 h-5" />
           </Button>
         </CardHeader>
         
-        <CardContent className="p-4 max-h-[70vh] overflow-y-auto">
+        <CardContent className="p-4 max-h-[70vh] overflow-y-auto bg-gradient-to-br from-emerald-50 to-green-100">
           {/* Rating Summary */}
-          <Card className="mb-4 border-red-100">
+          <Card className="mb-4 border-emerald-200 bg-gradient-to-br from-white to-emerald-50">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-3xl font-bold text-red-600">{averageRating.toFixed(1)}</span>
+                    <span className="text-3xl font-bold text-emerald-700">{averageRating.toFixed(1)}</span>
                     <div className="flex">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <Star
                           key={star}
                           className={`w-5 h-5 ${
-                            star <= averageRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                            star <= averageRating ? 'fill-yellow-400 text-yellow-400' : 'text-emerald-300'
                           }`}
                         />
                       ))}
                     </div>
                   </div>
-                  <p className="text-gray-600">{reviews.length} reviews</p>
+                  <p className="text-emerald-600">{reviews.length} reviews</p>
                 </div>
                 <Button 
                   onClick={() => setShowWriteReview(true)}
-                  className="bg-red-600 hover:bg-red-700"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-300"
                 >
                   Write Review
                 </Button>
@@ -121,25 +121,25 @@ const ProductReviews = ({ isOpen, onClose, productName }: ProductReviewsProps) =
 
           {/* Write Review Form */}
           {showWriteReview && (
-            <Card className="mb-4 border-green-200 bg-green-50">
+            <Card className="mb-4 border-emerald-300 bg-gradient-to-br from-emerald-100 to-green-100">
               <CardContent className="p-4">
-                <h3 className="font-semibold mb-3">Write Your Review</h3>
+                <h3 className="font-semibold mb-3 text-emerald-800">Write Your Review</h3>
                 
                 {/* Star Rating */}
                 <div className="mb-3">
-                  <p className="text-sm font-medium mb-2">Rating</p>
+                  <p className="text-sm font-medium mb-2 text-emerald-700">Rating</p>
                   <div className="flex space-x-1">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         key={star}
                         onClick={() => setNewRating(star)}
-                        className="focus:outline-none"
+                        className="focus:outline-none transition-all duration-300"
                       >
                         <Star
                           className={`w-6 h-6 ${
                             star <= newRating 
                               ? 'fill-yellow-400 text-yellow-400' 
-                              : 'text-gray-300 hover:text-yellow-400'
+                              : 'text-emerald-300 hover:text-yellow-400'
                           }`}
                         />
                       </button>
@@ -149,22 +149,24 @@ const ProductReviews = ({ isOpen, onClose, productName }: ProductReviewsProps) =
 
                 {/* Comment */}
                 <div className="mb-3">
-                  <p className="text-sm font-medium mb-2">Your Review</p>
+                  <p className="text-sm font-medium mb-2 text-emerald-700">Your Review</p>
                   <Textarea
                     placeholder="Share your experience with this product..."
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     rows={3}
+                    className="border-emerald-200 focus:border-emerald-400 bg-white/80"
                   />
                 </div>
 
                 <div className="flex space-x-2">
-                  <Button onClick={submitReview} className="bg-green-600 hover:bg-green-700">
+                  <Button onClick={submitReview} className="bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-300">
                     Submit Review
                   </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => setShowWriteReview(false)}
+                    className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 transition-all duration-300"
                   >
                     Cancel
                   </Button>
@@ -176,16 +178,16 @@ const ProductReviews = ({ isOpen, onClose, productName }: ProductReviewsProps) =
           {/* Reviews List */}
           <div className="space-y-4">
             {reviews.map((review) => (
-              <Card key={review.id} className="border-gray-200">
+              <Card key={review.id} className="border-emerald-200 hover:border-emerald-400 transition-all duration-300 bg-gradient-to-br from-white to-emerald-50">
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex items-center space-x-2">
-                      <span className="font-semibold">{review.user}</span>
+                      <span className="font-semibold text-emerald-900">{review.user}</span>
                       {review.verified && (
-                        <Badge className="bg-green-600 text-xs">Verified Purchase</Badge>
+                        <Badge className="bg-emerald-600 text-white text-xs border-emerald-700">Verified Purchase</Badge>
                       )}
                     </div>
-                    <span className="text-sm text-gray-500">{review.date}</span>
+                    <span className="text-sm text-emerald-500">{review.date}</span>
                   </div>
                   
                   <div className="flex items-center space-x-2 mb-2">
@@ -194,17 +196,17 @@ const ProductReviews = ({ isOpen, onClose, productName }: ProductReviewsProps) =
                         <Star
                           key={star}
                           className={`w-4 h-4 ${
-                            star <= review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                            star <= review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-emerald-300'
                           }`}
                         />
                       ))}
                     </div>
                   </div>
                   
-                  <p className="text-gray-700 mb-3">{review.comment}</p>
+                  <p className="text-emerald-800 mb-3">{review.comment}</p>
                   
                   <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="sm" className="text-gray-500">
+                    <Button variant="ghost" size="sm" className="text-emerald-600 hover:bg-emerald-100 transition-all duration-300">
                       <ThumbsUp className="w-4 h-4 mr-1" />
                       Helpful ({review.helpful})
                     </Button>

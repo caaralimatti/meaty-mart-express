@@ -51,76 +51,76 @@ const NutritionInfo = ({ isOpen, onClose, productName }: NutritionInfoProps) => 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md max-h-[90vh] overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between">
+      <Card className="w-full max-w-md max-h-[90vh] overflow-hidden bg-gradient-to-br from-emerald-50 to-green-100 border-emerald-200 shadow-xl">
+        <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-emerald-500 to-green-600 text-white border-b border-emerald-300">
           <div className="flex items-center space-x-2">
-            <Activity className="w-5 h-5 text-green-600" />
-            <CardTitle className="text-xl text-green-700">Nutrition Info</CardTitle>
+            <Activity className="w-5 h-5 text-white" />
+            <CardTitle className="text-xl font-semibold">Nutrition Info</CardTitle>
           </div>
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="ghost" onClick={onClose} className="text-white hover:bg-white/20 transition-all duration-300">
             <X className="w-5 h-5" />
           </Button>
         </CardHeader>
         
-        <CardContent className="p-4 max-h-[70vh] overflow-y-auto">
+        <CardContent className="p-4 max-h-[70vh] overflow-y-auto bg-gradient-to-br from-emerald-50 to-green-100">
           <Tabs defaultValue="nutrition" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="nutrition">Nutrition Facts</TabsTrigger>
-              <TabsTrigger value="benefits">Health Benefits</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-emerald-100 border border-emerald-200">
+              <TabsTrigger value="nutrition" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white transition-all duration-300">Nutrition Facts</TabsTrigger>
+              <TabsTrigger value="benefits" className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white transition-all duration-300">Health Benefits</TabsTrigger>
             </TabsList>
             
             <TabsContent value="nutrition" className="space-y-4">
               <div className="text-center mb-4">
-                <h3 className="font-bold text-lg">{productName}</h3>
-                <p className="text-sm text-gray-600">Per 100g serving</p>
+                <h3 className="font-bold text-lg text-emerald-900">{productName}</h3>
+                <p className="text-sm text-emerald-600">Per 100g serving</p>
               </div>
 
-              <Card className="border-2 border-green-200">
+              <Card className="border-2 border-emerald-200 bg-gradient-to-br from-white to-emerald-50">
                 <CardContent className="p-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">{currentNutrition.calories}</div>
-                      <div className="text-sm text-gray-600">Calories</div>
+                      <div className="text-2xl font-bold text-emerald-700">{currentNutrition.calories}</div>
+                      <div className="text-sm text-emerald-600">Calories</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">{currentNutrition.protein}g</div>
-                      <div className="text-sm text-gray-600">Protein</div>
+                      <div className="text-2xl font-bold text-emerald-700">{currentNutrition.protein}g</div>
+                      <div className="text-sm text-emerald-600">Protein</div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               <div className="space-y-3">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center text-emerald-800">
                   <span>Total Fat</span>
                   <span className="font-semibold">{currentNutrition.fat}g</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center text-emerald-800">
                   <span>Carbohydrates</span>
                   <span className="font-semibold">{currentNutrition.carbs}g</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center text-emerald-800">
                   <span>Sodium</span>
                   <span className="font-semibold">{currentNutrition.sodium}mg</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center text-emerald-800">
                   <span>Iron</span>
                   <span className="font-semibold">{currentNutrition.iron}mg</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center text-emerald-800">
                   <span>Zinc</span>
                   <span className="font-semibold">{currentNutrition.zinc}mg</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center text-emerald-800">
                   <span>Vitamin B12</span>
                   <span className="font-semibold">{currentNutrition.vitaminB12}μg</span>
                 </div>
               </div>
 
-              <div className="mt-4 p-3 bg-green-50 rounded-lg">
+              <div className="mt-4 p-3 bg-gradient-to-r from-emerald-100 to-green-100 rounded-lg border border-emerald-200">
                 <div className="flex items-center space-x-2">
-                  <Badge className="bg-green-600">Halal Certified</Badge>
-                  <Badge className="bg-blue-600">Farm Fresh</Badge>
+                  <Badge className="bg-emerald-600 text-white border-emerald-700">Halal Certified</Badge>
+                  <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">Farm Fresh</Badge>
                 </div>
               </div>
             </TabsContent>
@@ -129,13 +129,13 @@ const NutritionInfo = ({ isOpen, onClose, productName }: NutritionInfoProps) => 
               {healthBenefits.map((benefit, index) => {
                 const IconComponent = benefit.icon;
                 return (
-                  <Card key={index} className="border-green-200">
+                  <Card key={index} className="border-emerald-200 hover:border-emerald-400 transition-all duration-300 bg-gradient-to-br from-white to-emerald-50">
                     <CardContent className="p-4">
                       <div className="flex items-start space-x-3">
-                        <IconComponent className="w-6 h-6 text-green-600 mt-1" />
+                        <IconComponent className="w-6 h-6 text-emerald-600 mt-1" />
                         <div>
-                          <h4 className="font-semibold text-green-700">{benefit.title}</h4>
-                          <p className="text-sm text-gray-600 mt-1">{benefit.desc}</p>
+                          <h4 className="font-semibold text-emerald-800">{benefit.title}</h4>
+                          <p className="text-sm text-emerald-600 mt-1">{benefit.desc}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -143,10 +143,10 @@ const NutritionInfo = ({ isOpen, onClose, productName }: NutritionInfoProps) => 
                 );
               })}
 
-              <Card className="border-orange-200 bg-orange-50">
+              <Card className="border-emerald-300 bg-gradient-to-r from-emerald-100 to-green-100">
                 <CardContent className="p-4">
-                  <h4 className="font-semibold text-orange-700 mb-2">Cooking Tips</h4>
-                  <ul className="text-sm space-y-1 text-gray-700">
+                  <h4 className="font-semibold text-emerald-800 mb-2">Cooking Tips</h4>
+                  <ul className="text-sm space-y-1 text-emerald-700">
                     <li>• Marinate for 2-4 hours for best flavor</li>
                     <li>• Cook on medium heat to retain nutrients</li>
                     <li>• Don't overcook to preserve protein quality</li>

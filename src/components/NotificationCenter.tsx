@@ -77,30 +77,30 @@ const NotificationCenter = ({ isOpen, onClose }: NotificationCenterProps) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md max-h-[80vh] overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between">
+      <Card className="w-full max-w-md max-h-[80vh] overflow-hidden bg-gradient-to-br from-emerald-50 to-green-100 border-emerald-200 shadow-xl">
+        <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-emerald-500 to-green-600 text-white border-b border-emerald-300">
           <div className="flex items-center space-x-2">
-            <Bell className="w-5 h-5 text-red-600" />
-            <CardTitle className="text-xl text-red-700">Notifications</CardTitle>
+            <Bell className="w-5 h-5 text-white" />
+            <CardTitle className="text-xl font-semibold">Notifications</CardTitle>
             {unreadCount > 0 && (
-              <Badge className="bg-red-600 text-white">
+              <Badge className="bg-red-600 text-white border-red-700 animate-pulse">
                 {unreadCount}
               </Badge>
             )}
           </div>
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="ghost" onClick={onClose} className="text-white hover:bg-white/20 transition-all duration-300">
             <X className="w-5 h-5" />
           </Button>
         </CardHeader>
         
-        <CardContent className="p-0">
+        <CardContent className="p-0 bg-gradient-to-br from-emerald-50 to-green-100">
           {unreadCount > 0 && (
-            <div className="p-4 border-b">
+            <div className="p-4 border-b border-emerald-200">
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={markAllAsRead}
-                className="w-full"
+                className="w-full border-emerald-300 text-emerald-700 hover:bg-emerald-100 transition-all duration-300"
               >
                 <Check className="w-4 h-4 mr-2" />
                 Mark All as Read
@@ -110,8 +110,8 @@ const NotificationCenter = ({ isOpen, onClose }: NotificationCenterProps) => {
           
           <div className="max-h-[50vh] overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="p-6 text-center text-gray-500">
-                <Bell className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+              <div className="p-6 text-center text-emerald-500">
+                <Bell className="w-12 h-12 mx-auto mb-2 text-emerald-300" />
                 <p>No notifications</p>
               </div>
             ) : (
@@ -120,24 +120,24 @@ const NotificationCenter = ({ isOpen, onClose }: NotificationCenterProps) => {
                 return (
                   <div
                     key={notification.id}
-                    className={`p-4 border-b hover:bg-gray-50 ${
-                      !notification.read ? 'bg-red-50 border-l-4 border-l-red-500' : ''
+                    className={`p-4 border-b border-emerald-100 hover:bg-emerald-100 transition-all duration-300 ${
+                      !notification.read ? 'bg-red-50 border-l-4 border-l-red-600' : 'bg-white/50'
                     }`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-3 flex-1">
-                        <div className={`p-2 rounded-full ${
-                          notification.type === 'order' ? 'bg-blue-100 text-blue-600' :
+                        <div className={`p-2 rounded-full transition-all duration-300 ${
+                          notification.type === 'order' ? 'bg-emerald-100 text-emerald-600' :
                           notification.type === 'promotion' ? 'bg-green-100 text-green-600' :
-                          notification.type === 'alert' ? 'bg-yellow-100 text-yellow-600' :
-                          'bg-purple-100 text-purple-600'
+                          notification.type === 'alert' ? 'bg-red-100 text-red-600' :
+                          'bg-emerald-100 text-emerald-600'
                         }`}>
                           <IconComponent className="w-4 h-4" />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-semibold text-sm">{notification.title}</h4>
-                          <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
-                          <p className="text-xs text-gray-400 mt-2">{notification.time}</p>
+                          <h4 className="font-semibold text-sm text-emerald-900">{notification.title}</h4>
+                          <p className="text-sm text-emerald-700 mt-1">{notification.message}</p>
+                          <p className="text-xs text-emerald-500 mt-2">{notification.time}</p>
                         </div>
                       </div>
                       <div className="flex items-center space-x-1">
@@ -146,6 +146,7 @@ const NotificationCenter = ({ isOpen, onClose }: NotificationCenterProps) => {
                             variant="ghost"
                             size="sm"
                             onClick={() => markAsRead(notification.id)}
+                            className="text-emerald-600 hover:bg-emerald-100 transition-all duration-300"
                           >
                             <Check className="w-4 h-4" />
                           </Button>
@@ -154,6 +155,7 @@ const NotificationCenter = ({ isOpen, onClose }: NotificationCenterProps) => {
                           variant="ghost"
                           size="sm"
                           onClick={() => deleteNotification(notification.id)}
+                          className="text-emerald-600 hover:bg-emerald-100 transition-all duration-300"
                         >
                           <X className="w-4 h-4" />
                         </Button>
