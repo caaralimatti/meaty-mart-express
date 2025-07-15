@@ -50,12 +50,17 @@ const ApiMonitor = () => {
                 variant={isRecording ? "destructive" : "default"}
                 size="sm"
                 onClick={toggleRecording}
-                className={isRecording ? "bg-red-600 hover:bg-red-700" : "bg-emerald-600 hover:bg-emerald-700"}
+                className={isRecording ? "bg-red-600 hover:bg-red-700 text-white" : "bg-emerald-600 hover:bg-emerald-700 text-white"}
               >
                 {isRecording ? <Pause className="w-4 h-4 mr-2" /> : <Play className="w-4 h-4 mr-2" />}
                 {isRecording ? 'Pause' : 'Record'}
               </Button>
-              <Button variant="outline" size="sm" onClick={clearLogs} className="border-emerald-300/50 text-emerald-100 hover:bg-emerald-600/20">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={clearLogs} 
+                className="bg-white/90 border-white text-emerald-700 hover:bg-white hover:text-emerald-800 shadow-md"
+              >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Clear
               </Button>
@@ -75,7 +80,10 @@ const ApiMonitor = () => {
                   variant={filter === f ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFilter(f as any)}
-                  className={filter === f ? "bg-emerald-600 hover:bg-emerald-700" : "border-emerald-300/50 text-emerald-100 hover:bg-emerald-600/20"}
+                  className={filter === f 
+                    ? "bg-emerald-600 hover:bg-emerald-700 text-white" 
+                    : "bg-white/90 border-white text-emerald-700 hover:bg-white hover:text-emerald-800 shadow-md"
+                  }
                 >
                   {f.replace('_', ' ').toUpperCase()}
                 </Button>
