@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 export interface ApiLog {
   id: string;
@@ -17,10 +17,9 @@ export interface ApiLog {
 export const useApiMonitor = () => {
   const [logs, setLogs] = useState<ApiLog[]>([]);
   const [isRecording, setIsRecording] = useState(true);
+  const isRecordingRef = useRef(isRecording);
 
-  const addLog = (log: Omit<ApiLog, 'id' | 'timestamp'>) => {
-    if (!isRecording) return;
-    
+  const addLog = useCallback((log: Omit<ApiLog, 'id' | 'timestamp'>) => {
     const newLog: ApiLog = {
       ...log,
       id: Math.random().toString(36).substr(2, 9),
@@ -28,7 +27,12 @@ export const useApiMonitor = () => {
     };
     
     setLogs(prev => [newLog, ...prev].slice(0, 100)); // Keep only last 100 logs
-  };
+  }, []);
+
+  // Update ref whenever isRecording changes
+  useEffect(() => {
+    isRecordingRef.current = isRecording;
+  }, [isRecording]);
 
   const clearLogs = () => setLogs([]);
   
@@ -44,7 +48,7 @@ export const useApiMonitor = () => {
       const method = options.method || 'GET';
       
       // Log the request
-      if (isRecording) {
+      if (isRecordingRef.current) {
         addLog({
           type: 'api_request',
           method,
@@ -61,7 +65,7 @@ export const useApiMonitor = () => {
       try {
         const response = await originalFetch(...args);
         
-        if (isRecording) {
+        if (isRecordingRef.current) {
           const responseClone = response.clone();
           let responseData = null;
           
@@ -89,7 +93,7 @@ export const useApiMonitor = () => {
 
         return response;
       } catch (error) {
-        if (isRecording) {
+        if (isRecordingRef.current) {
           addLog({
             type: 'api_response',
             method,
@@ -106,7 +110,7 @@ export const useApiMonitor = () => {
     return () => {
       window.fetch = originalFetch;
     };
-  }, [isRecording, addLog]);
+  }, [addLog]);
 
   return {
     logs,
