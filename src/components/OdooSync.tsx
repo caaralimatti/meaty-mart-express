@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { RotateCw, Database, ShoppingCart, Users, Package, Settings } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RotateCw, Database, ShoppingCart, Users, Package, Settings, Edit3, Save, X, Play, Pause, Square } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { odooService } from "@/services/odooService";
 import OdooProductsTable from "./OdooProductsTable";
@@ -14,14 +16,29 @@ interface OdooSyncProps {
   onProductsSync: (products: any[]) => void;
 }
 
+interface OdooConfig {
+  serverUrl: string;
+  database: string;
+  fields: string;
+}
+
 const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isStopped, setIsStopped] = useState(false);
+  const [isEditingConfig, setIsEditingConfig] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [connectionDetails, setConnectionDetails] = useState<string>('');
   const [odooProducts, setOdooProducts] = useState<any[]>([]);
+  const [config, setConfig] = useState<OdooConfig>({
+    serverUrl: 'http://138.91.109.69:8069',
+    database: 'ipurvey_staging',
+    fields: 'name, list_price, uom_id'
+  });
+  const [tempConfig, setTempConfig] = useState<OdooConfig>(config);
   const [syncStats, setSyncStats] = useState({
     productsUpdated: 0,
     ordersCreated: 0,
@@ -34,9 +51,54 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
     if (savedLastSync) {
       setLastSync(new Date(savedLastSync));
     }
+    
+    const savedConfig = localStorage.getItem('odooConfig');
+    if (savedConfig) {
+      const parsedConfig = JSON.parse(savedConfig);
+      setConfig(parsedConfig);
+      setTempConfig(parsedConfig);
+    }
   }, []);
 
+  const getConnectionStatus = () => {
+    if (isStopped) return "Stopped";
+    if (isPaused) return "Paused";
+    if (isConnected) return "Connected";
+    return "Disconnected";
+  };
+
+  const getConnectionBadgeVariant = () => {
+    if (isStopped) return "destructive";
+    if (isPaused) return "secondary";
+    if (isConnected) return "default";
+    return "secondary";
+  };
+
+  const saveConfig = () => {
+    setConfig(tempConfig);
+    localStorage.setItem('odooConfig', JSON.stringify(tempConfig));
+    setIsEditingConfig(false);
+    toast({
+      title: "Configuration Saved",
+      description: "Odoo configuration has been updated successfully.",
+    });
+  };
+
+  const cancelConfigEdit = () => {
+    setTempConfig(config);
+    setIsEditingConfig(false);
+  };
+
   const testConnection = async () => {
+    if (isStopped || isPaused) {
+      toast({
+        title: "Connection Unavailable",
+        description: "Connection is currently stopped or paused. Please resume first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setConnectionDetails('Testing connection...');
       console.log('Starting connection test...');
@@ -70,7 +132,48 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
     }
   };
 
+  const pauseConnection = () => {
+    setIsPaused(true);
+    setIsConnected(false);
+    setConnectionDetails('Connection paused');
+    toast({
+      title: "Connection Paused",
+      description: "Odoo connection has been paused. Click resume to continue.",
+    });
+  };
+
+  const resumeConnection = () => {
+    setIsPaused(false);
+    setIsStopped(false);
+    setConnectionDetails('Connection resumed');
+    toast({
+      title: "Connection Resumed",
+      description: "Odoo connection has been resumed. Test connection to reconnect.",
+    });
+  };
+
+  const stopConnection = () => {
+    setIsStopped(true);
+    setIsPaused(false);
+    setIsConnected(false);
+    setConnectionDetails('Connection stopped');
+    toast({
+      title: "Connection Stopped",
+      description: "Odoo connection has been stopped. Click resume to enable connection again.",
+      variant: "destructive",
+    });
+  };
+
   const fetchOdooProducts = async () => {
+    if (isStopped || isPaused) {
+      toast({
+        title: "Connection Unavailable",
+        description: "Connection is currently stopped or paused. Please resume first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoadingProducts(true);
     try {
       const connected = await odooService.authenticate();
@@ -98,6 +201,15 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
   };
 
   const syncProducts = async () => {
+    if (isStopped || isPaused) {
+      toast({
+        title: "Connection Unavailable",
+        description: "Connection is currently stopped or paused. Please resume first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSyncing(true);
     setSyncProgress(0);
     
@@ -144,6 +256,15 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
   };
 
   const createSampleOrder = async () => {
+    if (isStopped || isPaused) {
+      toast({
+        title: "Connection Unavailable",
+        description: "Connection is currently stopped or paused. Please resume first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const sampleOrder = {
         partner_id: 1,
@@ -184,24 +305,94 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
           <Database className="w-5 h-5 text-emerald-600" />
           <h2 className="text-xl font-semibold text-emerald-900">Odoo Integration - Product Sync</h2>
         </div>
-        <Badge variant={isConnected ? "default" : "secondary"} className="bg-emerald-100 text-emerald-800 border-emerald-300">
-          {isConnected ? "Connected" : "Disconnected"}
+        <Badge variant={getConnectionBadgeVariant()} className="bg-emerald-100 text-emerald-800 border-emerald-300">
+          {getConnectionStatus()}
         </Badge>
       </div>
       
       <div className="p-4 border border-emerald-200 bg-emerald-50 rounded-lg">
-        <div className="flex items-start space-x-3">
-          <Settings className="w-5 h-5 text-emerald-600 mt-0.5" />
-          <div>
-            <h3 className="font-semibold text-emerald-800">Configuration Status</h3>
-            <p className="text-sm text-emerald-700 mt-1">
-              Syncing from: product.product table
-            </p>
-            <ul className="text-sm text-emerald-700 mt-2 space-y-1">
-              <li>• Fields: name, list_price, uom_id</li>
-              <li>• Server: http://138.91.109.69:8069</li>
-              <li>• Database: ipurvey_staging</li>
-            </ul>
+        <div className="flex items-start justify-between">
+          <div className="flex items-start space-x-3">
+            <Settings className="w-5 h-5 text-emerald-600 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-emerald-800">Configuration Status</h3>
+              <p className="text-sm text-emerald-700 mt-1">
+                Syncing from: product.product table
+              </p>
+              {!isEditingConfig ? (
+                <ul className="text-sm text-emerald-700 mt-2 space-y-1">
+                  <li>• Fields: {config.fields}</li>
+                  <li>• Server: {config.serverUrl}</li>
+                  <li>• Database: {config.database}</li>
+                </ul>
+              ) : (
+                <div className="mt-3 space-y-3">
+                  <div>
+                    <Label htmlFor="fields" className="text-sm font-medium text-emerald-800">Fields</Label>
+                    <Input
+                      id="fields"
+                      value={tempConfig.fields}
+                      onChange={(e) => setTempConfig(prev => ({ ...prev, fields: e.target.value }))}
+                      placeholder="name, list_price, uom_id"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="server" className="text-sm font-medium text-emerald-800">Server URL</Label>
+                    <Input
+                      id="server"
+                      value={tempConfig.serverUrl}
+                      onChange={(e) => setTempConfig(prev => ({ ...prev, serverUrl: e.target.value }))}
+                      placeholder="http://138.91.109.69:8069"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="database" className="text-sm font-medium text-emerald-800">Database</Label>
+                    <Input
+                      id="database"
+                      value={tempConfig.database}
+                      onChange={(e) => setTempConfig(prev => ({ ...prev, database: e.target.value }))}
+                      placeholder="ipurvey_staging"
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex space-x-2">
+            {!isEditingConfig ? (
+              <Button 
+                onClick={() => setIsEditingConfig(true)}
+                variant="outline"
+                size="sm"
+                className="border-emerald-300 text-emerald-700 hover:bg-emerald-100"
+              >
+                <Edit3 className="w-4 h-4 mr-2" />
+                Edit
+              </Button>
+            ) : (
+              <>
+                <Button 
+                  onClick={saveConfig}
+                  size="sm"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Save
+                </Button>
+                <Button 
+                  onClick={cancelConfigEdit}
+                  variant="outline"
+                  size="sm"
+                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-100"
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Cancel
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -213,10 +404,44 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
             {connectionDetails || (isConnected ? "Connected to Odoo" : "Not connected. Click test to begin.")}
           </p>
         </div>
-        <Button onClick={testConnection} variant="outline" className="border-emerald-300 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400">
-          <Database className="w-4 h-4 mr-2" />
-          Test Connection
-        </Button>
+        <div className="flex space-x-2">
+          <Button onClick={testConnection} variant="outline" className="border-emerald-300 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400">
+            <Database className="w-4 h-4 mr-2" />
+            Test Connection
+          </Button>
+          
+          {(isPaused || isStopped) ? (
+            <Button 
+              onClick={resumeConnection}
+              variant="outline" 
+              className="border-emerald-300 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400"
+            >
+              <Play className="w-4 h-4 mr-2" />
+              Resume
+            </Button>
+          ) : (
+            <>
+              <Button 
+                onClick={pauseConnection}
+                variant="outline" 
+                className="border-yellow-300 text-yellow-700 hover:bg-yellow-100 hover:border-yellow-400"
+                disabled={!isConnected}
+              >
+                <Pause className="w-4 h-4 mr-2" />
+                Pause
+              </Button>
+              <Button 
+                onClick={stopConnection}
+                variant="outline" 
+                className="border-red-300 text-red-700 hover:bg-red-100 hover:border-red-400"
+                disabled={!isConnected}
+              >
+                <Square className="w-4 h-4 mr-2" />
+                Stop
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {isSyncing && (
@@ -258,7 +483,7 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
       <div className="flex space-x-3">
         <Button 
           onClick={fetchOdooProducts} 
-          disabled={!isConnected || isLoadingProducts}
+          disabled={!isConnected || isLoadingProducts || isPaused || isStopped}
           variant="outline"
           className="flex-1 border-emerald-300 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400"
         >
@@ -268,7 +493,7 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
         
         <Button 
           onClick={syncProducts} 
-          disabled={!isConnected || isSyncing}
+          disabled={!isConnected || isSyncing || isPaused || isStopped}
           className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
         >
           <RotateCw className={`w-4 h-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
@@ -277,7 +502,7 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
         
         <Button 
           onClick={createSampleOrder}
-          disabled={!isConnected}
+          disabled={!isConnected || isPaused || isStopped}
           variant="outline"
           className="flex-1 border-emerald-300 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400"
         >
