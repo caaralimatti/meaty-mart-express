@@ -19,11 +19,11 @@ export default {
 		},
 		extend: {
 			colors: {
-				// Modern Professional Palette - Navy & Emerald
-				'navy-deep': '#0f172a',
-				'emerald-fresh': '#10b981',
-				'slate-cool': '#334155',
-				'pearl-white': '#fefefe',
+				// Sophisticated Dark Palette - Deep Charcoal & Electric Blue
+				'charcoal-deep': '#1a1a1a',
+				'electric-blue': '#007aff',
+				'slate-dark': '#2d2d30',
+				'white-pure': '#ffffff',
 				
 				// Semantic token system
 				border: 'hsl(var(--border))',
