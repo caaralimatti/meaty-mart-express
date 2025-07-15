@@ -61,66 +61,66 @@ const WishlistModal = ({ isOpen, onClose, onAddToCart }: WishlistModalProps) => 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-2xl text-red-700">My Wishlist</CardTitle>
-          <Button variant="ghost" onClick={onClose}>
+      <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden bg-gradient-to-br from-emerald-50 to-green-100 border-emerald-200 shadow-xl">
+        <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-emerald-500 to-green-600 text-white border-b border-emerald-300">
+          <CardTitle className="text-2xl font-semibold">My Wishlist</CardTitle>
+          <Button variant="ghost" onClick={onClose} className="text-white hover:bg-white/20 transition-all duration-300">
             <X className="w-5 h-5" />
           </Button>
         </CardHeader>
         
-        <CardContent className="p-4 max-h-[70vh] overflow-y-auto">
+        <CardContent className="p-4 max-h-[70vh] overflow-y-auto bg-gradient-to-br from-emerald-50 to-green-100">
           {wishlistItems.length === 0 ? (
             <div className="text-center py-12">
-              <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg mb-4">Your wishlist is empty</p>
-              <Button onClick={onClose} className="bg-red-600 hover:bg-red-700">
+              <Heart className="w-16 h-16 text-emerald-300 mx-auto mb-4" />
+              <p className="text-emerald-600 text-lg mb-4">Your wishlist is empty</p>
+              <Button onClick={onClose} className="bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-300">
                 Continue Shopping
               </Button>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {wishlistItems.map((item) => (
-                <Card key={item.id} className="border-red-100 hover:shadow-lg transition-shadow">
+                <Card key={item.id} className="border-emerald-200 hover:border-emerald-400 hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-emerald-50">
                   <CardContent className="p-4">
                     <div className="relative mb-3">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-full h-32 object-cover rounded"
+                        className="w-full h-32 object-cover rounded border border-emerald-100"
                       />
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => removeFromWishlist(item.id)}
-                        className="absolute top-2 right-2 bg-white/80 hover:bg-white text-red-600"
+                        className="absolute top-2 right-2 bg-white/90 hover:bg-white text-emerald-700 hover:text-emerald-800 border border-emerald-200 transition-all duration-300"
                       >
                         <X className="w-4 h-4" />
                       </Button>
                       {!item.inStock && (
                         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded">
-                          <Badge variant="destructive">Out of Stock</Badge>
+                          <Badge className="bg-red-600 text-white border-red-700">Out of Stock</Badge>
                         </div>
                       )}
                     </div>
                     
-                    <h3 className="font-semibold text-gray-800 mb-2">{item.name}</h3>
+                    <h3 className="font-semibold text-emerald-900 mb-2">{item.name}</h3>
                     
                     <div className="flex items-center justify-between mb-2">
-                      <Badge variant="outline" className="text-xs">
+                      <Badge className="text-xs bg-emerald-100 text-emerald-700 border-emerald-200">
                         {item.weight}
                       </Badge>
                       <div className="flex items-center space-x-1">
                         <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm text-gray-600">{item.rating}</span>
+                        <span className="text-sm text-emerald-600">{item.rating}</span>
                       </div>
                     </div>
                     
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-2">
-                        <span className="text-lg font-bold text-red-600">₹{item.price}</span>
+                        <span className="text-lg font-bold text-emerald-700">₹{item.price}</span>
                         {item.originalPrice > item.price && (
-                          <span className="text-sm text-gray-500 line-through">₹{item.originalPrice}</span>
+                          <span className="text-sm text-emerald-500 line-through">₹{item.originalPrice}</span>
                         )}
                       </div>
                     </div>
@@ -129,7 +129,11 @@ const WishlistModal = ({ isOpen, onClose, onAddToCart }: WishlistModalProps) => 
                       <Button 
                         onClick={() => moveToCart(item)}
                         disabled={!item.inStock}
-                        className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400"
+                        className={`w-full transition-all duration-300 ${
+                          item.inStock 
+                            ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-md hover:shadow-lg" 
+                            : "bg-red-600 text-white cursor-not-allowed opacity-75"
+                        }`}
                       >
                         <ShoppingCart className="w-4 h-4 mr-2" />
                         {item.inStock ? "Move to Cart" : "Out of Stock"}
