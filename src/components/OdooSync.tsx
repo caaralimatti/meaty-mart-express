@@ -59,8 +59,15 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
     const savedConfig = localStorage.getItem('odooConfig');
     if (savedConfig) {
       const parsedConfig = JSON.parse(savedConfig);
-      setConfig(parsedConfig);
-      setTempConfig(parsedConfig);
+      const fullConfig = {
+        serverUrl: parsedConfig.serverUrl || 'https://goatgoat.xyz/',
+        database: parsedConfig.database || 'staging',
+        fields: parsedConfig.fields || 'name, list_price, uom_id',
+        username: parsedConfig.username || 'admin',
+        password: parsedConfig.password || 'admin'
+      };
+      setConfig(fullConfig);
+      setTempConfig(fullConfig);
     }
   }, []);
 
@@ -366,7 +373,7 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
                   <li>• Server: {config.serverUrl}</li>
                   <li>• Database: {config.database}</li>
                   <li>• Username: {config.username}</li>
-                  <li>• Password: {'•'.repeat(config.password.length)}</li>
+                  <li>• Password: {'•'.repeat((config.password || '').length)}</li>
                 </ul>
               ) : (
                 <div className="mt-3 space-y-3">
