@@ -148,16 +148,16 @@ const CustomerDashboard = ({
               originalPrice: 900,
               saving: "20% OFF",
               badge: "Trending"
-            }].map((product, index) => <Card key={index} className="border-emerald-200 hover:border-emerald-400 transition-colors cursor-pointer bg-white shadow-md">
+            }].map((product, index) => <Card key={index} className="border-emerald-200 hover:border-emerald-400 transition-all duration-300 cursor-pointer bg-gradient-to-br from-white to-emerald-50 shadow-md hover:shadow-lg">
                   <CardContent className="p-4">
                     <Badge className="mb-2 bg-emerald-100 text-emerald-700 border-emerald-200">{product.badge}</Badge>
                     <h4 className="font-semibold mb-2 text-emerald-900">{product.name}</h4>
                     <div className="flex items-center space-x-2 mb-3">
                       <span className="text-lg font-bold text-emerald-700">₹{product.price}</span>
-                      <span className="text-sm text-gray-500 line-through">₹{product.originalPrice}</span>
-                      <Badge className="text-xs bg-emerald-600 text-white">{product.saving}</Badge>
+                      <span className="text-sm text-emerald-500 line-through">₹{product.originalPrice}</span>
+                      <Badge className="text-xs bg-emerald-600 text-white border-0">{product.saving}</Badge>
                     </div>
-                    <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" size="sm">
+                    <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white transition-colors duration-200 shadow-sm" size="sm">
                       Add to Cart
                     </Button>
                   </CardContent>
