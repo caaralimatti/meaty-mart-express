@@ -47,14 +47,14 @@ const OrderTracking = ({ isOpen, onClose, orderId = "QG001234" }: OrderTrackingP
         
         <CardContent className="p-4 space-y-4 max-h-[70vh] overflow-y-auto">
           {/* Current Status */}
-          <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 transition-all duration-300">
+          <Card className="border-red-200 bg-gradient-to-br from-red-50 to-orange-50 transition-all duration-300">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold text-emerald-800">{orderStatus.status}</h3>
-                  <p className="text-sm text-emerald-600">ETA: {orderStatus.estimatedTime}</p>
+                  <h3 className="font-semibold text-red-600">{orderStatus.status}</h3>
+                  <p className="text-sm text-red-500">ETA: {orderStatus.estimatedTime}</p>
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-green-600 rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 bg-gradient-to-br from-red-600 to-red-700 rounded-full flex items-center justify-center shadow-lg">
                   <MapPin className="w-6 h-6 text-white" />
                 </div>
               </div>
@@ -91,7 +91,7 @@ const OrderTracking = ({ isOpen, onClose, orderId = "QG001234" }: OrderTrackingP
                       step.completed 
                         ? 'bg-emerald-600' 
                         : step.current 
-                          ? 'bg-emerald-500 animate-pulse' 
+                          ? 'bg-red-600 animate-pulse' 
                           : 'bg-emerald-200'
                     }`}>
                       {step.completed && (
@@ -100,12 +100,12 @@ const OrderTracking = ({ isOpen, onClose, orderId = "QG001234" }: OrderTrackingP
                     </div>
                     <div className="flex-1">
                       <p className={`font-medium transition-colors duration-200 ${
-                        step.current ? 'text-emerald-700' : step.completed ? 'text-emerald-800' : 'text-emerald-400'
+                        step.current ? 'text-red-600' : step.completed ? 'text-emerald-800' : 'text-emerald-400'
                       }`}>
                         {step.status}
                       </p>
                       <p className={`text-sm transition-colors duration-200 ${
-                        step.current ? 'text-emerald-600' : step.completed ? 'text-emerald-600' : 'text-emerald-400'
+                        step.current ? 'text-red-500' : step.completed ? 'text-emerald-600' : 'text-emerald-400'
                       }`}>
                         {step.time}
                       </p>
