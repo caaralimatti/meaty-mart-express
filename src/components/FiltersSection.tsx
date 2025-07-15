@@ -28,7 +28,7 @@ const FiltersSection = ({
     label: "Marinated"
   }];
   return <div className="container mx-auto px-4">
-      <div className="flex flex-wrap gap-2 mb-6 justify-center bg-inherit">
+      <div className="flex flex-wrap gap-2 mb-6 justify-center bg-transparent">
         {filters.map(filter => <Button key={filter.key} variant={selectedFilter === filter.key ? "default" : "outline"} size="sm" onClick={() => onFilterChange(filter.key)} className={selectedFilter === filter.key ? "bg-green-700 text-lime-200 hover:bg-green-600" : "border-green-200 text-green-700 hover:bg-green-50"}>
             {filter.label}
           </Button>)}
