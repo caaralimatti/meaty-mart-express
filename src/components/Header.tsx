@@ -71,7 +71,7 @@ const Header = ({
                 </Button>
               </>}
             
-            <Button variant="outline" size="sm" onClick={onCartOpen} className="relative border-red-200 hover:bg-red-50 text-black">
+            <Button variant="outline" size="sm" onClick={onCartOpen} className="relative border-red-200 hover:bg-red-50 text-base text-black">
               Cart ({totalCartItems})
               {totalCartItems > 0 && <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-1">
                   {totalCartItems}
