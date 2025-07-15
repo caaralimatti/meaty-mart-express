@@ -34,17 +34,17 @@ const FiltersSection = ({
           </Button>)}
         
         {/* New Feature Buttons */}
-        <Button variant="outline" size="sm" onClick={onFiltersOpen} className="border-red-200 text-red-700 hover:bg-red-50">
+        <Button variant="outline" size="sm" onClick={onFiltersOpen} className="bg-transparent border-green-200 text-green-700 hover:bg-green-50">
           <Filter className="w-4 h-4 mr-1" />
           Filters
         </Button>
         
-        <Button variant="outline" size="sm" onClick={onRecipesOpen} className="border-red-200 text-red-700 hover:bg-red-50">
+        <Button variant="outline" size="sm" onClick={onRecipesOpen} className="bg-transparent border-green-200 text-green-700 hover:bg-green-50">
           <ChefHat className="w-4 h-4 mr-1" />
           Recipes
         </Button>
         
-        <Button variant="outline" size="sm" onClick={onSchedulerOpen} className="border-red-200 text-red-700 hover:bg-red-50">
+        <Button variant="outline" size="sm" onClick={onSchedulerOpen} className="bg-transparent border-green-200 text-green-700 hover:bg-green-50">
           <Calendar className="w-4 h-4 mr-1" />
           Schedule
         </Button>
