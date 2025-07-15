@@ -212,7 +212,7 @@ const SellerOptionsScreen = ({
 
           <div className="text-center mt-8">
             <p className="text-sm text-emerald-600 font-medium">
-              GoatGoat
+              Join thousands of successful sellers on GoatGoat
             </p>
           </div>
         </div>
