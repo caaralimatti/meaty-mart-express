@@ -1,26 +1,20 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShoppingCart, Store } from "lucide-react";
 import { UserRole } from "@/hooks/useUserRole";
-
 interface RoleSelectorProps {
   onRoleSelect: (role: UserRole) => void;
 }
-
-const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
-  return (
-    <div className="min-h-screen bg-charcoal-black flex items-center justify-center p-4">
+const RoleSelector = ({
+  onRoleSelect
+}: RoleSelectorProps) => {
+  return <div className="min-h-screen bg-charcoal-black flex items-center justify-center p-4 bg-lime-200">
       <div className="max-w-5xl w-full">
         {/* Header with Logo */}
         <div className="text-center mb-12">
           <div className="mb-6 flex justify-center">
             <div className="w-24 h-24 sm:w-32 sm:h-32 relative">
-              <img
-                src="/lovable-uploads/8f9753cb-0f1b-4875-8ffd-8cf77fcf2eff.png"
-                alt="QuickGoat Logo"
-                className="w-full h-full object-contain"
-              />
+              <img src="/lovable-uploads/8f9753cb-0f1b-4875-8ffd-8cf77fcf2eff.png" alt="QuickGoat Logo" className="w-full h-full object-contain" />
             </div>
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-off-white mb-4">
@@ -32,10 +26,7 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
 
         <div className="flex flex-col lg:flex-row gap-6 justify-center items-center">
           {/* Customer Card */}
-          <Card 
-            className="relative w-full lg:w-96 h-[400px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105"
-            onClick={() => onRoleSelect('customer')}
-          >
+          <Card className="relative w-full lg:w-96 h-[400px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105" onClick={() => onRoleSelect('customer')}>
             <CardContent className="p-6 h-full flex flex-col justify-center text-center">
               <div className="flex-1 flex flex-col justify-center">
                 <div className="flex items-center justify-center mb-6">
@@ -59,23 +50,17 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
                 </div>
               </div>
               
-              <Button 
-                className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black font-bold text-lg h-12 transition-all duration-300"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRoleSelect('customer');
-                }}
-              >
+              <Button className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black font-bold text-lg h-12 transition-all duration-300" onClick={e => {
+              e.stopPropagation();
+              onRoleSelect('customer');
+            }}>
                 Start Shopping
               </Button>
             </CardContent>
           </Card>
 
           {/* Seller Card - Now directly goes to seller dashboard */}
-          <Card 
-            className="relative w-full lg:w-96 h-[400px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105"
-            onClick={() => onRoleSelect('seller')}
-          >
+          <Card className="relative w-full lg:w-96 h-[400px] rounded-2xl shadow-2xl bg-dark-slate border-dark-slate hover:border-vibrant-orange/30 cursor-pointer hover:shadow-vibrant-orange/10 transition-all duration-300 overflow-hidden group hover:scale-105" onClick={() => onRoleSelect('seller')}>
             <CardContent className="p-6 h-full flex flex-col justify-center text-center">
               <div className="flex-1 flex flex-col justify-center">
                 <div className="flex items-center justify-center mb-6">
@@ -86,13 +71,10 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
                 <p className="text-2xl sm:text-3xl font-bold text-vibrant-orange mb-8">GROW YOUR BUSINESS</p>
               </div>
               
-              <Button 
-                className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black font-bold text-lg h-12 transition-all duration-300"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRoleSelect('seller');
-                }}
-              >
+              <Button className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black font-bold text-lg h-12 transition-all duration-300" onClick={e => {
+              e.stopPropagation();
+              onRoleSelect('seller');
+            }}>
                 Access Dashboard
               </Button>
             </CardContent>
@@ -105,8 +87,6 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default RoleSelector;
