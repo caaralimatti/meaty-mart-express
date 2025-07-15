@@ -28,12 +28,12 @@ const ProductCard = ({
       <div className="relative">
         <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
         {!product.inStock && <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <Badge variant="destructive" className="text-white">Out of Stock</Badge>
+            <Badge variant="destructive" className="text-white bg-red-600">Out of Stock</Badge>
           </div>}
         {product.inStock && discountPercent > 0 && <Badge className="absolute top-2 left-2 bg-green-600">
             {discountPercent}% OFF
           </Badge>}
-        <Badge className="absolute top-2 right-2 bg-blue-600">
+        <Badge className="absolute top-2 right-2 bg-green-600">
           {product.freshness}
         </Badge>
       </div>

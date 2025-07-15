@@ -33,7 +33,7 @@ const Header = ({
               <span className="text-white font-bold text-lg">Q</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-red-800">QuickGoat</h1>
+              <h1 className="text-xl font-bold text-red-800">GoatGoat</h1>
               <p className="text-xs text-gray-600">Farm to Fork in 30 mins</p>
             </div>
           </div>
