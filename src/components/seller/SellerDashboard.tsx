@@ -415,6 +415,7 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
         onShowRegistration={handleShowRegistration}
         onShowLogin={handleShowLogin}
         onBack={onBackToMain}
+        onRegistrationSuccess={handleRegistrationSuccess}
       />
       <AuthModal 
         isOpen={showAuthModal}

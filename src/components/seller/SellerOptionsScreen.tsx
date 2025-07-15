@@ -9,12 +9,14 @@ interface SellerOptionsScreenProps {
   onShowRegistration: () => void;
   onShowLogin: () => void;
   onBack: () => void;
+  onRegistrationSuccess?: () => void;
 }
 
 const SellerOptionsScreen = ({
   onShowRegistration,
   onShowLogin,
-  onBack
+  onBack,
+  onRegistrationSuccess
 }: SellerOptionsScreenProps) => {
   const [currentView, setCurrentView] = useState<'options' | 'registration'>('options');
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -38,8 +40,8 @@ const SellerOptionsScreen = ({
   };
 
   const handleRegistrationSuccess = () => {
-    // Call the parent's registration handler to switch to dashboard
-    onShowRegistration();
+    // Call the parent's registration success handler to switch to dashboard
+    onRegistrationSuccess?.();
   };
 
   const handleRegistrationCancel = () => {
