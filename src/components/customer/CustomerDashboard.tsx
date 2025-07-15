@@ -43,15 +43,15 @@ const CustomerDashboard = ({ onBackToShopping }: CustomerDashboardProps) => {
   const progressPercentage = (loyaltyPoints / nextRewardPoints) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white shadow-md border-b-2 border-red-100 p-4">
+      <div className="bg-card shadow-lg border-b border-border p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-red-800">Welcome back, Rajesh! 👋</h1>
-            <p className="text-gray-600">Your premium shopping experience awaits</p>
+            <h1 className="text-2xl font-bold text-foreground">Welcome back, Rajesh! 👋</h1>
+            <p className="text-muted-foreground">Your premium shopping experience awaits</p>
           </div>
-          <Button onClick={onBackToShopping} className="bg-red-600 hover:bg-red-700">
+          <Button onClick={onBackToShopping} className="bg-primary text-primary-foreground hover:bg-primary/90">
             Continue Shopping
           </Button>
         </div>
@@ -59,16 +59,16 @@ const CustomerDashboard = ({ onBackToShopping }: CustomerDashboardProps) => {
 
       <div className="container mx-auto p-6 space-y-6">
         {/* Flash Sale Banner - Urgency Psychology */}
-        <Card className="bg-gradient-to-r from-red-600 to-orange-600 text-white border-none shadow-lg">
+        <Card className="bg-gradient-to-r from-primary/20 to-primary/10 text-foreground border border-primary/20 shadow-lg">
           <CardContent className="p-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-2xl font-bold mb-2">⚡ FLASH SALE ENDING SOON!</h3>
-                <p className="text-red-100">Up to 40% OFF on premium cuts - Limited time only!</p>
+                <h3 className="text-2xl font-bold mb-2 text-primary">⚡ FLASH SALE ENDING SOON!</h3>
+                <p className="text-muted-foreground">Up to 40% OFF on premium cuts - Limited time only!</p>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-mono font-bold">{formatTime(timeRemaining)}</div>
-                <p className="text-sm text-red-100">Time left</p>
+                <div className="text-3xl font-mono font-bold text-primary">{formatTime(timeRemaining)}</div>
+                <p className="text-sm text-muted-foreground">Time left</p>
               </div>
             </div>
           </CardContent>
@@ -79,24 +79,24 @@ const CustomerDashboard = ({ onBackToShopping }: CustomerDashboardProps) => {
           <Card className="col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <Gift className="w-5 h-5 text-yellow-600" />
+                <Gift className="w-5 h-5 text-primary" />
                 <span>Loyalty Rewards</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="font-semibold text-lg">{loyaltyPoints} Points</span>
-                  <Badge className="bg-yellow-100 text-yellow-800">Gold Member</Badge>
+                  <span className="font-semibold text-lg text-foreground">{loyaltyPoints} Points</span>
+                  <Badge className="bg-primary/20 text-primary">Gold Member</Badge>
                 </div>
                 <Progress value={progressPercentage} className="h-3" />
-                <p className="text-sm text-gray-600 mt-2">
+                <p className="text-sm text-muted-foreground mt-2">
                   {nextRewardPoints - loyaltyPoints} points to next reward!
                 </p>
               </div>
               
               <div className="space-y-2">
-                <Button className="w-full bg-yellow-600 hover:bg-yellow-700" size="sm">
+                <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90" size="sm">
                   Redeem 500 Points (₹50 OFF)
                 </Button>
                 <Button variant="outline" className="w-full" size="sm">
@@ -114,20 +114,20 @@ const CustomerDashboard = ({ onBackToShopping }: CustomerDashboardProps) => {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">₹12,450</div>
-                  <p className="text-sm text-gray-600">Total Saved</p>
+                  <div className="text-2xl font-bold text-primary">₹12,450</div>
+                  <p className="text-sm text-muted-foreground">Total Saved</p>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">47</div>
-                  <p className="text-sm text-gray-600">Orders Placed</p>
+                  <div className="text-2xl font-bold text-primary">47</div>
+                  <p className="text-sm text-muted-foreground">Orders Placed</p>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">4.9⭐</div>
-                  <p className="text-sm text-gray-600">Avg Rating</p>
+                  <div className="text-2xl font-bold text-primary">4.9⭐</div>
+                  <p className="text-sm text-muted-foreground">Avg Rating</p>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-red-600">18 min</div>
-                  <p className="text-sm text-gray-600">Avg Delivery</p>
+                  <div className="text-2xl font-bold text-primary">18 min</div>
+                  <p className="text-sm text-muted-foreground">Avg Delivery</p>
                 </div>
               </div>
             </CardContent>
@@ -138,9 +138,9 @@ const CustomerDashboard = ({ onBackToShopping }: CustomerDashboardProps) => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <TrendingUp className="w-5 h-5 text-red-600" />
+              <TrendingUp className="w-5 h-5 text-primary" />
               <span>Handpicked Just for You</span>
-              <Badge className="bg-red-100 text-red-700">AI Powered</Badge>
+              <Badge className="bg-primary/20 text-primary">AI Powered</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>

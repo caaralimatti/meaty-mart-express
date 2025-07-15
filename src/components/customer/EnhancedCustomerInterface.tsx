@@ -74,7 +74,7 @@ const EnhancedCustomerInterface = ({ onSwitchRole }: EnhancedCustomerInterfacePr
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-red-50">
+    <div className="min-h-screen bg-background">
       <Header
         isLoggedIn={state.isLoggedIn}
         notificationCount={state.notificationCount}
@@ -89,13 +89,13 @@ const EnhancedCustomerInterface = ({ onSwitchRole }: EnhancedCustomerInterfacePr
       />
 
       {/* Role Switch Button */}
-      <div className="bg-white border-b border-red-100 p-2">
+      <div className="bg-card border-b border-border p-2">
         <div className="container mx-auto flex justify-end">
           <Button 
             variant="outline" 
             size="sm" 
             onClick={onSwitchRole}
-            className="border-blue-200 text-blue-700 hover:bg-blue-50"
+            className="border-primary/30 text-primary hover:bg-primary/10"
           >
             <User className="w-4 h-4 mr-1" />
             Switch to Seller
