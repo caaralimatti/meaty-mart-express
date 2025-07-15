@@ -2,28 +2,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShoppingCart, Store } from "lucide-react";
 import { UserRole } from "@/hooks/useUserRole";
-
 interface RoleSelectorProps {
   onRoleSelect: (role: UserRole) => void;
 }
-
-const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center p-4">
+const RoleSelector = ({
+  onRoleSelect
+}: RoleSelectorProps) => {
+  return <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center p-4">
       <div className="max-w-5xl w-full">
         {/* Header with Logo */}
         <div className="text-center mb-12">
           <div className="mb-6 flex justify-center">
             <div className="w-24 h-24 sm:w-32 sm:h-32 relative p-4 bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30 shadow-lg">
-              <img 
-                src="/lovable-uploads/8f9753cb-0f1b-4875-8ffd-8cf77fcf2eff.png" 
-                alt="QuickGoat Logo" 
-                className="w-full h-full object-contain drop-shadow-lg" 
-              />
+              <img src="/lovable-uploads/8f9753cb-0f1b-4875-8ffd-8cf77fcf2eff.png" alt="QuickGoat Logo" className="w-full h-full object-contain drop-shadow-lg" />
             </div>
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-emerald-900 mb-4">
-            GoatGoat
+            Quick<span className="text-emerald-600">Goat</span>
           </h1>
           <p className="text-lg sm:text-xl text-emerald-700 mb-2 font-medium">Premium Meat & Livestock Platform</p>
           <p className="text-sm sm:text-base text-emerald-600">Choose your experience to get started</p>
@@ -61,13 +56,10 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
                   </div>
                 </div>
                 
-                <Button 
-                  className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold text-lg h-12 transition-all duration-300 shadow-lg hover:shadow-[0_10px_20px_-5px_rgba(5,150,105,0.4)] border-0" 
-                  onClick={e => {
-                    e.stopPropagation();
-                    onRoleSelect('customer');
-                  }}
-                >
+                <Button className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold text-lg h-12 transition-all duration-300 shadow-lg hover:shadow-[0_10px_20px_-5px_rgba(5,150,105,0.4)] border-0" onClick={e => {
+                e.stopPropagation();
+                onRoleSelect('customer');
+              }}>
                   Start Shopping
                 </Button>
               </div>
@@ -92,13 +84,10 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
                   <p className="text-2xl sm:text-3xl font-bold text-white mb-8 drop-shadow-sm">GROW YOUR BUSINESS</p>
                 </div>
                 
-                <Button 
-                  className="w-full bg-white/20 hover:bg-white/30 text-white font-bold text-lg h-12 transition-all duration-300 shadow-lg hover:shadow-[0_10px_20px_-5px_rgba(255,255,255,0.2)] backdrop-blur-sm border border-white/30 hover:border-white/50" 
-                  onClick={e => {
-                    e.stopPropagation();
-                    onRoleSelect('seller');
-                  }}
-                >
+                <Button className="w-full bg-white/20 hover:bg-white/30 text-white font-bold text-lg h-12 transition-all duration-300 shadow-lg hover:shadow-[0_10px_20px_-5px_rgba(255,255,255,0.2)] backdrop-blur-sm border border-white/30 hover:border-white/50" onClick={e => {
+                e.stopPropagation();
+                onRoleSelect('seller');
+              }}>
                   Access Dashboard
                 </Button>
               </div>
@@ -107,13 +96,9 @@ const RoleSelector = ({ onRoleSelect }: RoleSelectorProps) => {
         </div>
 
         <div className="text-center mt-12">
-          <p className="text-sm text-emerald-600 font-medium">
-            Join thousands of satisfied customers and successful sellers on QuickGoat
-          </p>
+          <p className="text-sm text-emerald-600 font-medium">Join thousands of satisfied customers and successful sellers on GoatGoat</p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default RoleSelector;
