@@ -49,6 +49,11 @@ interface OdooOrder {
 
 class OdooService {
   private sessionId: string | null = null;
+  private config: OdooConfig | null = null;
+
+  setConfig(config: OdooConfig) {
+    this.config = config;
+  }
 
   private async makeRequest(endpoint: string, data?: any) {
     console.log(`Making Odoo proxy request for endpoint: ${endpoint}`, { data, sessionId: this.sessionId });
@@ -83,6 +88,10 @@ class OdooService {
   }
 
   async authenticate(): Promise<boolean> {
+    if (!this.config) {
+      throw new Error('Odoo configuration not set. Please configure server, database, and credentials.');
+    }
+
     try {
       console.log('Starting Odoo authentication...');
       
@@ -90,9 +99,9 @@ class OdooService {
         jsonrpc: '2.0',
         method: 'call',
         params: {
-          db: '',
-          login: '',
-          password: ''
+          db: this.config.database,
+          login: this.config.username,
+          password: this.config.password
         },
         id: Math.random(),
       });
@@ -118,7 +127,7 @@ class OdooService {
         params: {
           service: 'common',
           method: 'authenticate',
-          args: ['', '', '']
+          args: [this.config.database, this.config.username, this.config.password]
         },
         id: Math.random(),
       });
@@ -139,14 +148,19 @@ class OdooService {
     }
   }
 
-  async getProducts(): Promise<OdooProduct[]> {
+  async getProducts(fields?: string[]): Promise<OdooProduct[]> {
     if (!this.sessionId) {
       const authSuccess = await this.authenticate();
       if (!authSuccess) throw new Error("Not authenticated with Odoo");
     }
 
+    if (!this.config) {
+      throw new Error('Odoo configuration not set');
+    }
+
     try {
-      console.log('Fetching products from Odoo with specific fields: name, list_price, uom_id');
+      const fieldsToUse = fields || ['name', 'list_price', 'uom_id'];
+      console.log('Fetching products from Odoo with fields:', fieldsToUse);
       
       const response = await this.makeRequest('/web/dataset/call_kw', {
         jsonrpc: '2.0',
@@ -156,7 +170,7 @@ class OdooService {
           method: 'search_read',
           args: [[]],
           kwargs: {
-            fields: ['name', 'list_price', 'uom_id'],
+            fields: fieldsToUse,
             limit: 100,
           },
         },
@@ -171,9 +185,9 @@ class OdooService {
     }
   }
 
-  async syncProductsToLocal(localProducts: any[]): Promise<any[]> {
+  async syncProductsToLocal(localProducts: any[], fields?: string[]): Promise<any[]> {
     console.log('Starting product sync with Odoo...');
-    const odooProducts = await this.getProducts();
+    const odooProducts = await this.getProducts(fields);
     console.log('Fetched', odooProducts.length, 'products from Odoo');
     
     return localProducts.map(localProduct => {

@@ -103,6 +103,14 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
       setConnectionDetails('Testing connection...');
       console.log('Starting connection test...');
       
+      // Set configuration before authenticating
+      odooService.setConfig({
+        serverUrl: config.serverUrl,
+        database: config.database,
+        username: '', // These come from Supabase secrets
+        password: '', // These come from Supabase secrets
+      });
+      
       const connected = await odooService.authenticate();
       setIsConnected(connected);
       
@@ -176,12 +184,22 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
 
     setIsLoadingProducts(true);
     try {
+      // Set configuration before making requests
+      odooService.setConfig({
+        serverUrl: config.serverUrl,
+        database: config.database,
+        username: '', // These come from Supabase secrets
+        password: '', // These come from Supabase secrets
+      });
+
       const connected = await odooService.authenticate();
       if (!connected) {
         throw new Error('Authentication failed. Please test connection first.');
       }
 
-      const fetchedProducts = await odooService.getProducts();
+      // Parse fields from config
+      const fieldsArray = config.fields.split(',').map(field => field.trim());
+      const fetchedProducts = await odooService.getProducts(fieldsArray);
       setOdooProducts(fetchedProducts);
       
       toast({
@@ -215,6 +233,15 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
     
     try {
       setSyncProgress(20);
+      
+      // Set configuration before making requests
+      odooService.setConfig({
+        serverUrl: config.serverUrl,
+        database: config.database,
+        username: '', // These come from Supabase secrets
+        password: '', // These come from Supabase secrets
+      });
+
       const connected = await odooService.authenticate();
       
       if (!connected) {
@@ -222,7 +249,9 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
       }
 
       setSyncProgress(50);
-      const syncedProducts = await odooService.syncProductsToLocal(products);
+      // Parse fields from config
+      const fieldsArray = config.fields.split(',').map(field => field.trim());
+      const syncedProducts = await odooService.syncProductsToLocal(products, fieldsArray);
       setSyncProgress(80);
       
       onProductsSync(syncedProducts);
@@ -266,6 +295,14 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
     }
 
     try {
+      // Set configuration before making requests
+      odooService.setConfig({
+        serverUrl: config.serverUrl,
+        database: config.database,
+        username: '', // These come from Supabase secrets
+        password: '', // These come from Supabase secrets
+      });
+
       const sampleOrder = {
         partner_id: 1,
         order_line: [
