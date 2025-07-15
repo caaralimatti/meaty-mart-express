@@ -17,7 +17,7 @@ const RoleSelector = ({
               <img src="/lovable-uploads/8f9753cb-0f1b-4875-8ffd-8cf77fcf2eff.png" alt="QuickGoat Logo" className="w-full h-full object-contain" />
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-off-white mb-4 text-green-700">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-off-white mb-4 text-green-900">
             GoatGoat<span className="text-vibrant-orange">Goat</span>
           </h1>
           <p className="text-lg sm:text-xl text-off-white/80 mb-2 text-green-700">Premium Meat & Livestock Platform</p>
