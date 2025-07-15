@@ -39,46 +39,66 @@ export const useApiMonitor = () => {
     const originalFetch = window.fetch;
     
     window.fetch = async (...args) => {
-      if (!isRecording) return originalFetch(...args);
-      
       const startTime = Date.now();
       const [url, options = {}] = args;
       const method = options.method || 'GET';
       
       // Log the request
-      addLog({
-        type: 'api_request',
-        method,
-        endpoint: url.toString(),
-        payload: options.body ? JSON.parse(options.body as string) : null,
-        headers: options.headers as Record<string, string> || {},
-      });
+      if (isRecording) {
+        addLog({
+          type: 'api_request',
+          method,
+          endpoint: url.toString(),
+          payload: options.body ? (
+            typeof options.body === 'string' ? 
+              (() => { try { return JSON.parse(options.body as string); } catch { return options.body; } })() 
+              : options.body
+          ) : null,
+          headers: options.headers as Record<string, string> || {},
+        });
+      }
 
       try {
         const response = await originalFetch(...args);
-        const responseClone = response.clone();
-        const responseData = await responseClone.json().catch(() => null);
         
-        // Log the response
-        addLog({
-          type: 'api_response',
-          method,
-          endpoint: url.toString(),
-          statusCode: response.status,
-          response: responseData,
-          duration: Date.now() - startTime,
-        });
+        if (isRecording) {
+          const responseClone = response.clone();
+          let responseData = null;
+          
+          try {
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              responseData = await responseClone.json();
+            } else {
+              responseData = await responseClone.text();
+            }
+          } catch {
+            responseData = 'Unable to parse response';
+          }
+          
+          // Log the response
+          addLog({
+            type: 'api_response',
+            method,
+            endpoint: url.toString(),
+            statusCode: response.status,
+            response: responseData,
+            duration: Date.now() - startTime,
+          });
+        }
 
         return response;
       } catch (error) {
-        addLog({
-          type: 'api_response',
-          method,
-          endpoint: url.toString(),
-          statusCode: 0,
-          response: { error: error.message },
-          duration: Date.now() - startTime,
-        });
+        if (isRecording) {
+          addLog({
+            type: 'api_response',
+            method,
+            endpoint: url.toString(),
+            statusCode: 0,
+            response: { error: error.message },
+            duration: Date.now() - startTime,
+          });
+        }
         throw error;
       }
     };
@@ -86,7 +106,7 @@ export const useApiMonitor = () => {
     return () => {
       window.fetch = originalFetch;
     };
-  }, [isRecording]);
+  }, [isRecording, addLog]);
 
   return {
     logs,
