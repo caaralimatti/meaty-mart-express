@@ -27,7 +27,7 @@ const FeatureButtons = ({
           variant="outline"
           size="sm"
           onClick={onLoyaltyOpen}
-          className="border-yellow-200 text-yellow-700 hover:bg-yellow-50"
+          className="bg-transparent border-green-200 text-green-700 hover:bg-green-50"
         >
           <Crown className="w-4 h-4 mr-1" />
           Loyalty Points
@@ -38,7 +38,7 @@ const FeatureButtons = ({
           variant="outline"
           size="sm"
           onClick={onBulkOrderOpen}
-          className="border-blue-200 text-blue-700 hover:bg-blue-50"
+          className="bg-transparent border-green-200 text-green-700 hover:bg-green-50"
         >
           <Users className="w-4 h-4 mr-1" />
           Bulk Orders
@@ -48,7 +48,7 @@ const FeatureButtons = ({
           variant="outline"
           size="sm"
           onClick={onSubscriptionOpen}
-          className="border-purple-200 text-purple-700 hover:bg-purple-50"
+          className="bg-transparent border-green-200 text-green-700 hover:bg-green-50"
         >
           <Package2 className="w-4 h-4 mr-1" />
           Subscriptions
@@ -58,7 +58,7 @@ const FeatureButtons = ({
           variant="outline"
           size="sm"
           onClick={onQuickReorderOpen}
-          className="border-green-200 text-green-700 hover:bg-green-50"
+          className="bg-transparent border-green-200 text-green-700 hover:bg-green-50"
         >
           <RotateCcw className="w-4 h-4 mr-1" />
           Quick Reorder
@@ -68,7 +68,7 @@ const FeatureButtons = ({
           variant="outline"
           size="sm"
           onClick={onReferralOpen}
-          className="border-pink-200 text-pink-700 hover:bg-pink-50"
+          className="bg-transparent border-green-200 text-green-700 hover:bg-green-50"
         >
           <Gift className="w-4 h-4 mr-1" />
           Refer & Earn
@@ -78,7 +78,7 @@ const FeatureButtons = ({
           variant="outline"
           size="sm"
           onClick={onSocialSharingOpen}
-          className="border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+          className="bg-transparent border-green-200 text-green-700 hover:bg-green-50"
         >
           <Share2 className="w-4 h-4 mr-1" />
           Share Experience
