@@ -254,7 +254,7 @@ const SellerRegistrationForm = ({
                     type="text" 
                     value={firstName} 
                     onChange={e => setFirstName(e.target.value)} 
-                    className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                     placeholder="Enter first name" 
                   />
                 </div>
@@ -265,7 +265,7 @@ const SellerRegistrationForm = ({
                     type="text" 
                     value={lastName} 
                     onChange={e => setLastName(e.target.value)} 
-                    className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                     placeholder="Enter last name" 
                   />
                 </div>
@@ -278,7 +278,7 @@ const SellerRegistrationForm = ({
                   type="text" 
                   value={address} 
                   onChange={e => setAddress(e.target.value)} 
-                  className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                   placeholder="Enter your address" 
                 />
               </div>
@@ -291,7 +291,7 @@ const SellerRegistrationForm = ({
                     type="text" 
                     value={city} 
                     onChange={e => setCity(e.target.value)} 
-                    className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                     placeholder="Enter city" 
                   />
                 </div>
@@ -302,7 +302,7 @@ const SellerRegistrationForm = ({
                     type="text" 
                     value={pincode} 
                     onChange={e => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))} 
-                    className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                     maxLength={6} 
                     placeholder="6-digit pincode" 
                   />
@@ -317,7 +317,7 @@ const SellerRegistrationForm = ({
                     type="tel" 
                     value={mobileNumber} 
                     onChange={e => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} 
-                    className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                     maxLength={10} 
                     placeholder="10-digit mobile number" 
                   />
@@ -329,7 +329,7 @@ const SellerRegistrationForm = ({
                     type="text" 
                     value={aadhaarNumber} 
                     onChange={e => setAadhaarNumber(e.target.value.slice(0, 12))} 
-                    className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                     maxLength={12} 
                     placeholder="12-digit Aadhaar" 
                   />
@@ -343,7 +343,7 @@ const SellerRegistrationForm = ({
                   type="email" 
                   value={email} 
                   onChange={e => setEmail(e.target.value)} 
-                  className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                   placeholder="example@email.com" 
                 />
               </div>
@@ -357,7 +357,7 @@ const SellerRegistrationForm = ({
                   type="text" 
                   value={entityFullName} 
                   onChange={e => setEntityFullName(e.target.value)} 
-                  className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                   placeholder="Enter company/entity name" 
                 />
               </div>
@@ -369,7 +369,7 @@ const SellerRegistrationForm = ({
                   type="text" 
                   value={registeredAddress} 
                   onChange={e => setRegisteredAddress(e.target.value)} 
-                  className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                   placeholder="Enter registered address" 
                 />
               </div>
@@ -382,7 +382,7 @@ const SellerRegistrationForm = ({
                     type="text" 
                     value={city} 
                     onChange={e => setCity(e.target.value)} 
-                    className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                     placeholder="Enter city" 
                   />
                 </div>
@@ -393,7 +393,7 @@ const SellerRegistrationForm = ({
                     type="text" 
                     value={pincode} 
                     onChange={e => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))} 
-                    className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                     maxLength={6} 
                     placeholder="6-digit pincode" 
                   />
@@ -408,7 +408,7 @@ const SellerRegistrationForm = ({
                     type="text" 
                     value={gstin} 
                     onChange={e => setGstin(e.target.value)} 
-                    className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                     placeholder="Enter GSTIN" 
                   />
                 </div>
@@ -419,7 +419,7 @@ const SellerRegistrationForm = ({
                     type="tel" 
                     value={mobileNumber} 
                     onChange={e => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} 
-                    className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                     maxLength={10} 
                     placeholder="10-digit mobile" 
                   />
@@ -433,7 +433,7 @@ const SellerRegistrationForm = ({
                   type="email" 
                   value={email} 
                   onChange={e => setEmail(e.target.value)} 
-                  className="mt-1 h-10 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
+                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
                   placeholder="example@email.com" 
                 />
               </div>
