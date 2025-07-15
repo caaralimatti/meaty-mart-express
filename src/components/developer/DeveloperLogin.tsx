@@ -43,33 +43,33 @@ const DeveloperLogin = ({ onLogin }: DeveloperLoginProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-4">
-      <Card className="w-full max-w-md border-orange-500/20 bg-gray-900/50 backdrop-blur-sm">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md border-emerald-200/50 bg-gradient-to-br from-white/80 to-emerald-50/80 backdrop-blur-md shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] hover:shadow-[0_8px_32px_0_rgba(16,185,129,0.4)] transition-all duration-300">
         <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center mb-4">
-            <Shield className="w-6 h-6 text-orange-500" />
+          <div className="mx-auto w-12 h-12 bg-gradient-to-br from-emerald-500/20 to-green-600/20 rounded-full flex items-center justify-center mb-4 border border-emerald-200/50">
+            <Shield className="w-6 h-6 text-emerald-600" />
           </div>
-          <CardTitle className="text-2xl text-white">Developer Access</CardTitle>
-          <p className="text-gray-400">QuickGoat Development Panel</p>
+          <CardTitle className="text-2xl text-emerald-900 font-semibold">Developer Access</CardTitle>
+          <p className="text-emerald-600">QuickGoat Development Panel</p>
         </CardHeader>
         
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-gray-300">Username</Label>
+              <Label htmlFor="username" className="text-emerald-800 font-medium">Username</Label>
               <Input
                 id="username"
                 type="text"
                 placeholder="Enter developer username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-orange-500"
+                className="bg-white/70 border-emerald-200 text-emerald-900 placeholder-emerald-500/70 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200/50 backdrop-blur-sm transition-all duration-300"
                 disabled={isLoading}
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-gray-300">Password</Label>
+              <Label htmlFor="password" className="text-emerald-800 font-medium">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -77,7 +77,7 @@ const DeveloperLogin = ({ onLogin }: DeveloperLoginProps) => {
                   placeholder="Enter developer password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-orange-500 pr-10"
+                  className="bg-white/70 border-emerald-200 text-emerald-900 placeholder-emerald-500/70 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200/50 backdrop-blur-sm transition-all duration-300 pr-10"
                   disabled={isLoading}
                 />
                 <Button
@@ -85,7 +85,7 @@ const DeveloperLogin = ({ onLogin }: DeveloperLoginProps) => {
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-gray-400 hover:text-white"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-emerald-600 hover:text-emerald-800 hover:bg-emerald-100/50 transition-all duration-300"
                   disabled={isLoading}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -95,7 +95,7 @@ const DeveloperLogin = ({ onLogin }: DeveloperLoginProps) => {
             
             <Button
               type="submit"
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+              className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-medium shadow-[0_4px_16px_0_rgba(16,185,129,0.3)] hover:shadow-[0_6px_20px_0_rgba(16,185,129,0.4)] transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
               disabled={isLoading}
             >
               {isLoading ? 'Authenticating...' : 'Access Developer Panel'}
@@ -103,7 +103,7 @@ const DeveloperLogin = ({ onLogin }: DeveloperLoginProps) => {
           </form>
           
           <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-emerald-600/70">
               Authorized personnel only
             </p>
           </div>
