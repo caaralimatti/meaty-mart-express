@@ -20,6 +20,8 @@ interface OdooConfig {
   serverUrl: string;
   database: string;
   fields: string;
+  username: string;
+  password: string;
 }
 
 const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
@@ -36,7 +38,9 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
   const [config, setConfig] = useState<OdooConfig>({
     serverUrl: 'https://goatgoat.xyz/',
     database: 'staging',
-    fields: 'name, list_price, uom_id'
+    fields: 'name, list_price, uom_id',
+    username: 'admin',
+    password: 'admin'
   });
   const [tempConfig, setTempConfig] = useState<OdooConfig>(config);
   const [syncStats, setSyncStats] = useState({
@@ -107,8 +111,8 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
       odooService.setConfig({
         serverUrl: config.serverUrl,
         database: config.database,
-        username: 'admin',
-        password: 'admin',
+        username: config.username,
+        password: config.password,
       });
       
       const connected = await odooService.authenticate();
@@ -188,8 +192,8 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
       odooService.setConfig({
         serverUrl: config.serverUrl,
         database: config.database,
-        username: 'admin',
-        password: 'admin',
+        username: config.username,
+        password: config.password,
       });
 
       const connected = await odooService.authenticate();
@@ -238,8 +242,8 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
       odooService.setConfig({
         serverUrl: config.serverUrl,
         database: config.database,
-        username: 'admin',
-        password: 'admin',
+        username: config.username,
+        password: config.password,
       });
 
       const connected = await odooService.authenticate();
@@ -299,8 +303,8 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
       odooService.setConfig({
         serverUrl: config.serverUrl,
         database: config.database,
-        username: 'admin',
-        password: 'admin',
+        username: config.username,
+        password: config.password,
       });
 
       const sampleOrder = {
@@ -361,6 +365,8 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
                   <li>• Fields: {config.fields}</li>
                   <li>• Server: {config.serverUrl}</li>
                   <li>• Database: {config.database}</li>
+                  <li>• Username: {config.username}</li>
+                  <li>• Password: {'•'.repeat(config.password.length)}</li>
                 </ul>
               ) : (
                 <div className="mt-3 space-y-3">
@@ -391,6 +397,27 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
                       value={tempConfig.database}
                       onChange={(e) => setTempConfig(prev => ({ ...prev, database: e.target.value }))}
                       placeholder="staging"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="username" className="text-sm font-medium text-emerald-800">Username</Label>
+                    <Input
+                      id="username"
+                      value={tempConfig.username}
+                      onChange={(e) => setTempConfig(prev => ({ ...prev, username: e.target.value }))}
+                      placeholder="admin"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="password" className="text-sm font-medium text-emerald-800">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={tempConfig.password}
+                      onChange={(e) => setTempConfig(prev => ({ ...prev, password: e.target.value }))}
+                      placeholder="admin"
                       className="mt-1"
                     />
                   </div>
