@@ -1,17 +1,18 @@
-
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-
 interface BillSummaryProps {
   subtotal: number;
   deliveryFee: number;
   total: number;
   onCheckout: () => void;
 }
-
-const BillSummary = ({ subtotal, deliveryFee, total, onCheckout }: BillSummaryProps) => {
-  return (
-    <div className="space-y-4">
+const BillSummary = ({
+  subtotal,
+  deliveryFee,
+  total,
+  onCheckout
+}: BillSummaryProps) => {
+  return <div className="space-y-4">
       <Separator />
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
@@ -28,14 +29,9 @@ const BillSummary = ({ subtotal, deliveryFee, total, onCheckout }: BillSummaryPr
           <span>₹{total}</span>
         </div>
       </div>
-      <Button
-        onClick={onCheckout}
-        className="w-full bg-red-600 hover:bg-red-700 py-3"
-      >
+      <Button onClick={onCheckout} className="w-full py-3 bg-green-500 hover:bg-green-400 rounded-lg">
         Proceed to Checkout • ₹{total}
       </Button>
-    </div>
-  );
+    </div>;
 };
-
 export default BillSummary;
