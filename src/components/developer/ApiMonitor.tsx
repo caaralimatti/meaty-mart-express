@@ -14,7 +14,7 @@ const ApiMonitor = () => {
   const [selectedLog, setSelectedLog] = useState<ApiLog | null>(null);
   const [filter, setFilter] = useState<'all' | 'webhook' | 'api_request' | 'api_response'>('all');
 
-  const filteredLogs = logs.filter(log => filter === 'all' || log.type === filter);
+  const filteredLogs = (logs || []).filter(log => filter === 'all' || log.type === filter);
 
   const getStatusColor = (statusCode?: number) => {
     if (!statusCode) return 'bg-emerald-500';
@@ -36,6 +36,16 @@ const ApiMonitor = () => {
   const formatJson = (obj: any) => {
     if (!obj) return 'N/A';
     return JSON.stringify(obj, null, 2);
+  };
+
+  const testApiCall = async () => {
+    try {
+      // Test API call to verify monitoring is working
+      await fetch('https://jsonplaceholder.typicode.com/posts/1');
+      toast.success('Test API call made - check Activity Logs!');
+    } catch (error) {
+      toast.error('Test API call failed');
+    }
   };
 
   return (
@@ -63,6 +73,14 @@ const ApiMonitor = () => {
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Clear
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={testApiCall} 
+                className="bg-white/90 border-white text-emerald-700 hover:bg-white hover:text-emerald-800 shadow-md"
+              >
+                Test API
               </Button>
             </div>
           </CardTitle>
