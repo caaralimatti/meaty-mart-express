@@ -9,7 +9,7 @@ import LiveChatButton from "@/components/LiveChatButton";
 import FeatureButtons from "@/components/FeatureButtons";
 import FeatureModals from "@/components/FeatureModals";
 import OdooControlPanel from "@/components/OdooControlPanel";
-import OdooSync from "@/components/OdooSync";
+import OdooSyncModal from "@/components/OdooSyncModal";
 import CustomerDashboard from "./CustomerDashboard";
 import PromoBanners from "@/components/PromoBanners";
 import { useModalStates } from "@/hooks/useModalStates";
@@ -102,7 +102,7 @@ const EnhancedCustomerInterface = ({
 
       <FeatureModals isLoyaltyOpen={modals.isLoyaltyOpen} isNutritionOpen={modals.isNutritionOpen} isBulkOrderOpen={modals.isBulkOrderOpen} isSubscriptionOpen={modals.isSubscriptionOpen} isQuickReorderOpen={modals.isQuickReorderOpen} isReferralOpen={modals.isReferralOpen} isSocialSharingOpen={modals.isSocialSharingOpen} selectedProductForNutrition={state.selectedProductForNutrition} onLoyaltyClose={() => modalHandlers.setIsLoyaltyOpen(false)} onNutritionClose={() => modalHandlers.setIsNutritionOpen(false)} onBulkOrderClose={() => modalHandlers.setIsBulkOrderOpen(false)} onSubscriptionClose={() => modalHandlers.setIsSubscriptionOpen(false)} onQuickReorderClose={() => modalHandlers.setIsQuickReorderOpen(false)} onReferralClose={() => modalHandlers.setIsReferralOpen(false)} onSocialSharingClose={() => modalHandlers.setIsSocialSharingOpen(false)} onAddToCart={handleAddToCart} />
 
-      <OdooSync isOpen={modals.isOdooSyncOpen} onClose={() => modalHandlers.setIsOdooSyncOpen(false)} products={filteredProducts} onProductsSync={handleProductsSync} />
+      <OdooSyncModal isOpen={modals.isOdooSyncOpen} onClose={() => modalHandlers.setIsOdooSyncOpen(false)} products={filteredProducts} onProductsSync={handleProductsSync} />
 
       <LiveChatButton isLiveChatOpen={modals.isLiveChatOpen} onLiveChatOpen={() => modalHandlers.setIsLiveChatOpen(true)} onLiveChatClose={() => modalHandlers.setIsLiveChatOpen(false)} />
     </div>;

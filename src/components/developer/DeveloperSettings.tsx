@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ApiMonitor from './ApiMonitor';
+import OdooSync from '@/components/OdooSync';
 import { Database, Monitor, Settings, LogOut, Smartphone, Globe } from 'lucide-react';
 
 interface DeveloperSettingsProps {
@@ -13,6 +14,7 @@ interface DeveloperSettingsProps {
 
 const DeveloperSettings = ({ onLogout, username }: DeveloperSettingsProps) => {
   const [activeTab, setActiveTab] = useState('monitor');
+  const [products, setProducts] = useState<any[]>([]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 p-4">
@@ -104,54 +106,13 @@ const DeveloperSettings = ({ onLogout, username }: DeveloperSettingsProps) => {
           <TabsContent value="odoo">
             <Card className="bg-gradient-to-br from-white/80 to-emerald-50/80 backdrop-blur-md border-emerald-200/50">
               <CardHeader>
-                <CardTitle className="text-emerald-900">Odoo Integration Status</CardTitle>
+                <CardTitle className="text-emerald-900">Odoo Integration Management</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card className="bg-gradient-to-br from-white/90 to-emerald-50/90 border-emerald-200/50 hover:shadow-lg transition-all duration-300">
-                      <CardContent className="p-4">
-                        <h3 className="font-semibold mb-2 text-emerald-800">Connection Status</h3>
-                        <div className="flex items-center space-x-2">
-                          <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
-                          <span className="text-sm text-emerald-600">Connected</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-gradient-to-br from-white/90 to-emerald-50/90 border-emerald-200/50 hover:shadow-lg transition-all duration-300">
-                      <CardContent className="p-4">
-                        <h3 className="font-semibold mb-2 text-emerald-800">Sync Status</h3>
-                        <div className="flex items-center space-x-2">
-                          <div className="w-3 h-3 bg-emerald-600 rounded-full"></div>
-                          <span className="text-sm text-emerald-700">Active</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  <div>
-                    <h3 className="font-semibold mb-4 text-emerald-800">Webhook Endpoints</h3>
-                    <div className="space-y-2 bg-emerald-50/50 p-4 rounded-lg text-sm border border-emerald-200/50">
-                      <p className="text-emerald-800"><strong>Seller Approval:</strong> /functions/v1/seller-approval-webhook</p>
-                      <p className="text-emerald-800"><strong>Product Approval:</strong> /functions/v1/product-approval-webhook</p>
-                      <p className="text-emerald-800"><strong>Livestock Approval:</strong> /functions/v1/livestock-approval-webhook</p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="font-semibold mb-4 text-emerald-800">Recent Sync Activity</h3>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center p-2 bg-emerald-50 rounded border border-emerald-200/50">
-                        <span className="text-sm text-emerald-800">Seller Registration</span>
-                        <span className="text-xs text-emerald-600">2 minutes ago</span>
-                      </div>
-                      <div className="flex justify-between items-center p-2 bg-emerald-50 rounded border border-emerald-200/50">  
-                        <span className="text-sm text-emerald-800">Product Sync</span>
-                        <span className="text-xs text-emerald-600">15 minutes ago</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <OdooSync 
+                  products={products} 
+                  onProductsSync={setProducts} 
+                />
               </CardContent>
             </Card>
           </TabsContent>

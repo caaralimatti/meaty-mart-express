@@ -10,13 +10,11 @@ import { odooService } from "@/services/odooService";
 import OdooProductsTable from "./OdooProductsTable";
 
 interface OdooSyncProps {
-  isOpen: boolean;
-  onClose: () => void;
   products: any[];
   onProductsSync: (products: any[]) => void;
 }
 
-const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) => {
+const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
@@ -179,131 +177,119 @@ const OdooSync = ({ isOpen, onClose, products, onProductsSync }: OdooSyncProps) 
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-        <CardHeader>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Database className="w-5 h-5 text-emerald-600" />
+          <h2 className="text-xl font-semibold text-emerald-900">Odoo Integration - Product Sync</h2>
+        </div>
+        <Badge variant={isConnected ? "default" : "secondary"} className="bg-emerald-100 text-emerald-800 border-emerald-300">
+          {isConnected ? "Connected" : "Disconnected"}
+        </Badge>
+      </div>
+      
+      <div className="p-4 border border-emerald-200 bg-emerald-50 rounded-lg">
+        <div className="flex items-start space-x-3">
+          <Settings className="w-5 h-5 text-emerald-600 mt-0.5" />
+          <div>
+            <h3 className="font-semibold text-emerald-800">Configuration Status</h3>
+            <p className="text-sm text-emerald-700 mt-1">
+              Syncing from: product.product table
+            </p>
+            <ul className="text-sm text-emerald-700 mt-2 space-y-1">
+              <li>• Fields: name, list_price, uom_id</li>
+              <li>• Server: http://138.91.109.69:8069</li>
+              <li>• Database: ipurvey_staging</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between p-4 border border-emerald-200 rounded-lg bg-white/50">
+        <div>
+          <h3 className="font-semibold text-emerald-800">Connection Status</h3>
+          <p className="text-sm text-emerald-600">
+            {connectionDetails || (isConnected ? "Connected to Odoo" : "Not connected. Click test to begin.")}
+          </p>
+        </div>
+        <Button onClick={testConnection} variant="outline" className="border-emerald-300 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400">
+          <Database className="w-4 h-4 mr-2" />
+          Test Connection
+        </Button>
+      </div>
+
+      {isSyncing && (
+        <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Database className="w-5 h-5 text-red-600" />
-              <CardTitle>Odoo Integration - Product Sync</CardTitle>
-            </div>
-            <Badge variant={isConnected ? "default" : "secondary"}>
-              {isConnected ? "Connected" : "Disconnected"}
-            </Badge>
+            <span className="text-sm font-medium text-emerald-800">Syncing...</span>
+            <span className="text-sm text-emerald-600">{syncProgress}%</span>
           </div>
-        </CardHeader>
+          <Progress value={syncProgress} className="w-full" />
+        </div>
+      )}
+
+      <div className="grid grid-cols-3 gap-4">
+        <div className="text-center p-4 border border-emerald-200 rounded-lg bg-white/50">
+          <Package className="w-6 h-6 mx-auto mb-2 text-emerald-600" />
+          <div className="text-2xl font-bold text-emerald-800">{syncStats.productsUpdated}</div>
+          <div className="text-sm text-emerald-600">Products Synced</div>
+        </div>
+        <div className="text-center p-4 border border-emerald-200 rounded-lg bg-white/50">
+          <ShoppingCart className="w-6 h-6 mx-auto mb-2 text-emerald-600" />
+          <div className="text-2xl font-bold text-emerald-800">{syncStats.ordersCreated}</div>
+          <div className="text-sm text-emerald-600">Orders Created</div>
+        </div>
+        <div className="text-center p-4 border border-emerald-200 rounded-lg bg-white/50">
+          <Users className="w-6 h-6 mx-auto mb-2 text-emerald-600" />
+          <div className="text-2xl font-bold text-emerald-800">{odooProducts.length}</div>
+          <div className="text-sm text-emerald-600">Odoo Products</div>
+        </div>
+      </div>
+
+      {lastSync && (
+        <div className="text-center p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+          <p className="text-sm text-emerald-700">
+            Last sync: {lastSync.toLocaleString()}
+          </p>
+        </div>
+      )}
+
+      <div className="flex space-x-3">
+        <Button 
+          onClick={fetchOdooProducts} 
+          disabled={!isConnected || isLoadingProducts}
+          variant="outline"
+          className="flex-1 border-emerald-300 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400"
+        >
+          <Package className={`w-4 h-4 mr-2 ${isLoadingProducts ? 'animate-spin' : ''}`} />
+          {isLoadingProducts ? 'Loading...' : 'Load Products'}
+        </Button>
         
-        <CardContent className="space-y-6">
-          <div className="p-4 border border-yellow-200 bg-yellow-50 rounded-lg">
-            <div className="flex items-start space-x-3">
-              <Settings className="w-5 h-5 text-yellow-600 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-yellow-800">Configuration Status</h3>
-                <p className="text-sm text-yellow-700 mt-1">
-                  Syncing from: product.product table
-                </p>
-                <ul className="text-sm text-yellow-700 mt-2 space-y-1">
-                  <li>• Fields: name, list_price, uom_id</li>
-                  <li>• Server: http://138.91.109.69:8069</li>
-                  <li>• Database: ipurvey_staging</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+        <Button 
+          onClick={syncProducts} 
+          disabled={!isConnected || isSyncing}
+          className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+        >
+          <RotateCw className={`w-4 h-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
+          {isSyncing ? 'Syncing...' : 'Sync Products'}
+        </Button>
+        
+        <Button 
+          onClick={createSampleOrder}
+          disabled={!isConnected}
+          variant="outline"
+          className="flex-1 border-emerald-300 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-400"
+        >
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          Test Order
+        </Button>
+      </div>
 
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div>
-              <h3 className="font-semibold">Connection Status</h3>
-              <p className="text-sm text-gray-600">
-                {connectionDetails || (isConnected ? "Connected to Odoo" : "Not connected. Click test to begin.")}
-              </p>
-            </div>
-            <Button onClick={testConnection} variant="outline">
-              <Database className="w-4 h-4 mr-2" />
-              Test Connection
-            </Button>
-          </div>
-
-          {isSyncing && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Syncing...</span>
-                <span className="text-sm text-gray-600">{syncProgress}%</span>
-              </div>
-              <Progress value={syncProgress} className="w-full" />
-            </div>
-          )}
-
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 border rounded-lg">
-              <Package className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-              <div className="text-2xl font-bold">{syncStats.productsUpdated}</div>
-              <div className="text-sm text-gray-600">Products Synced</div>
-            </div>
-            <div className="text-center p-4 border rounded-lg">
-              <ShoppingCart className="w-6 h-6 mx-auto mb-2 text-green-600" />
-              <div className="text-2xl font-bold">{syncStats.ordersCreated}</div>
-              <div className="text-sm text-gray-600">Orders Created</div>
-            </div>
-            <div className="text-center p-4 border rounded-lg">
-              <Users className="w-6 h-6 mx-auto mb-2 text-purple-600" />
-              <div className="text-2xl font-bold">{odooProducts.length}</div>
-              <div className="text-sm text-gray-600">Odoo Products</div>
-            </div>
-          </div>
-
-          {lastSync && (
-            <div className="text-center p-3 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600">
-                Last sync: {lastSync.toLocaleString()}
-              </p>
-            </div>
-          )}
-
-          <div className="flex space-x-3">
-            <Button 
-              onClick={fetchOdooProducts} 
-              disabled={!isConnected || isLoadingProducts}
-              variant="outline"
-              className="flex-1"
-            >
-              <Package className={`w-4 h-4 mr-2 ${isLoadingProducts ? 'animate-spin' : ''}`} />
-              {isLoadingProducts ? 'Loading...' : 'Load Products'}
-            </Button>
-            
-            <Button 
-              onClick={syncProducts} 
-              disabled={!isConnected || isSyncing}
-              className="flex-1 bg-red-600 hover:bg-red-700"
-            >
-              <RotateCw className={`w-4 h-4 mr-2 ${isSyncing ? 'animate-spin' : ''}`} />
-              {isSyncing ? 'Syncing...' : 'Sync Products'}
-            </Button>
-            
-            <Button 
-              onClick={createSampleOrder}
-              disabled={!isConnected}
-              variant="outline"
-              className="flex-1"
-            >
-              <ShoppingCart className="w-4 h-4 mr-2" />
-              Test Order
-            </Button>
-          </div>
-
-          <OdooProductsTable 
-            products={odooProducts} 
-            isLoading={isLoadingProducts} 
-          />
-
-          <Button onClick={onClose} variant="ghost" className="w-full">
-            Close
-          </Button>
-        </CardContent>
-      </Card>
+      <OdooProductsTable 
+        products={odooProducts} 
+        isLoading={isLoadingProducts} 
+      />
     </div>
   );
 };
