@@ -44,16 +44,16 @@ const CustomerDashboard = ({
 
       <div className="container mx-auto p-6 space-y-6">
         {/* Flash Sale Banner - Urgency Psychology */}
-        <Card className="bg-gradient-to-r from-primary/20 to-primary/10 text-foreground border border-primary/20 shadow-lg">
+        <Card className="bg-gradient-to-r from-emerald-600 to-green-700 text-white border border-emerald-500 shadow-lg">
           <CardContent className="p-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-2xl font-bold mb-2 text-lime-900">⚡ FLASH SALE ENDING SOON!</h3>
-                <p className="text-lime-700">Up to 40% OFF on premium cuts - Limited time only!</p>
+                <h3 className="text-2xl font-bold mb-2 text-white">⚡ FLASH SALE ENDING SOON!</h3>
+                <p className="text-emerald-100">Up to 40% OFF on premium cuts - Limited time only!</p>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-mono font-bold text-primary bg-transparent">{formatTime(timeRemaining)}</div>
-                <p className="text-sm text-lime-900">Time left</p>
+                <div className="text-3xl font-mono font-bold text-white bg-emerald-800/30 px-4 py-2 rounded-lg">{formatTime(timeRemaining)}</div>
+                <p className="text-sm text-emerald-100 mt-1">Time left</p>
               </div>
             </div>
           </CardContent>
@@ -120,15 +120,15 @@ const CustomerDashboard = ({
         </div>
 
         {/* Personalized Recommendations - AI Psychology */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <TrendingUp className="w-5 h-5 text-primary" />
+        <Card className="bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200 shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-t-lg">
+            <CardTitle className="flex items-center space-x-2 text-white">
+              <TrendingUp className="w-5 h-5 text-emerald-100" />
               <span>Handpicked Just for You</span>
-              <Badge className="bg-primary/20 text-primary">AI Powered</Badge>
+              <Badge className="bg-emerald-100 text-emerald-800">AI Powered</Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="grid md:grid-cols-3 gap-4">
               {[{
               name: "Premium Mutton Curry Cut",
@@ -148,16 +148,16 @@ const CustomerDashboard = ({
               originalPrice: 900,
               saving: "20% OFF",
               badge: "Trending"
-            }].map((product, index) => <Card key={index} className="border-red-100 hover:border-red-300 transition-colors cursor-pointer">
+            }].map((product, index) => <Card key={index} className="border-emerald-200 hover:border-emerald-400 transition-colors cursor-pointer bg-white shadow-md">
                   <CardContent className="p-4">
-                    <Badge className="mb-2 bg-green-100 text-green-700">{product.badge}</Badge>
-                    <h4 className="font-semibold mb-2">{product.name}</h4>
+                    <Badge className="mb-2 bg-emerald-100 text-emerald-700 border-emerald-200">{product.badge}</Badge>
+                    <h4 className="font-semibold mb-2 text-emerald-900">{product.name}</h4>
                     <div className="flex items-center space-x-2 mb-3">
-                      <span className="text-lg font-bold text-red-600">₹{product.price}</span>
+                      <span className="text-lg font-bold text-emerald-700">₹{product.price}</span>
                       <span className="text-sm text-gray-500 line-through">₹{product.originalPrice}</span>
-                      <Badge variant="destructive" className="text-xs">{product.saving}</Badge>
+                      <Badge className="text-xs bg-emerald-600 text-white">{product.saving}</Badge>
                     </div>
-                    <Button className="w-full bg-red-600 hover:bg-red-700" size="sm">
+                    <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white" size="sm">
                       Add to Cart
                     </Button>
                   </CardContent>
@@ -168,14 +168,14 @@ const CustomerDashboard = ({
 
         {/* Social Proof & Reviews */}
         <div className="grid md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Star className="w-5 h-5 text-yellow-500" />
+          <Card className="bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-t-lg">
+              <CardTitle className="flex items-center space-x-2 text-white">
+                <Star className="w-5 h-5 text-emerald-100" />
                 <span>Recent Reviews</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-6">
               {[{
               name: "Priya S.",
               rating: 5,
@@ -191,40 +191,40 @@ const CustomerDashboard = ({
               rating: 4,
               comment: "Good quality, will order again.",
               time: "1 day ago"
-            }].map((review, index) => <div key={index} className="border-l-4 border-yellow-400 pl-4">
+            }].map((review, index) => <div key={index} className="border-l-4 border-emerald-400 pl-4 bg-white p-3 rounded-r-lg">
                   <div className="flex items-center space-x-2 mb-1">
-                    <span className="font-semibold">{review.name}</span>
+                    <span className="font-semibold text-emerald-800">{review.name}</span>
                     <div className="flex">
                       {Array.from({
                     length: review.rating
-                  }).map((_, i) => <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />)}
+                  }).map((_, i) => <Star key={i} className="w-3 h-3 fill-emerald-500 text-emerald-500" />)}
                     </div>
-                    <span className="text-xs text-gray-500">{review.time}</span>
+                    <span className="text-xs text-emerald-600">{review.time}</span>
                   </div>
-                  <p className="text-sm text-gray-700">"{review.comment}"</p>
+                  <p className="text-sm text-emerald-700">"{review.comment}"</p>
                 </div>)}
             </CardContent>
           </Card>
 
           {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
+          <Card className="bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-t-lg">
+              <CardTitle className="text-white">Quick Actions</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <Button className="w-full justify-start bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800">
+            <CardContent className="space-y-3 p-6">
+              <Button className="w-full justify-start bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white">
                 <Heart className="w-4 h-4 mr-2" />
                 View Wishlist (8 items)
               </Button>
-              <Button className="w-full justify-start bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
+              <Button className="w-full justify-start bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white">
                 <Clock className="w-4 h-4 mr-2" />
                 Reorder Last Purchase
               </Button>
-              <Button className="w-full justify-start bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800">
+              <Button className="w-full justify-start bg-gradient-to-r from-emerald-700 to-green-800 hover:from-emerald-800 hover:to-green-900 text-white">
                 <MapPin className="w-4 h-4 mr-2" />
                 Track Active Orders
               </Button>
-              <Button className="w-full justify-start bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800">
+              <Button className="w-full justify-start bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white">
                 <Phone className="w-4 h-4 mr-2" />
                 Contact Support (24/7)
               </Button>
@@ -233,15 +233,15 @@ const CustomerDashboard = ({
         </div>
 
         {/* Scarcity Psychology - Stock Alert */}
-        <Card className="border-orange-200 bg-orange-50">
+        <Card className="border-emerald-300 bg-gradient-to-r from-emerald-100 to-green-100 shadow-lg">
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
-              <Zap className="w-6 h-6 text-orange-600" />
+              <Zap className="w-6 h-6 text-emerald-700" />
               <div>
-                <p className="font-semibold text-orange-800">⚠️ Running Low on Your Favorites!</p>
-                <p className="text-sm text-orange-700">Premium Mutton Curry Cut - Only 3 kg left in stock. Order now to avoid disappointment!</p>
+                <p className="font-semibold text-emerald-800">⚠️ Running Low on Your Favorites!</p>
+                <p className="text-sm text-emerald-700">Premium Mutton Curry Cut - Only 3 kg left in stock. Order now to avoid disappointment!</p>
               </div>
-              <Button className="bg-orange-600 hover:bg-orange-700 ml-auto">
+              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white ml-auto shadow-md">
                 Order Now
               </Button>
             </div>
