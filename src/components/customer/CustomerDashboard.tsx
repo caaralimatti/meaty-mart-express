@@ -61,30 +61,30 @@ const CustomerDashboard = ({
 
         <div className="grid md:grid-cols-3 gap-6">
           {/* Loyalty Points - Gamification */}
-          <Card className="col-span-1 bg-lime-900">
-            <CardHeader className="bg-lime-800">
-              <CardTitle className="flex items-center space-x-2">
-                <Gift className="w-5 h-5 text-primary" />
+          <Card className="col-span-1 bg-gradient-to-br from-emerald-700 to-green-800 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-emerald-800 to-green-900 rounded-t-lg">
+              <CardTitle className="flex items-center space-x-2 text-white">
+                <Gift className="w-5 h-5 text-emerald-100" />
                 <span>Loyalty Rewards</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 bg-lime-800">
+            <CardContent className="space-y-4 bg-gradient-to-br from-emerald-700 to-green-800 text-white p-6">
               <div>
                 <div className="flex justify-between mb-2">
-                  <span className="font-semibold text-lg text-foreground">{loyaltyPoints} Points</span>
-                  <Badge className="bg-primary/20 text-primary">Gold Member</Badge>
+                  <span className="font-semibold text-lg text-white">{loyaltyPoints} Points</span>
+                  <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">Gold Member</Badge>
                 </div>
-                <Progress value={progressPercentage} className="h-3" />
-                <p className="text-sm text-muted-foreground mt-2">
+                <Progress value={progressPercentage} className="h-3 bg-emerald-900" />
+                <p className="text-sm text-emerald-100 mt-2">
                   {nextRewardPoints - loyaltyPoints} points to next reward!
                 </p>
               </div>
               
               <div className="space-y-2">
-                <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90" size="sm">
+                <Button className="w-full bg-emerald-100 text-emerald-800 hover:bg-emerald-200 font-medium" size="sm">
                   Redeem 500 Points (₹50 OFF)
                 </Button>
-                <Button variant="outline" className="w-full" size="sm">
+                <Button variant="outline" className="w-full border-emerald-200 text-emerald-100 hover:bg-emerald-100 hover:text-emerald-800" size="sm">
                   View All Rewards
                 </Button>
               </div>
