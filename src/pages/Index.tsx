@@ -39,10 +39,10 @@ const Index = () => {
   // Show loading while checking onboarding status
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-charcoal-black flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-vibrant-orange border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-off-white/70">Loading...</p>
+          <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-emerald-700 font-medium">Loading...</p>
         </div>
       </div>
     );

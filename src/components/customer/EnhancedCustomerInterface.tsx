@@ -67,13 +67,13 @@ const EnhancedCustomerInterface = ({
   if (showDashboard) {
     return <CustomerDashboard onBackToShopping={() => setShowDashboard(false)} />;
   }
-  return <div className="min-h-screen bg-green-100">
+  return <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100">
       <Header isLoggedIn={state.isLoggedIn} notificationCount={state.notificationCount} wishlistItems={state.wishlistItems} totalCartItems={totalCartItems} onAuthOpen={() => modalHandlers.setIsAuthOpen(true)} onNotificationOpen={() => modalHandlers.setIsNotificationOpen(true)} onTrackingOpen={() => modalHandlers.setIsTrackingOpen(true)} onWishlistOpen={() => modalHandlers.setIsWishlistOpen(true)} onProfileOpen={() => setShowDashboard(true)} onCartOpen={() => modalHandlers.setIsCartOpen(true)} />
 
       {/* Role Switch Button */}
-      <div className="border-b border-border p-2 bg-green-100">
+      <div className="border-b border-emerald-200 p-2 bg-gradient-to-r from-white to-emerald-50 backdrop-blur-sm">
         <div className="container mx-auto flex justify-end">
-          <Button variant="outline" size="sm" onClick={onSwitchRole} className="border-primary/30 text-primary bg-green-700 hover:bg-green-600">
+          <Button variant="outline" size="sm" onClick={onSwitchRole} className="border-emerald-200 text-emerald-700 bg-white/90 hover:bg-emerald-50 hover:border-emerald-400 transition-all duration-300 shadow-md">
             <User className="w-4 h-4 mr-1" />
             Switch to Seller
           </Button>
