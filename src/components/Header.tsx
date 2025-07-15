@@ -25,11 +25,11 @@ const Header = ({
   onProfileOpen,
   onCartOpen
 }: HeaderProps) => {
-  return <header className="sticky top-0 z-50 bg-gradient-to-r from-emerald-50 to-green-100 shadow-lg border-b-2 border-emerald-200">
+  return <header className="sticky top-0 z-50 bg-gradient-to-r from-white to-emerald-50 shadow-lg border-b border-emerald-200/30 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-r from-emerald-600 to-green-600 rounded-lg flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-green-600 rounded-xl flex items-center justify-center shadow-md">
               <span className="text-white font-bold text-lg">G
             </span>
             </div>
@@ -39,41 +39,71 @@ const Header = ({
             </div>
           </div>
           
-          <div className="flex items-center space-x-3 bg-transparent">
+          <div className="flex items-center space-x-2">
             {/* Notifications */}
-            <Button variant="outline" size="sm" onClick={onNotificationOpen} className="relative border-emerald-200 hover:bg-emerald-50 text-emerald-700 hover:border-emerald-400 transition-all duration-300">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onNotificationOpen} 
+              className="relative bg-white/80 hover:bg-emerald-50 text-emerald-700 border border-emerald-200/50 hover:border-emerald-300 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+            >
               <Bell className="w-4 h-4" />
-              {notificationCount > 0 && <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-1 animate-pulse border-red-700">
+              {notificationCount > 0 && <Badge className="absolute -top-1 -right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full animate-pulse border-2 border-white shadow-sm">
                   {notificationCount}
                 </Badge>}
             </Button>
 
-            {!isLoggedIn ? <Button variant="outline" size="sm" onClick={onAuthOpen} className="border-emerald-200 hover:bg-emerald-50 text-emerald-700 hover:border-emerald-400 transition-all duration-300">
+            {!isLoggedIn ? <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={onAuthOpen} 
+                className="bg-white/80 hover:bg-emerald-50 text-emerald-700 border border-emerald-200/50 hover:border-emerald-300 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+              >
                 <Phone className="w-4 h-4 mr-1" />
                 Login
               </Button> : <>
-                <Button variant="outline" size="sm" onClick={onTrackingOpen} className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400 transition-all duration-300">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={onTrackingOpen} 
+                  className="bg-white/80 hover:bg-emerald-50 text-emerald-700 border border-emerald-200/50 hover:border-emerald-300 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+                >
                   <Package className="w-4 h-4 mr-1" />
-                  Track
+                  <span className="hidden sm:inline">Track</span>
                 </Button>
                 
-                <Button variant="outline" size="sm" onClick={onWishlistOpen} className="relative border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400 transition-all duration-300">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={onWishlistOpen} 
+                  className="relative bg-white/80 hover:bg-emerald-50 text-emerald-700 border border-emerald-200/50 hover:border-emerald-300 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+                >
                   <Heart className="w-4 h-4 mr-1" />
-                  Wishlist
-                  {wishlistItems.length > 0 && <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-1 animate-pulse border-red-700">
+                  <span className="hidden sm:inline">Wishlist</span>
+                  {wishlistItems.length > 0 && <Badge className="absolute -top-1 -right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full animate-pulse border-2 border-white shadow-sm">
                       {wishlistItems.length}
                     </Badge>}
                 </Button>
                 
-                <Button variant="outline" size="sm" onClick={onProfileOpen} className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400 transition-all duration-300">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={onProfileOpen} 
+                  className="bg-white/80 hover:bg-emerald-50 text-emerald-700 border border-emerald-200/50 hover:border-emerald-300 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
+                >
                   <User className="w-4 h-4 mr-1" />
-                  Profile
+                  <span className="hidden sm:inline">Profile</span>
                 </Button>
               </>}
             
-            <Button variant="outline" size="sm" onClick={onCartOpen} className="relative border-emerald-200 hover:bg-emerald-50 text-emerald-700 hover:border-emerald-400 transition-all duration-300">
-              Cart ({totalCartItems})
-              {totalCartItems > 0 && <Badge className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-1 animate-pulse border-red-700">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onCartOpen} 
+              className="relative bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 px-4"
+            >
+              <span className="font-medium">Cart ({totalCartItems})</span>
+              {totalCartItems > 0 && <Badge className="absolute -top-1 -right-1 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-full animate-pulse border-2 border-white shadow-sm">
                   {totalCartItems}
                 </Badge>}
             </Button>
