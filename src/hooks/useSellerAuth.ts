@@ -82,6 +82,7 @@ export const useSellerAuth = () => {
         is_company: authData.type === 'Registered',
         supplier_rank: 1,
         customer_rank: 0,
+        state: 'Pending for Approval',
       };
       
       console.log('Creating Odoo customer with data:', customerData);
