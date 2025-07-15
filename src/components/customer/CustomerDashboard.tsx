@@ -28,7 +28,7 @@ const CustomerDashboard = ({
   };
   const nextRewardPoints = 2000;
   const progressPercentage = loyaltyPoints / nextRewardPoints * 100;
-  return <div className="min-h-screen bg-lime-100">
+  return <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100">
       {/* Header */}
       <div className="bg-card shadow-lg border-b border-border p-4">
         <div className="container mx-auto flex justify-between items-center">
@@ -36,7 +36,7 @@ const CustomerDashboard = ({
             <h1 className="text-2xl font-bold text-foreground">Welcome back, Rajesh! 👋</h1>
             <p className="text-muted-foreground">Your premium shopping experience awaits</p>
           </div>
-          <Button onClick={onBackToShopping} className="bg-primary text-primary-foreground hover:bg-primary/90">
+          <Button onClick={onBackToShopping} className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg">
             Continue Shopping
           </Button>
         </div>
@@ -92,27 +92,27 @@ const CustomerDashboard = ({
           </Card>
 
           {/* Quick Stats */}
-          <Card className="col-span-2">
-            <CardHeader>
-              <CardTitle>Your Shopping Stats</CardTitle>
+          <Card className="col-span-2 bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-t-lg">
+              <CardTitle className="text-white">Your Shopping Stats</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">₹12,450</div>
-                  <p className="text-sm text-muted-foreground">Total Saved</p>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="text-center p-3 bg-emerald-100 rounded-lg">
+                  <div className="text-2xl font-bold text-emerald-700">₹12,450</div>
+                  <p className="text-sm text-emerald-600">Total Saved</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">47</div>
-                  <p className="text-sm text-muted-foreground">Orders Placed</p>
+                <div className="text-center p-3 bg-green-100 rounded-lg">
+                  <div className="text-2xl font-bold text-green-700">47</div>
+                  <p className="text-sm text-green-600">Orders Placed</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">4.9⭐</div>
-                  <p className="text-sm text-muted-foreground">Avg Rating</p>
+                <div className="text-center p-3 bg-emerald-100 rounded-lg">
+                  <div className="text-2xl font-bold text-emerald-700">4.9⭐</div>
+                  <p className="text-sm text-emerald-600">Avg Rating</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">18 min</div>
-                  <p className="text-sm text-muted-foreground">Avg Delivery</p>
+                <div className="text-center p-3 bg-green-100 rounded-lg">
+                  <div className="text-2xl font-bold text-green-700">18 min</div>
+                  <p className="text-sm text-green-600">Avg Delivery</p>
                 </div>
               </div>
             </CardContent>
