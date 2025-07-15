@@ -18,7 +18,7 @@ const RoleSelector = ({
             </div>
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-off-white mb-4">
-            Quick<span className="text-vibrant-orange">Goat</span>
+            GoatGoat<span className="text-vibrant-orange">Goat</span>
           </h1>
           <p className="text-lg sm:text-xl text-off-white/80 mb-2">Premium Meat & Livestock Platform</p>
           <p className="text-sm sm:text-base text-off-white/60">Choose your experience to get started</p>
