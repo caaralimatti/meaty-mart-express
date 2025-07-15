@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Edit, MapPin, Phone, Mail, Building, CreditCard, Settings } from 'lucide-react';
 import { SellerProfile } from '@/hooks/useSellerData';
+import GoogleMap from '@/components/GoogleMap';
 
 interface AccountDetailsProps {
   sellerProfile: SellerProfile;
@@ -100,11 +101,14 @@ const AccountDetails = ({ sellerProfile }: AccountDetailsProps) => {
               <p className="text-gray-900">123 Farm Street, Agricultural District, State - 123456</p>
             </div>
             <div className="col-span-2">
-              <label className="text-sm font-medium text-gray-600">Location on Map</label>
-              <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
-                <MapPin className="w-8 h-8 text-gray-400" />
-                <span className="text-gray-500 ml-2">Map integration pending</span>
-              </div>
+              <label className="text-sm font-medium text-emerald-700">Location on Map</label>
+              <GoogleMap 
+                latitude={28.6139} 
+                longitude={77.2090} 
+                zoom={15}
+                address={`${sellerProfile.seller_name} - Shop/Farm Location`}
+                className="mt-2"
+              />
             </div>
           </div>
         </CardContent>
