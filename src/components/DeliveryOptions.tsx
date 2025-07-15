@@ -17,7 +17,7 @@ const DeliveryOptions = ({ deliveryType, onDeliveryTypeChange }: DeliveryOptions
           onClick={() => onDeliveryTypeChange("express")}
           className={`p-3 h-auto flex flex-col items-center ${
             deliveryType === "express" 
-              ? "bg-red-600 hover:bg-red-700" 
+              ? "bg-red-600 hover:bg-red-700 text-white" 
               : "border-red-200 hover:bg-red-50"
           }`}
         >
@@ -30,7 +30,7 @@ const DeliveryOptions = ({ deliveryType, onDeliveryTypeChange }: DeliveryOptions
           onClick={() => onDeliveryTypeChange("scheduled")}
           className={`p-3 h-auto flex flex-col items-center ${
             deliveryType === "scheduled" 
-              ? "bg-red-600 hover:bg-red-700" 
+              ? "bg-red-600 hover:bg-red-700 text-white" 
               : "border-red-200 hover:bg-red-50"
           }`}
         >
