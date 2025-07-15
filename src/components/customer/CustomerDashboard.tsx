@@ -44,7 +44,7 @@ const CustomerDashboard = ({
 
       <div className="container mx-auto p-6 space-y-6">
         {/* Flash Sale Banner - Urgency Psychology */}
-        <Card className="bg-gradient-to-r from-emerald-600 to-green-700 text-white border border-emerald-500 shadow-lg">
+        <Card className="bg-gradient-to-r from-emerald-600 to-green-700 text-white border border-emerald-500 shadow-lg transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex justify-between items-center">
               <div>
@@ -52,8 +52,8 @@ const CustomerDashboard = ({
                 <p className="text-emerald-100">Up to 40% OFF on premium cuts - Limited time only!</p>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-mono font-bold text-white bg-emerald-800/30 px-4 py-2 rounded-lg">{formatTime(timeRemaining)}</div>
-                <p className="text-sm text-emerald-100 mt-1">Time left</p>
+                <div className="text-3xl font-mono font-bold text-red-600 bg-red-50 px-4 py-2 rounded-lg border-2 border-red-200 animate-pulse">{formatTime(timeRemaining)}</div>
+                <p className="text-sm text-red-600 mt-1 font-medium">Time left</p>
               </div>
             </div>
           </CardContent>
@@ -150,7 +150,7 @@ const CustomerDashboard = ({
               badge: "Trending"
             }].map((product, index) => <Card key={index} className="border-emerald-200 hover:border-emerald-400 transition-all duration-300 cursor-pointer bg-gradient-to-br from-white to-emerald-50 shadow-md hover:shadow-lg">
                   <CardContent className="p-4">
-                    <Badge className="mb-2 bg-emerald-100 text-emerald-700 border-emerald-200">{product.badge}</Badge>
+                    <Badge className={`mb-2 ${product.badge === "Low Stock" ? "bg-red-50 text-red-600 border-red-200" : "bg-emerald-100 text-emerald-700 border-emerald-200"}`}>{product.badge}</Badge>
                     <h4 className="font-semibold mb-2 text-emerald-900">{product.name}</h4>
                     <div className="flex items-center space-x-2 mb-3">
                       <span className="text-lg font-bold text-emerald-700">₹{product.price}</span>
@@ -233,15 +233,15 @@ const CustomerDashboard = ({
         </div>
 
         {/* Scarcity Psychology - Stock Alert */}
-        <Card className="border-emerald-300 bg-gradient-to-r from-emerald-100 to-green-100 shadow-lg">
+        <Card className="border-red-200 bg-gradient-to-r from-red-50 to-orange-50 shadow-lg transition-all duration-300">
           <CardContent className="p-4">
             <div className="flex items-center space-x-3">
-              <Zap className="w-6 h-6 text-emerald-700" />
+              <Zap className="w-6 h-6 text-red-600" />
               <div>
-                <p className="font-semibold text-emerald-800">⚠️ Running Low on Your Favorites!</p>
-                <p className="text-sm text-emerald-700">Premium Mutton Curry Cut - Only 3 kg left in stock. Order now to avoid disappointment!</p>
+                <p className="font-semibold text-red-600">⚠️ Running Low on Your Favorites!</p>
+                <p className="text-sm text-red-500">Premium Mutton Curry Cut - Only 3 kg left in stock. Order now to avoid disappointment!</p>
               </div>
-              <Button className="bg-emerald-600 hover:bg-emerald-700 text-white ml-auto shadow-md">
+              <Button className="bg-red-600 hover:bg-red-700 text-white ml-auto shadow-md transition-all duration-300">
                 Order Now
               </Button>
             </div>
