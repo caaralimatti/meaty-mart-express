@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,23 +8,34 @@ import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useSellerAuth } from "@/hooks/useSellerAuth";
 import { usePhoneOTP } from "@/hooks/usePhoneOTP";
-
 interface SellerRegistrationFormProps {
   onBack: () => void;
   onLoginLink: () => void;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
-
-const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: SellerRegistrationFormProps) => {
-  const { registerSeller, isLoading } = useSellerAuth();
-  const { otpState, isLoading: otpLoading, sendOTP, verifyOTP, resetOTP } = usePhoneOTP();
-  
+const SellerRegistrationForm = ({
+  onBack,
+  onLoginLink,
+  onSuccess,
+  onCancel
+}: SellerRegistrationFormProps) => {
+  const {
+    registerSeller,
+    isLoading
+  } = useSellerAuth();
+  const {
+    otpState,
+    isLoading: otpLoading,
+    sendOTP,
+    verifyOTP,
+    resetOTP
+  } = usePhoneOTP();
   const [type, setType] = useState<string>("");
   const [typeOfSeller, setTypeOfSeller] = useState<string>("");
   const [otp, setOtp] = useState("");
   const [formData, setFormData] = useState<any>(null);
-  
+
   // Individual fields
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -35,24 +45,21 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
   const [mobileNumber, setMobileNumber] = useState("");
   const [aadhaarNumber, setAadhaarNumber] = useState("");
   const [email, setEmail] = useState("");
-  
+
   // Registered entity fields
   const [entityFullName, setEntityFullName] = useState("");
   const [registeredAddress, setRegisteredAddress] = useState("");
   const [gstin, setGstin] = useState("");
-
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-
   const handleRegister = async () => {
     // Validation
     if (!type || !typeOfSeller) {
       toast.error("Please fill in all required fields");
       return;
     }
-
     if (type === "Individual") {
       if (!firstName || !address || !city || !pincode || !mobileNumber || !aadhaarNumber) {
         toast.error("Please fill in all required fields for Individual registration");
@@ -64,12 +71,10 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
         return;
       }
     }
-
     if (!mobileNumber || mobileNumber.length !== 10) {
       toast.error("Please enter a valid 10-digit mobile number");
       return;
     }
-
     if (email && !validateEmail(email)) {
       toast.error("Please enter a valid email address");
       return;
@@ -91,27 +96,24 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
       gstin,
       email
     };
-
     setFormData(authData);
-    
+
     // Send OTP
     const result = await sendOTP(mobileNumber);
     if (!result.success) {
       setFormData(null);
     }
   };
-
   const handleVerifyOTP = async () => {
     if (!otp || otp.length !== 4) {
       toast.error("Please enter a valid 4-digit OTP");
       return;
     }
-    
     if (!formData) {
       toast.error("Registration data not found. Please try again.");
       return;
     }
-    
+
     // Verify OTP
     const result = await verifyOTP(otp);
     if (result.success) {
@@ -123,7 +125,6 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
       });
     }
   };
-
   const handleCancelOTP = () => {
     if (onCancel) {
       onCancel();
@@ -133,10 +134,8 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
       setOtp("");
     }
   };
-
   if (otpState.otpSent && !otpState.otpVerified) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 flex items-center justify-center p-4">
+    return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 flex items-center justify-center p-4">
         <Card className="w-full max-w-md mx-auto shadow-lg">
           <CardHeader className="text-center px-4 py-6">
             <CardTitle className="text-xl sm:text-2xl text-red-700">Verify OTP</CardTitle>
@@ -151,65 +150,37 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
           <CardContent className="space-y-4 px-4 pb-6">
             <div className="space-y-2">
               <Label htmlFor="otp" className="text-sm font-medium">Enter OTP</Label>
-              <Input
-                id="otp"
-                type="text"
-                placeholder="Enter 4-digit OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                className="text-center text-lg sm:text-2xl tracking-wider h-12 sm:h-14"
-                maxLength={4}
-              />
+              <Input id="otp" type="text" placeholder="Enter 4-digit OTP" value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))} className="text-center text-lg sm:text-2xl tracking-wider h-12 sm:h-14" maxLength={4} />
             </div>
             
-            <Button 
-              onClick={handleVerifyOTP}
-              disabled={isLoading || otpLoading || otp.length !== 4}
-              className="w-full bg-red-600 hover:bg-red-700 h-12 text-base font-medium"
-            >
+            <Button onClick={handleVerifyOTP} disabled={isLoading || otpLoading || otp.length !== 4} className="w-full bg-red-600 hover:bg-red-700 h-12 text-base font-medium">
               {isLoading ? "Registering..." : "Verify & Complete Registration"}
             </Button>
             
-            <Button 
-              variant="link" 
-              onClick={() => {
-                resetOTP();
-                setFormData(null);
-                setOtp("");
-              }}
-              className="w-full text-red-600 text-sm"
-            >
+            <Button variant="link" onClick={() => {
+            resetOTP();
+            setFormData(null);
+            setOtp("");
+          }} className="w-full text-red-600 text-sm">
               Change Mobile Number
             </Button>
 
-            <Button 
-              variant="outline" 
-              onClick={handleCancelOTP}
-              className="w-full h-10"
-            >
+            <Button variant="outline" onClick={handleCancelOTP} className="w-full h-10">
               Cancel
             </Button>
           </CardContent>
         </Card>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 flex items-center justify-center p-3 sm:p-4">
+  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-blue-100 flex items-center justify-center p-3 sm:p-4">
       <Card className="w-full max-w-2xl mx-auto shadow-lg">
         <CardHeader className="px-4 sm:px-6 py-4 sm:py-6">
           <div className="flex items-center mb-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onBack}
-              className="mr-3 h-8 w-8 p-0 sm:h-10 sm:w-auto sm:px-3"
-            >
+            <Button variant="outline" size="sm" onClick={onBack} className="mr-3 h-8 w-8 p-0 sm:h-10 sm:w-auto sm:px-3">
               <ArrowLeft className="w-4 h-4" />
               <span className="hidden sm:ml-2 sm:inline">Back</span>
             </Button>
-            <CardTitle className="text-lg sm:text-2xl text-red-700">Seller Registration</CardTitle>
+            <CardTitle className="text-lg sm:text-2xl text-slate-50">Seller Registration</CardTitle>
           </div>
         </CardHeader>
         
@@ -249,230 +220,105 @@ const SellerRegistrationForm = ({ onBack, onLoginLink, onSuccess, onCancel }: Se
           </div>
 
           {/* Conditional Fields Based on Type */}
-          {type === "Individual" && (
-            <div className="space-y-4">
+          {type === "Individual" && <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="firstName" className="text-sm font-medium">First Name *</Label>
-                  <Input
-                    id="firstName"
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="mt-1 h-10"
-                    placeholder="Enter first name"
-                  />
+                  <Input id="firstName" type="text" value={firstName} onChange={e => setFirstName(e.target.value)} className="mt-1 h-10" placeholder="Enter first name" />
                 </div>
                 <div>
                   <Label htmlFor="lastName" className="text-sm font-medium">Last Name</Label>
-                  <Input
-                    id="lastName"
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="mt-1 h-10"
-                    placeholder="Enter last name"
-                  />
+                  <Input id="lastName" type="text" value={lastName} onChange={e => setLastName(e.target.value)} className="mt-1 h-10" placeholder="Enter last name" />
                 </div>
               </div>
               
               <div>
                 <Label htmlFor="address" className="text-sm font-medium">Address *</Label>
-                <Input
-                  id="address"
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  className="mt-1 h-10"
-                  placeholder="Enter your address"
-                />
+                <Input id="address" type="text" value={address} onChange={e => setAddress(e.target.value)} className="mt-1 h-10" placeholder="Enter your address" />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="city" className="text-sm font-medium">City *</Label>
-                  <Input
-                    id="city"
-                    type="text"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="mt-1 h-10"
-                    placeholder="Enter city"
-                  />
+                  <Input id="city" type="text" value={city} onChange={e => setCity(e.target.value)} className="mt-1 h-10" placeholder="Enter city" />
                 </div>
                 <div>
                   <Label htmlFor="pincode" className="text-sm font-medium">Pincode *</Label>
-                  <Input
-                    id="pincode"
-                    type="text"
-                    value={pincode}
-                    onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    className="mt-1 h-10"
-                    maxLength={6}
-                    placeholder="6-digit pincode"
-                  />
+                  <Input id="pincode" type="text" value={pincode} onChange={e => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))} className="mt-1 h-10" maxLength={6} placeholder="6-digit pincode" />
                 </div>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="mobileNumber" className="text-sm font-medium">Mobile Number *</Label>
-                  <Input
-                    id="mobileNumber"
-                    type="tel"
-                    value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    className="mt-1 h-10"
-                    maxLength={10}
-                    placeholder="10-digit mobile number"
-                  />
+                  <Input id="mobileNumber" type="tel" value={mobileNumber} onChange={e => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} className="mt-1 h-10" maxLength={10} placeholder="10-digit mobile number" />
                 </div>
                 <div>
                   <Label htmlFor="aadhaarNumber" className="text-sm font-medium">Aadhaar Number *</Label>
-                  <Input
-                    id="aadhaarNumber"
-                    type="text"
-                    value={aadhaarNumber}
-                    onChange={(e) => setAadhaarNumber(e.target.value.slice(0, 12))}
-                    className="mt-1 h-10"
-                    maxLength={12}
-                    placeholder="12-digit Aadhaar"
-                  />
+                  <Input id="aadhaarNumber" type="text" value={aadhaarNumber} onChange={e => setAadhaarNumber(e.target.value.slice(0, 12))} className="mt-1 h-10" maxLength={12} placeholder="12-digit Aadhaar" />
                 </div>
               </div>
               
               <div>
                 <Label htmlFor="email" className="text-sm font-medium">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 h-10"
-                  placeholder="example@email.com"
-                />
+                <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} className="mt-1 h-10" placeholder="example@email.com" />
               </div>
-            </div>
-          )}
+            </div>}
 
-          {type === "Registered" && (
-            <div className="space-y-4">
+          {type === "Registered" && <div className="space-y-4">
               <div>
                 <Label htmlFor="entityFullName" className="text-sm font-medium">Entity Full Name *</Label>
-                <Input
-                  id="entityFullName"
-                  type="text"
-                  value={entityFullName}
-                  onChange={(e) => setEntityFullName(e.target.value)}
-                  className="mt-1 h-10"
-                  placeholder="Enter company/entity name"
-                />
+                <Input id="entityFullName" type="text" value={entityFullName} onChange={e => setEntityFullName(e.target.value)} className="mt-1 h-10" placeholder="Enter company/entity name" />
               </div>
               
               <div>
                 <Label htmlFor="registeredAddress" className="text-sm font-medium">Registered Address *</Label>
-                <Input
-                  id="registeredAddress"
-                  type="text"
-                  value={registeredAddress}
-                  onChange={(e) => setRegisteredAddress(e.target.value)}
-                  className="mt-1 h-10"
-                  placeholder="Enter registered address"
-                />
+                <Input id="registeredAddress" type="text" value={registeredAddress} onChange={e => setRegisteredAddress(e.target.value)} className="mt-1 h-10" placeholder="Enter registered address" />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="cityReg" className="text-sm font-medium">City *</Label>
-                  <Input
-                    id="cityReg"
-                    type="text"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="mt-1 h-10"
-                    placeholder="Enter city"
-                  />
+                  <Input id="cityReg" type="text" value={city} onChange={e => setCity(e.target.value)} className="mt-1 h-10" placeholder="Enter city" />
                 </div>
                 <div>
                   <Label htmlFor="pincodeReg" className="text-sm font-medium">Pincode *</Label>
-                  <Input
-                    id="pincodeReg"
-                    type="text"
-                    value={pincode}
-                    onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    className="mt-1 h-10"
-                    maxLength={6}
-                    placeholder="6-digit pincode"
-                  />
+                  <Input id="pincodeReg" type="text" value={pincode} onChange={e => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))} className="mt-1 h-10" maxLength={6} placeholder="6-digit pincode" />
                 </div>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="gstin" className="text-sm font-medium">GSTIN (if applicable)</Label>
-                  <Input
-                    id="gstin"
-                    type="text"
-                    value={gstin}
-                    onChange={(e) => setGstin(e.target.value)}
-                    className="mt-1 h-10"
-                    placeholder="Enter GSTIN"
-                  />
+                  <Input id="gstin" type="text" value={gstin} onChange={e => setGstin(e.target.value)} className="mt-1 h-10" placeholder="Enter GSTIN" />
                 </div>
                 <div>
                   <Label htmlFor="mobileNumberReg" className="text-sm font-medium">Mobile Number *</Label>
-                  <Input
-                    id="mobileNumberReg"
-                    type="tel"
-                    value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    className="mt-1 h-10"
-                    maxLength={10}
-                    placeholder="10-digit mobile"
-                  />
+                  <Input id="mobileNumberReg" type="tel" value={mobileNumber} onChange={e => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} className="mt-1 h-10" maxLength={10} placeholder="10-digit mobile" />
                 </div>
               </div>
               
               <div>
                 <Label htmlFor="emailReg" className="text-sm font-medium">Email</Label>
-                <Input
-                  id="emailReg"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 h-10"
-                  placeholder="example@email.com"
-                />
+                <Input id="emailReg" type="email" value={email} onChange={e => setEmail(e.target.value)} className="mt-1 h-10" placeholder="example@email.com" />
               </div>
-            </div>
-          )}
+            </div>}
 
           {/* Registration Actions */}
-          {type && (
-            <div className="space-y-4 pt-4">
+          {type && <div className="space-y-4 pt-4">
               <p className="text-sm text-center text-gray-600">
                 Already Registered?{" "}
-                <button
-                  onClick={onLoginLink}
-                  className="text-red-600 hover:text-red-700 underline font-medium"
-                >
+                <button onClick={onLoginLink} className="text-red-600 hover:text-red-700 underline font-medium">
                   Login Here
                 </button>
               </p>
               
-              <Button
-                onClick={handleRegister}
-                disabled={isLoading || otpLoading}
-                className="w-full bg-red-600 hover:bg-red-700 h-12 text-base font-medium"
-              >
+              <Button onClick={handleRegister} disabled={isLoading || otpLoading} className="w-full bg-red-600 hover:bg-red-700 h-12 text-base font-medium">
                 {otpLoading ? "Sending OTP..." : "Send OTP"}
               </Button>
-            </div>
-          )}
+            </div>}
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default SellerRegistrationForm;
