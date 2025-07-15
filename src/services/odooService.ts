@@ -64,6 +64,7 @@ class OdooService {
           odoo_endpoint: endpoint,
           data,
           session_id: this.sessionId,
+          config: this.config, // Pass the configuration to the edge function
         },
       });
 

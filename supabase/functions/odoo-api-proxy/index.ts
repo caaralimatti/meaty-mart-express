@@ -13,20 +13,21 @@ serve(async (req) => {
   }
 
   try {
-    const { odoo_endpoint, data, session_id } = await req.json()
-    console.log('Proxy request:', { odoo_endpoint, data, session_id })
+    const { odoo_endpoint, data, session_id, config } = await req.json()
+    console.log('Proxy request:', { odoo_endpoint, data, session_id, config })
 
-    const ODOO_URL = Deno.env.get('ODOO_URL')
-    const ODOO_DB = Deno.env.get('ODOO_DB')
-    const ODOO_USERNAME = Deno.env.get('ODOO_USERNAME')
-    const ODOO_PASSWORD = Deno.env.get('ODOO_PASSWORD')
+    // Use config from request if provided, otherwise fall back to environment variables
+    const ODOO_URL = config?.serverUrl || Deno.env.get('ODOO_URL')
+    const ODOO_DB = config?.database || Deno.env.get('ODOO_DB')
+    const ODOO_USERNAME = config?.username || Deno.env.get('ODOO_USERNAME')
+    const ODOO_PASSWORD = config?.password || Deno.env.get('ODOO_PASSWORD')
 
     if (!ODOO_URL) {
-      throw new Error('ODOO_URL is not configured in Supabase secrets.')
+      throw new Error('ODOO_URL not configured. Please provide it in the request config or set in Supabase secrets.')
     }
 
     if (!ODOO_DB || !ODOO_USERNAME || !ODOO_PASSWORD) {
-      throw new Error('Odoo credentials (ODOO_DB, ODOO_USERNAME, ODOO_PASSWORD) are not configured in Supabase secrets.')
+      throw new Error('Odoo credentials (database, username, password) not configured. Please provide them in the request config or set in Supabase secrets.')
     }
     
     // Handle different authentication endpoints

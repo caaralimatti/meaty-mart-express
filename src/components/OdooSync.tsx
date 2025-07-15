@@ -34,8 +34,8 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
   const [connectionDetails, setConnectionDetails] = useState<string>('');
   const [odooProducts, setOdooProducts] = useState<any[]>([]);
   const [config, setConfig] = useState<OdooConfig>({
-    serverUrl: 'http://138.91.109.69:8069',
-    database: 'ipurvey_staging',
+    serverUrl: 'https://goatgoat.xyz/',
+    database: 'staging',
     fields: 'name, list_price, uom_id'
   });
   const [tempConfig, setTempConfig] = useState<OdooConfig>(config);
@@ -107,8 +107,8 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
       odooService.setConfig({
         serverUrl: config.serverUrl,
         database: config.database,
-        username: '', // These come from Supabase secrets
-        password: '', // These come from Supabase secrets
+        username: 'admin',
+        password: 'admin',
       });
       
       const connected = await odooService.authenticate();
@@ -188,8 +188,8 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
       odooService.setConfig({
         serverUrl: config.serverUrl,
         database: config.database,
-        username: '', // These come from Supabase secrets
-        password: '', // These come from Supabase secrets
+        username: 'admin',
+        password: 'admin',
       });
 
       const connected = await odooService.authenticate();
@@ -238,8 +238,8 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
       odooService.setConfig({
         serverUrl: config.serverUrl,
         database: config.database,
-        username: '', // These come from Supabase secrets
-        password: '', // These come from Supabase secrets
+        username: 'admin',
+        password: 'admin',
       });
 
       const connected = await odooService.authenticate();
@@ -299,8 +299,8 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
       odooService.setConfig({
         serverUrl: config.serverUrl,
         database: config.database,
-        username: '', // These come from Supabase secrets
-        password: '', // These come from Supabase secrets
+        username: 'admin',
+        password: 'admin',
       });
 
       const sampleOrder = {
@@ -380,7 +380,7 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
                       id="server"
                       value={tempConfig.serverUrl}
                       onChange={(e) => setTempConfig(prev => ({ ...prev, serverUrl: e.target.value }))}
-                      placeholder="http://138.91.109.69:8069"
+                      placeholder="https://goatgoat.xyz/"
                       className="mt-1"
                     />
                   </div>
@@ -390,7 +390,7 @@ const OdooSync = ({ products, onProductsSync }: OdooSyncProps) => {
                       id="database"
                       value={tempConfig.database}
                       onChange={(e) => setTempConfig(prev => ({ ...prev, database: e.target.value }))}
-                      placeholder="ipurvey_staging"
+                      placeholder="staging"
                       className="mt-1"
                     />
                   </div>
