@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -211,7 +212,7 @@ const SellerOptionsScreen = ({
 
           <div className="text-center mt-8">
             <p className="text-sm text-emerald-600 font-medium">
-              Join thousands of successful sellers on QuickGoat
+              GoatGoat
             </p>
           </div>
         </div>
