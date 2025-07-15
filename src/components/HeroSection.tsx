@@ -1,16 +1,15 @@
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, MapPin } from "lucide-react";
-
 interface HeroSectionProps {
   searchQuery: string;
   onSearchChange: (value: string) => void;
 }
-
-const HeroSection = ({ searchQuery, onSearchChange }: HeroSectionProps) => {
-  return (
-    <section className="container mx-auto px-4 py-6">
+const HeroSection = ({
+  searchQuery,
+  onSearchChange
+}: HeroSectionProps) => {
+  return <section className="container mx-auto px-4 py-6">
       <div className="text-center mb-6">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
           Fresh Goat Meat Delivered in 30 Minutes
@@ -29,16 +28,9 @@ const HeroSection = ({ searchQuery, onSearchChange }: HeroSectionProps) => {
         
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <Input
-            placeholder="Search for goat meat cuts..."
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-10 py-3 text-lg border-red-200 focus:border-red-400"
-          />
+          <Input placeholder="Search for goat meat cuts..." value={searchQuery} onChange={e => onSearchChange(e.target.value)} className="pl-10 py-3 text-lg border-red-200 focus:border-red-400 bg-lime-100" />
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
