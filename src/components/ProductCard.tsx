@@ -40,10 +40,10 @@ const ProductCard = ({
       
       <CardContent className="p-4 bg-green-700">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="font-semibold text-gray-800 text-lg truncate">{product.name}</h3>
+          <h3 className="font-semibold text-lg truncate text-lime-200">{product.name}</h3>
           <div className="flex items-center space-x-1">
             <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm text-gray-600">{product.rating}</span>
+            <span className="text-sm text-slate-50">{product.rating}</span>
           </div>
         </div>
         
@@ -58,16 +58,16 @@ const ProductCard = ({
         
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-red-600">₹{product.price}</span>
-            {product.originalPrice > product.price && <span className="text-sm text-gray-500 line-through">₹{product.originalPrice}</span>}
+            <span className="text-xl font-bold text-lime-200">₹{product.price}</span>
+            {product.originalPrice > product.price && <span className="text-sm line-through text-lime-200">₹{product.originalPrice}</span>}
           </div>
-          {product.inStock && <div className="flex items-center text-green-600 text-xs">
+          {product.inStock && <div className="flex items-center text-green-600 text-xs bg-transparent">
               <Clock className="w-3 h-3 mr-1" />
               30 min
             </div>}
         </div>
         
-        <Button onClick={() => onAddToCart(product)} disabled={!product.inStock} className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400">
+        <Button onClick={() => onAddToCart(product)} disabled={!product.inStock} className="w-full bg-lime-200 hover:bg-lime-100">
           {product.inStock ? "Add to Cart" : "Out of Stock"}
         </Button>
       </CardContent>
