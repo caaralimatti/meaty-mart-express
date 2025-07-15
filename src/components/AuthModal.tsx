@@ -61,9 +61,9 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
   };
 
   return (
-    <div className="fixed inset-0 bg-charcoal-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md mx-auto shadow-2xl bg-dark-slate border-vibrant-orange/20">
-        <CardHeader className="text-center px-4 sm:px-6 py-4 sm:py-6 border-b border-vibrant-orange/10">
+    <div className="fixed inset-0 bg-emerald-900/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <Card className="w-full max-w-md mx-auto bg-gradient-to-br from-white to-emerald-50 backdrop-blur-sm shadow-2xl border border-emerald-200">
+        <CardHeader className="text-center px-4 sm:px-6 py-4 sm:py-6 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-t-lg">
           {/* Logo */}
           <div className="mb-4 flex justify-center">
             <div className="w-16 h-16 relative">
@@ -79,23 +79,23 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
                 onLoad={() => console.log('Logo loaded successfully')}
               />
               {/* Fallback text logo */}
-              <div className="absolute inset-0 flex items-center justify-center text-vibrant-orange font-bold text-lg">
+              <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg">
                 QG
               </div>
             </div>
           </div>
           
-          <CardTitle className="text-xl sm:text-2xl text-off-white">
+          <CardTitle className="text-xl sm:text-2xl text-white">
             {step === "phone" ? (
               <>
-                Login to Quick<span className="text-vibrant-orange">Goat</span>
-                {userType === 'seller' && <span className="text-vibrant-orange"> Seller</span>}
+                Login to Quick<span className="text-emerald-100">Goat</span>
+                {userType === 'seller' && <span className="text-emerald-100"> Seller</span>}
               </>
             ) : (
               "Verify OTP"
             )}
           </CardTitle>
-          <p className="text-sm sm:text-base text-off-white/70 mt-2">
+          <p className="text-sm sm:text-base text-emerald-100 mt-2">
             {step === "phone" 
               ? "Enter your mobile number to get started" 
               : `We've sent an OTP to +91 ${phoneNumber}`
@@ -107,11 +107,11 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
           {step === "phone" ? (
             <>
               <div className="space-y-2">
-                <Label htmlFor="phone" className="text-sm font-medium text-off-white">Mobile Number</Label>
+                <Label htmlFor="phone" className="text-sm font-medium text-emerald-900">Mobile Number</Label>
                 <div className="flex">
-                  <div className="flex items-center px-3 border border-r-0 border-vibrant-orange/30 rounded-l-md bg-charcoal-black">
-                    <Phone className="w-4 h-4 text-vibrant-orange" />
-                    <span className="ml-2 text-sm font-medium text-off-white">+91</span>
+                  <div className="flex items-center px-3 border border-r-0 border-emerald-200 rounded-l-md bg-white/80">
+                    <Phone className="w-4 h-4 text-emerald-600" />
+                    <span className="ml-2 text-sm font-medium text-emerald-800">+91</span>
                   </div>
                   <Input
                     id="phone"
@@ -119,7 +119,7 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
                     placeholder="Enter 10-digit mobile number"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    className="rounded-l-none h-10 sm:h-11 bg-charcoal-black border-vibrant-orange/30 text-off-white placeholder:text-off-white/50 focus:border-vibrant-orange"
+                    className="rounded-l-none h-10 sm:h-11 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
                     maxLength={10}
                   />
                 </div>
@@ -128,7 +128,7 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
               <Button 
                 onClick={handleSendOTP}
                 disabled={isLoading || phoneNumber.length !== 10}
-                className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black h-11 sm:h-12 text-base font-semibold"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-11 sm:h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 {isLoading ? "Sending OTP..." : (
                   <>
@@ -141,14 +141,14 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
           ) : (
             <>
               <div className="space-y-2">
-                <Label htmlFor="otp" className="text-sm font-medium text-off-white">Enter OTP</Label>
+                <Label htmlFor="otp" className="text-sm font-medium text-emerald-900">Enter OTP</Label>
                 <Input
                   id="otp"
                   type="text"
                   placeholder="Enter 4-digit OTP"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  className="text-center text-lg sm:text-2xl tracking-wider h-12 sm:h-14 bg-charcoal-black border-vibrant-orange/30 text-off-white placeholder:text-off-white/50 focus:border-vibrant-orange"
+                  className="text-center text-lg sm:text-2xl tracking-wider h-12 sm:h-14 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
                   maxLength={4}
                 />
               </div>
@@ -156,7 +156,7 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
               <Button 
                 onClick={handleVerifyOTP}
                 disabled={isLoading || otp.length !== 4}
-                className="w-full bg-vibrant-orange hover:bg-vibrant-orange/90 text-charcoal-black h-11 sm:h-12 text-base font-semibold"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-11 sm:h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 {isLoading ? "Verifying..." : "Verify & Login"}
               </Button>
@@ -164,7 +164,7 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
               <Button 
                 variant="link" 
                 onClick={() => setStep("phone")}
-                className="w-full text-vibrant-orange hover:text-vibrant-orange/80 text-sm"
+                className="w-full text-emerald-600 hover:text-emerald-800 text-sm transition-all duration-300"
               >
                 Change Mobile Number
               </Button>
@@ -174,7 +174,7 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
           <Button 
             variant="outline" 
             onClick={onClose}
-            className="w-full h-10 sm:h-11 border-vibrant-orange/30 text-off-white hover:bg-vibrant-orange/10 hover:text-off-white"
+            className="w-full h-10 sm:h-11 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400 transition-all duration-300"
           >
             Cancel
           </Button>
