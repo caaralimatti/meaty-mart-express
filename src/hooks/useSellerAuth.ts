@@ -23,13 +23,48 @@ export interface SellerAuthData {
 export const useSellerAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const loadOdooConfiguration = () => {
+    try {
+      const savedConfig = localStorage.getItem('odooConfig');
+      if (savedConfig) {
+        const parsedConfig = JSON.parse(savedConfig);
+        return {
+          serverUrl: parsedConfig.serverUrl || 'https://goatgoat.xyz/',
+          database: parsedConfig.database || 'staging',
+          username: parsedConfig.username || 'admin',
+          password: parsedConfig.password || 'admin'
+        };
+      }
+    } catch (error) {
+      console.error('Error loading Odoo configuration:', error);
+    }
+    
+    // Return default configuration if no saved config or error
+    return {
+      serverUrl: 'https://goatgoat.xyz/',
+      database: 'staging',
+      username: 'admin',
+      password: 'admin'
+    };
+  };
+
   const createOdooCustomerAndApproval = async (authData: SellerAuthData, sellerId: string) => {
     try {
       console.log('Starting Odoo authentication and customer creation...');
       
+      // Load and set dynamic Odoo configuration
+      const odooConfig = loadOdooConfiguration();
+      console.log('Using Odoo configuration:', { 
+        serverUrl: odooConfig.serverUrl, 
+        database: odooConfig.database, 
+        username: odooConfig.username 
+      });
+      
+      odooService.setConfig(odooConfig);
+      
       const isAuthenticated = await odooService.authenticate();
       if (!isAuthenticated) {
-        throw new Error('Failed to authenticate with Odoo');
+        throw new Error('Failed to authenticate with Odoo - check Configuration Status');
       }
       
       console.log('Odoo authentication successful, creating customer...');
