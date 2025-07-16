@@ -6,3 +6,15 @@ verify_jwt = false
 
 [functions.fast2sms-otp]
 verify_jwt = false
+
+[functions.seller-approval-webhook]
+verify_jwt = false
+
+[functions.product-approval-webhook]
+verify_jwt = false
+
+[functions.livestock-approval-webhook]
+verify_jwt = false
+
+[functions.create-odoo-customer]
+verify_jwt = false
