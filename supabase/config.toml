@@ -1,5 +1,7 @@
+project_id = "oaynfzqjielnsipttzbs"
 
-```toml
 [functions.odoo-api-proxy]
 verify_jwt = false
-```
+
+[functions.fast2sms-otp]
+verify_jwt = false

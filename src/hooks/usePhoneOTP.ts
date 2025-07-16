@@ -1,12 +1,13 @@
 
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface OTPState {
   phoneNumber: string;
   otpSent: boolean;
   otpVerified: boolean;
-  generatedOTP: string;
+  sellerExists: boolean | null;
 }
 
 export const usePhoneOTP = () => {
@@ -14,29 +15,65 @@ export const usePhoneOTP = () => {
     phoneNumber: '',
     otpSent: false,
     otpVerified: false,
-    generatedOTP: ''
+    sellerExists: null
   });
   const [isLoading, setIsLoading] = useState(false);
+
+  const checkSellerExists = async (phoneNumber: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('sellers')
+        .select('id')
+        .eq('contact_phone', phoneNumber)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error checking seller:', error);
+        return false;
+      }
+
+      return !!data;
+    } catch (error) {
+      console.error('Error checking seller existence:', error);
+      return false;
+    }
+  };
 
   const sendOTP = async (phoneNumber: string) => {
     setIsLoading(true);
     try {
-      // Generate a random 4-digit OTP
-      const otp = Math.floor(1000 + Math.random() * 9000).toString();
+      // Check if seller exists
+      const exists = await checkSellerExists(phoneNumber);
       
-      // In a real app, you would send this OTP via SMS service
-      // For demo purposes, we'll just store it and show it in the console
-      console.log(`OTP for ${phoneNumber}: ${otp}`);
-      
+      // Send OTP via Fast2SMS
+      const { data, error } = await supabase.functions.invoke('fast2sms-otp', {
+        body: { 
+          action: 'send', 
+          phoneNumber: phoneNumber 
+        }
+      });
+
+      if (error) {
+        console.error('Error sending OTP:', error);
+        toast.error('Failed to send OTP. Please try again.');
+        return { success: false, error };
+      }
+
+      if (!data.success) {
+        toast.error(data.error || 'Failed to send OTP. Please try again.');
+        return { success: false, error: data.error };
+      }
+
       setOtpState({
         phoneNumber,
         otpSent: true,
         otpVerified: false,
-        generatedOTP: otp
+        sellerExists: exists
       });
-      
-      toast.success(`OTP sent to ${phoneNumber}. Check console for demo OTP: ${otp}`);
-      return { success: true };
+
+      // Show success message with demo OTP (remove in production)
+      toast.success(`OTP sent to ${phoneNumber}. Demo OTP: ${data.otp}`);
+      return { success: true, sellerExists: exists };
     } catch (error) {
       console.error('Error sending OTP:', error);
       toast.error('Failed to send OTP. Please try again.');
@@ -49,17 +86,32 @@ export const usePhoneOTP = () => {
   const verifyOTP = async (enteredOTP: string) => {
     setIsLoading(true);
     try {
-      if (enteredOTP === otpState.generatedOTP) {
-        setOtpState(prev => ({
-          ...prev,
-          otpVerified: true
-        }));
-        toast.success('OTP verified successfully!');
-        return { success: true };
-      } else {
-        toast.error('Invalid OTP. Please try again.');
-        return { success: false, error: 'Invalid OTP' };
+      const { data, error } = await supabase.functions.invoke('fast2sms-otp', {
+        body: { 
+          action: 'verify', 
+          phoneNumber: otpState.phoneNumber, 
+          otp: enteredOTP 
+        }
+      });
+
+      if (error) {
+        console.error('Error verifying OTP:', error);
+        toast.error('Failed to verify OTP. Please try again.');
+        return { success: false, error };
       }
+
+      if (!data.success) {
+        toast.error(data.error || 'Invalid OTP. Please try again.');
+        return { success: false, error: data.error };
+      }
+
+      setOtpState(prev => ({
+        ...prev,
+        otpVerified: true
+      }));
+
+      toast.success('OTP verified successfully!');
+      return { success: true, sellerExists: otpState.sellerExists };
     } catch (error) {
       console.error('Error verifying OTP:', error);
       toast.error('Failed to verify OTP. Please try again.');
@@ -74,7 +126,7 @@ export const usePhoneOTP = () => {
       phoneNumber: '',
       otpSent: false,
       otpVerified: false,
-      generatedOTP: ''
+      sellerExists: null
     });
   };
 
@@ -83,6 +135,7 @@ export const usePhoneOTP = () => {
     isLoading,
     sendOTP,
     verifyOTP,
-    resetOTP
+    resetOTP,
+    checkSellerExists
   };
 };

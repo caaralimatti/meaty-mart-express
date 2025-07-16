@@ -7,18 +7,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useSellerAuth } from "@/hooks/useSellerAuth";
+import { usePhoneOTP } from "@/hooks/usePhoneOTP";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   userType?: 'seller' | 'customer';
+  onRegisterRedirect?: () => void;
 }
 
-const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) => {
-  const { loginSeller, isLoading } = useSellerAuth();
-  const [step, setStep] = useState<"phone" | "otp">("phone");
+const AuthModal = ({ isOpen, onClose, userType = 'customer', onRegisterRedirect }: AuthModalProps) => {
+  const { loginSeller, isLoading: authLoading } = useSellerAuth();
+  const { otpState, isLoading: otpLoading, sendOTP, verifyOTP, resetOTP } = usePhoneOTP();
+  const [step, setStep] = useState<"phone" | "otp" | "register-prompt">("phone");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
+
+  const isLoading = authLoading || otpLoading;
 
   if (!isOpen) return null;
 
@@ -28,8 +33,15 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
       return;
     }
     
-    setStep("otp");
-    toast.success("OTP sent to your mobile number");
+    const result = await sendOTP(phoneNumber);
+    if (result.success) {
+      if (userType === 'seller' && !result.sellerExists) {
+        // Show registration prompt for new sellers
+        setStep("register-prompt");
+      } else {
+        setStep("otp");
+      }
+    }
   };
 
   const handleVerifyOTP = async () => {
@@ -38,24 +50,49 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
       return;
     }
     
-    if (userType === 'seller') {
-      // Use seller login flow with proper success callback
-      await loginSeller(phoneNumber, () => {
-        console.log('Login successful, closing modal and resetting state');
-        // Reset modal state first
+    const result = await verifyOTP(otp);
+    if (result.success) {
+      if (userType === 'seller') {
+        // Use seller login flow with proper success callback
+        await loginSeller(phoneNumber, () => {
+          console.log('Login successful, closing modal and resetting state');
+          // Reset modal state first
+          setStep("phone");
+          setPhoneNumber("");
+          setOtp("");
+          resetOTP();
+          // Close modal
+          onClose();
+        });
+      } else {
+        // Customer login flow (existing)
+        toast.success("Login successful! Welcome to QuickGoat");
+        onClose();
+        // Reset state
         setStep("phone");
         setPhoneNumber("");
         setOtp("");
-        // Close modal
-        onClose();
-      });
-    } else {
-      // Customer login flow (existing)
-      toast.success("Login successful! Welcome to QuickGoat");
-      onClose();
-      // Reset state
+        resetOTP();
+      }
+    }
+  };
+
+  const handleRegisterRedirect = () => {
+    if (onRegisterRedirect) {
+      onRegisterRedirect();
+    }
+    onClose();
+    resetOTP();
+    setStep("phone");
+    setPhoneNumber("");
+    setOtp("");
+  };
+
+  const handleBack = () => {
+    if (step === "register-prompt") {
       setStep("phone");
-      setPhoneNumber("");
+    } else {
+      setStep("phone");
       setOtp("");
     }
   };
@@ -138,6 +175,37 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
                 )}
               </Button>
             </>
+          ) : step === "register-prompt" ? (
+            <>
+              <div className="text-center space-y-4">
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold text-amber-800 mb-2">Seller Not Registered</h3>
+                  <p className="text-sm text-amber-700 mb-3">
+                    No seller account found with this phone number ({phoneNumber})
+                  </p>
+                  <p className="text-sm text-amber-800 font-medium">
+                    Would you like to create a new seller account?
+                  </p>
+                </div>
+                
+                <div className="space-y-3">
+                  <Button 
+                    onClick={handleRegisterRedirect}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-11 sm:h-12 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    Create Seller Account
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    onClick={handleBack}
+                    className="w-full h-10 sm:h-11 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400 transition-all duration-300"
+                  >
+                    Back to Phone Number
+                  </Button>
+                </div>
+              </div>
+            </>
           ) : (
             <>
               <div className="space-y-2">
@@ -163,7 +231,7 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer' }: AuthModalProps) =
               
               <Button 
                 variant="link" 
-                onClick={() => setStep("phone")}
+                onClick={handleBack}
                 className="w-full text-emerald-600 hover:text-emerald-800 text-sm transition-all duration-300"
               >
                 Change Mobile Number
