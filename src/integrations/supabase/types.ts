@@ -23,6 +23,7 @@ export type Database = {
           id: string
           location_latitude: number | null
           location_longitude: number | null
+          odoo_partner_id: number | null
           phone_number: string
           updated_at: string
           user_id: string | null
@@ -35,6 +36,7 @@ export type Database = {
           id?: string
           location_latitude?: number | null
           location_longitude?: number | null
+          odoo_partner_id?: number | null
           phone_number: string
           updated_at?: string
           user_id?: string | null
@@ -47,6 +49,7 @@ export type Database = {
           id?: string
           location_latitude?: number | null
           location_longitude?: number | null
+          odoo_partner_id?: number | null
           phone_number?: string
           updated_at?: string
           user_id?: string | null
