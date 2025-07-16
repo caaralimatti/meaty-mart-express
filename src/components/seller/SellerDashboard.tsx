@@ -46,6 +46,14 @@ const SellerDashboard = ({ onBackToMain }: SellerDashboardProps) => {
     }
   }, [sellerProfile, loading, currentView]);
 
+  // Failsafe guard - check localStorage if no seller profile but session exists
+  useEffect(() => {
+    if (!loading && !sellerProfile && localStorage.getItem('quickgoat_seller_session')) {
+      console.log('Found session in localStorage but no seller profile, refreshing data');
+      refreshSellerData();
+    }
+  }, [loading, sellerProfile, refreshSellerData]);
+
   // Force refresh when modal closes after login
   useEffect(() => {
     if (!showAuthModal && currentView === 'options') {

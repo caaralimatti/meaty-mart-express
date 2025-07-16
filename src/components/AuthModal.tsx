@@ -56,6 +56,8 @@ const AuthModal = ({ isOpen, onClose, userType = 'customer', onRegisterRedirect 
         // Use seller login flow with proper success callback
         await loginSeller(phoneNumber, () => {
           console.log('Login successful, closing modal and resetting state');
+          // Dispatch storage event to trigger state update
+          window.dispatchEvent(new Event('storage'));
           // Reset modal state first
           setStep("phone");
           setPhoneNumber("");

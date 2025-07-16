@@ -80,6 +80,18 @@ export const useSellerData = () => {
 
   useEffect(() => {
     fetchSellerData();
+    
+    // Listen for localStorage changes
+    const handleStorageChange = () => {
+      console.log('Storage changed, refetching seller data');
+      fetchSellerData();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const updateShopStatus = async (shopType: 'meat' | 'livestock', status: boolean) => {
