@@ -71,8 +71,7 @@ export const usePhoneOTP = () => {
         sellerExists: exists
       });
 
-      // Show success message with demo OTP (remove in production)
-      toast.success(`OTP sent to ${phoneNumber}. Demo OTP: ${data.otp}`);
+      toast.success(`OTP sent to ${phoneNumber}`);
       return { success: true, sellerExists: exists };
     } catch (error) {
       console.error('Error sending OTP:', error);

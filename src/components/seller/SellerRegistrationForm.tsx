@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,12 +9,14 @@ import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useSellerAuth } from "@/hooks/useSellerAuth";
 import { usePhoneOTP } from "@/hooks/usePhoneOTP";
+
 interface SellerRegistrationFormProps {
   onBack: () => void;
   onLoginLink: () => void;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
+
 const SellerRegistrationForm = ({
   onBack,
   onLoginLink,
@@ -31,6 +34,7 @@ const SellerRegistrationForm = ({
     verifyOTP,
     resetOTP
   } = usePhoneOTP();
+  
   const [type, setType] = useState<string>("");
   const [typeOfSeller, setTypeOfSeller] = useState<string>("");
   const [otp, setOtp] = useState("");
@@ -50,16 +54,19 @@ const SellerRegistrationForm = ({
   const [entityFullName, setEntityFullName] = useState("");
   const [registeredAddress, setRegisteredAddress] = useState("");
   const [gstin, setGstin] = useState("");
+
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+
   const handleRegister = async () => {
     // Validation
     if (!type || !typeOfSeller) {
       toast.error("Please fill in all required fields");
       return;
     }
+    
     if (type === "Individual") {
       if (!firstName || !address || !city || !pincode || !mobileNumber || !aadhaarNumber) {
         toast.error("Please fill in all required fields for Individual registration");
@@ -71,10 +78,12 @@ const SellerRegistrationForm = ({
         return;
       }
     }
+    
     if (!mobileNumber || mobileNumber.length !== 10) {
       toast.error("Please enter a valid 10-digit mobile number");
       return;
     }
+    
     if (email && !validateEmail(email)) {
       toast.error("Please enter a valid email address");
       return;
@@ -104,11 +113,13 @@ const SellerRegistrationForm = ({
       setFormData(null);
     }
   };
+
   const handleVerifyOTP = async () => {
     if (!otp || otp.length !== 4) {
       toast.error("Please enter a valid 4-digit OTP");
       return;
     }
+    
     if (!formData) {
       toast.error("Registration data not found. Please try again.");
       return;
@@ -125,6 +136,7 @@ const SellerRegistrationForm = ({
       });
     }
   };
+
   const handleCancelOTP = () => {
     if (onCancel) {
       onCancel();
@@ -134,72 +146,74 @@ const SellerRegistrationForm = ({
       setOtp("");
     }
   };
+
   if (otpState.otpSent && !otpState.otpVerified) {
-    return <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center p-4">
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center p-4">
         <Card className="w-full max-w-md mx-auto bg-gradient-to-br from-white to-emerald-50 backdrop-blur-sm shadow-lg border border-emerald-200">
           <CardHeader className="text-center px-4 py-6 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-t-lg">
             <CardTitle className="text-xl sm:text-2xl">Verify OTP</CardTitle>
             <p className="text-sm sm:text-base text-emerald-100 mt-2">
               We've sent an OTP to +91 {otpState.phoneNumber}
             </p>
-            <p className="text-xs sm:text-sm text-emerald-200 mt-2">
-              Demo OTP: Check browser console for the OTP
-            </p>
           </CardHeader>
           
           <CardContent className="space-y-4 px-4 pb-6">
             <div className="space-y-2">
               <Label htmlFor="otp" className="text-sm font-medium text-emerald-900">Enter OTP</Label>
-              <Input 
-                id="otp" 
-                type="text" 
-                placeholder="Enter 4-digit OTP" 
-                value={otp} 
-                onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))} 
-                className="text-center text-lg sm:text-2xl tracking-wider h-12 sm:h-14 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300" 
-                maxLength={4} 
+              <Input
+                id="otp"
+                type="text"
+                placeholder="Enter 4-digit OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                className="text-center text-lg sm:text-2xl tracking-wider h-12 sm:h-14 border-emerald-200 focus:border-emerald-400 focus:ring-emerald-400 transition-all duration-300"
+                maxLength={4}
               />
             </div>
             
-            <Button 
-              onClick={handleVerifyOTP} 
-              disabled={isLoading || otpLoading || otp.length !== 4} 
+            <Button
+              onClick={handleVerifyOTP}
+              disabled={isLoading || otpLoading || otp.length !== 4}
               className="w-full bg-emerald-600 hover:bg-emerald-700 h-12 text-base font-medium text-white shadow-lg hover:shadow-xl transition-all duration-300"
             >
               {isLoading ? "Registering..." : "Verify & Complete Registration"}
             </Button>
             
-            <Button 
-              variant="link" 
+            <Button
+              variant="link"
               onClick={() => {
                 resetOTP();
                 setFormData(null);
                 setOtp("");
-              }} 
+              }}
               className="w-full text-emerald-600 hover:text-emerald-700 text-sm transition-all duration-300"
             >
               Change Mobile Number
             </Button>
 
-            <Button 
-              variant="outline" 
-              onClick={handleCancelOTP} 
+            <Button
+              variant="outline"
+              onClick={handleCancelOTP}
               className="w-full h-10 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400 transition-all duration-300"
             >
               Cancel
             </Button>
           </CardContent>
         </Card>
-      </div>;
+      </div>
+    );
   }
-  return <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center p-3 sm:p-4">
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center p-3 sm:p-4">
       <Card className="w-full max-w-2xl mx-auto bg-gradient-to-br from-white to-emerald-50 backdrop-blur-sm shadow-lg border border-emerald-200">
         <CardHeader className="px-4 sm:px-6 py-4 sm:py-6 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-t-lg">
           <div className="flex items-center mb-4">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={onBack} 
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onBack}
               className="mr-3 h-8 w-8 p-0 sm:h-10 sm:w-auto sm:px-3 bg-white/20 border-white/30 text-white hover:bg-white/30 hover:border-white/50 backdrop-blur-sm transition-all duration-300"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -245,66 +259,67 @@ const SellerRegistrationForm = ({
           </div>
 
           {/* Conditional Fields Based on Type */}
-          {type === "Individual" && <div className="space-y-4">
+          {type === "Individual" && (
+            <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="firstName" className="text-sm font-medium text-emerald-900">First Name *</Label>
-                  <Input 
-                    id="firstName" 
-                    type="text" 
-                    value={firstName} 
-                    onChange={e => setFirstName(e.target.value)} 
-                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                    placeholder="Enter first name" 
+                  <Input
+                    id="firstName"
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                    placeholder="Enter first name"
                   />
                 </div>
                 <div>
                   <Label htmlFor="lastName" className="text-sm font-medium text-emerald-900">Last Name</Label>
-                  <Input 
-                    id="lastName" 
-                    type="text" 
-                    value={lastName} 
-                    onChange={e => setLastName(e.target.value)} 
-                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                    placeholder="Enter last name" 
+                  <Input
+                    id="lastName"
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                    placeholder="Enter last name"
                   />
                 </div>
               </div>
               
               <div>
                 <Label htmlFor="address" className="text-sm font-medium text-emerald-900">Address *</Label>
-                <Input 
-                  id="address" 
-                  type="text" 
-                  value={address} 
-                  onChange={e => setAddress(e.target.value)} 
-                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                  placeholder="Enter your address" 
+                <Input
+                  id="address"
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                  placeholder="Enter your address"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="city" className="text-sm font-medium text-emerald-900">City *</Label>
-                  <Input 
-                    id="city" 
-                    type="text" 
-                    value={city} 
-                    onChange={e => setCity(e.target.value)} 
-                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                    placeholder="Enter city" 
+                  <Input
+                    id="city"
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                    placeholder="Enter city"
                   />
                 </div>
                 <div>
                   <Label htmlFor="pincode" className="text-sm font-medium text-emerald-900">Pincode *</Label>
-                  <Input 
-                    id="pincode" 
-                    type="text" 
-                    value={pincode} 
-                    onChange={e => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))} 
-                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                    maxLength={6} 
-                    placeholder="6-digit pincode" 
+                  <Input
+                    id="pincode"
+                    type="text"
+                    value={pincode}
+                    onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                    maxLength={6}
+                    placeholder="6-digit pincode"
                   />
                 </div>
               </div>
@@ -312,90 +327,92 @@ const SellerRegistrationForm = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="mobileNumber" className="text-sm font-medium text-emerald-900">Mobile Number *</Label>
-                  <Input 
-                    id="mobileNumber" 
-                    type="tel" 
-                    value={mobileNumber} 
-                    onChange={e => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} 
-                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                    maxLength={10} 
-                    placeholder="10-digit mobile number" 
+                  <Input
+                    id="mobileNumber"
+                    type="tel"
+                    value={mobileNumber}
+                    onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                    maxLength={10}
+                    placeholder="10-digit mobile number"
                   />
                 </div>
                 <div>
                   <Label htmlFor="aadhaarNumber" className="text-sm font-medium text-emerald-900">Aadhaar Number *</Label>
-                  <Input 
-                    id="aadhaarNumber" 
-                    type="text" 
-                    value={aadhaarNumber} 
-                    onChange={e => setAadhaarNumber(e.target.value.slice(0, 12))} 
-                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                    maxLength={12} 
-                    placeholder="12-digit Aadhaar" 
+                  <Input
+                    id="aadhaarNumber"
+                    type="text"
+                    value={aadhaarNumber}
+                    onChange={(e) => setAadhaarNumber(e.target.value.slice(0, 12))}
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                    maxLength={12}
+                    placeholder="12-digit Aadhaar"
                   />
                 </div>
               </div>
               
               <div>
                 <Label htmlFor="email" className="text-sm font-medium text-emerald-900">Email</Label>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  value={email} 
-                  onChange={e => setEmail(e.target.value)} 
-                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                  placeholder="example@email.com" 
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                  placeholder="example@email.com"
                 />
               </div>
-            </div>}
+            </div>
+          )}
 
-          {type === "Registered" && <div className="space-y-4">
+          {type === "Registered" && (
+            <div className="space-y-4">
               <div>
                 <Label htmlFor="entityFullName" className="text-sm font-medium text-emerald-900">Entity Full Name *</Label>
-                <Input 
-                  id="entityFullName" 
-                  type="text" 
-                  value={entityFullName} 
-                  onChange={e => setEntityFullName(e.target.value)} 
-                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                  placeholder="Enter company/entity name" 
+                <Input
+                  id="entityFullName"
+                  type="text"
+                  value={entityFullName}
+                  onChange={(e) => setEntityFullName(e.target.value)}
+                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                  placeholder="Enter company/entity name"
                 />
               </div>
               
               <div>
                 <Label htmlFor="registeredAddress" className="text-sm font-medium text-emerald-900">Registered Address *</Label>
-                <Input 
-                  id="registeredAddress" 
-                  type="text" 
-                  value={registeredAddress} 
-                  onChange={e => setRegisteredAddress(e.target.value)} 
-                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                  placeholder="Enter registered address" 
+                <Input
+                  id="registeredAddress"
+                  type="text"
+                  value={registeredAddress}
+                  onChange={(e) => setRegisteredAddress(e.target.value)}
+                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                  placeholder="Enter registered address"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="cityReg" className="text-sm font-medium text-emerald-900">City *</Label>
-                  <Input 
-                    id="cityReg" 
-                    type="text" 
-                    value={city} 
-                    onChange={e => setCity(e.target.value)} 
-                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                    placeholder="Enter city" 
+                  <Input
+                    id="cityReg"
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                    placeholder="Enter city"
                   />
                 </div>
                 <div>
                   <Label htmlFor="pincodeReg" className="text-sm font-medium text-emerald-900">Pincode *</Label>
-                  <Input 
-                    id="pincodeReg" 
-                    type="text" 
-                    value={pincode} 
-                    onChange={e => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))} 
-                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                    maxLength={6} 
-                    placeholder="6-digit pincode" 
+                  <Input
+                    id="pincodeReg"
+                    type="text"
+                    value={pincode}
+                    onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                    maxLength={6}
+                    placeholder="6-digit pincode"
                   />
                 </div>
               </div>
@@ -403,64 +420,69 @@ const SellerRegistrationForm = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="gstin" className="text-sm font-medium text-emerald-900">GSTIN (if applicable)</Label>
-                  <Input 
-                    id="gstin" 
-                    type="text" 
-                    value={gstin} 
-                    onChange={e => setGstin(e.target.value)} 
-                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                    placeholder="Enter GSTIN" 
+                  <Input
+                    id="gstin"
+                    type="text"
+                    value={gstin}
+                    onChange={(e) => setGstin(e.target.value)}
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                    placeholder="Enter GSTIN"
                   />
                 </div>
                 <div>
                   <Label htmlFor="mobileNumberReg" className="text-sm font-medium text-emerald-900">Mobile Number *</Label>
-                  <Input 
-                    id="mobileNumberReg" 
-                    type="tel" 
-                    value={mobileNumber} 
-                    onChange={e => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} 
-                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                    maxLength={10} 
-                    placeholder="10-digit mobile" 
+                  <Input
+                    id="mobileNumberReg"
+                    type="tel"
+                    value={mobileNumber}
+                    onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                    maxLength={10}
+                    placeholder="10-digit mobile"
                   />
                 </div>
               </div>
               
               <div>
                 <Label htmlFor="emailReg" className="text-sm font-medium text-emerald-900">Email</Label>
-                <Input 
-                  id="emailReg" 
-                  type="email" 
-                  value={email} 
-                  onChange={e => setEmail(e.target.value)} 
-                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300" 
-                  placeholder="example@email.com" 
+                <Input
+                  id="emailReg"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-1 h-10 bg-white/80 border-emerald-200 text-emerald-900 placeholder:text-emerald-500 focus:border-emerald-400 focus:ring-emerald-400 focus:bg-white transition-all duration-300"
+                  placeholder="example@email.com"
                 />
               </div>
-            </div>}
+            </div>
+          )}
 
           {/* Registration Actions */}
-          {type && <div className="space-y-4 pt-4">
+          {type && (
+            <div className="space-y-4 pt-4">
               <p className="text-sm text-center text-emerald-700">
                 Already Registered?{" "}
-                <button 
-                  onClick={onLoginLink} 
+                <button
+                  onClick={onLoginLink}
                   className="text-emerald-600 hover:text-emerald-800 underline font-medium transition-all duration-300"
                 >
                   Login Here
                 </button>
               </p>
               
-              <Button 
-                onClick={handleRegister} 
-                disabled={isLoading || otpLoading} 
+              <Button
+                onClick={handleRegister}
+                disabled={isLoading || otpLoading}
                 className="w-full bg-emerald-600 hover:bg-emerald-700 h-12 text-base font-medium text-white shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 {otpLoading ? "Sending OTP..." : "Send OTP"}
               </Button>
-            </div>}
+            </div>
+          )}
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 };
+
 export default SellerRegistrationForm;

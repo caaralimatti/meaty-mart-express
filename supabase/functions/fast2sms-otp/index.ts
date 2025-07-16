@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.50.0";
 
@@ -96,9 +97,7 @@ serve(async (req) => {
           return new Response(
             JSON.stringify({ 
               success: true, 
-              message: `OTP sent to ${phoneNumber}`,
-              // For demo purposes, also return OTP in response (remove in production)
-              otp: otpCode
+              message: `OTP sent to ${phoneNumber}`
             }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
