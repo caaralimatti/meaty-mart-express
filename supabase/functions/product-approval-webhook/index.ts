@@ -10,7 +10,7 @@ interface ProductApprovalPayload {
   product_id: string;
   seller_id: string;
   product_type: 'meat' | 'livestock';
-  is_approved: boolean;
+  approval_status: "approved" | "rejected" | "pending";
   rejection_reason?: string;
   updated_at: string;
 }
@@ -35,8 +35,8 @@ Deno.serve(async (req) => {
     const payload: ProductApprovalPayload = await req.json();
     
     // Validate required fields
-    if (!payload.product_id || !payload.seller_id || !payload.product_type || typeof payload.is_approved !== "boolean") {
-      return new Response(JSON.stringify({ error: "Missing required fields: product_id, seller_id, product_type, is_approved" }), {
+    if (!payload.product_id || !payload.seller_id || !payload.product_type || !payload.approval_status) {
+      return new Response(JSON.stringify({ error: "Missing required fields: product_id, seller_id, product_type, approval_status" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });
@@ -93,8 +93,8 @@ Deno.serve(async (req) => {
     const { error: updateError } = await supabase
       .from(productTable)
       .update({
-        approval_status: payload.is_approved ? "approved" : "rejected",
-        approved_at: payload.is_approved ? new Date().toISOString() : null,
+        approval_status: payload.approval_status,
+        approved_at: payload.approval_status === "approved" ? new Date().toISOString() : null,
         updated_at: new Date().toISOString(),
       })
       .eq("id", payload.product_id);
@@ -105,9 +105,9 @@ Deno.serve(async (req) => {
 
     // Update approval table
     const approvalData = {
-      approval_status: payload.is_approved ? "approved" : "rejected",
-      approved_at: payload.is_approved ? new Date().toISOString() : null,
-      rejected_at: payload.is_approved ? null : new Date().toISOString(),
+      approval_status: payload.approval_status,
+      approved_at: payload.approval_status === "approved" ? new Date().toISOString() : null,
+      rejected_at: payload.approval_status === "rejected" ? new Date().toISOString() : null,
       rejection_reason: payload.rejection_reason || null,
       updated_at: new Date().toISOString(),
     };
@@ -128,14 +128,14 @@ Deno.serve(async (req) => {
         });
     }
 
-    console.log(`${payload.product_type} product ${payload.product_id} approval status updated to: ${payload.is_approved ? 'approved' : 'rejected'}`);
+    console.log(`${payload.product_type} product ${payload.product_id} approval status updated to: ${payload.approval_status}`);
 
     return new Response(JSON.stringify({ 
       success: true, 
       message: `Product approval status updated successfully`,
       product_id: payload.product_id,
       product_type: payload.product_type,
-      status: payload.is_approved ? "approved" : "rejected"
+      status: payload.approval_status
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
