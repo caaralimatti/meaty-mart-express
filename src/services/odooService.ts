@@ -274,6 +274,39 @@ class OdooService {
       return null;
     }
   }
+
+  async createProduct(product: { name: string; list_price: number; seller_id: string; state: string }): Promise<number | null> {
+    if (!this.sessionId) {
+      const authSuccess = await this.authenticate();
+      if (!authSuccess) throw new Error("Not authenticated with Odoo");
+    }
+    
+    try {
+      console.log('Creating product in Odoo product.template table:', product);
+      
+      const response = await this.makeRequest('/web/dataset/call_kw', {
+        jsonrpc: '2.0',
+        method: 'call',
+        params: {
+          model: 'product.template',
+          method: 'create',
+          args: [product],
+          kwargs: {},
+        },
+        id: Math.random(),
+      });
+
+      if (response.result) {
+        console.log('Odoo product created successfully with ID:', response.result);
+        return response.result;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Failed to create product in Odoo:', error);
+      throw error;
+    }
+  }
 }
 
 export const odooService = new OdooService();

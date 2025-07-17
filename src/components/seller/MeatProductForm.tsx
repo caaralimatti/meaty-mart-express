@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { X, Upload } from 'lucide-react';
+import { odooService } from '@/services/odooService';
 
 interface MeatProductFormProps {
   sellerId: string;
@@ -93,6 +94,31 @@ const MeatProductForm = ({ sellerId, onClose, onSuccess }: MeatProductFormProps)
       // Upload images if any
       if (images.length > 0) {
         await uploadImages(product.id);
+      }
+
+      // Get seller name for Odoo API
+      const { data: seller, error: sellerError } = await supabase
+        .from('sellers')
+        .select('seller_name')
+        .eq('id', sellerId)
+        .single();
+
+      if (sellerError) {
+        console.error('Error fetching seller name:', sellerError);
+      } else {
+        // Create product in Odoo
+        try {
+          await odooService.createProduct({
+            name: formData.name,
+            list_price: parseFloat(formData.price),
+            seller_id: seller.seller_name,
+            state: 'pending'
+          });
+          console.log('Product created successfully in Odoo');
+        } catch (odooError) {
+          console.error('Failed to create product in Odoo (non-blocking):', odooError);
+          // Don't block the success flow if Odoo fails
+        }
       }
 
       toast.success('Product added successfully!');

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Plus } from 'lucide-react';
 import { SellerProfile } from '@/hooks/useSellerData';
 import MeatProductForm from './MeatProductForm';
+import MeatProductsList from './MeatProductsList';
 
 interface MeatShopManagementProps {
   sellerProfile: SellerProfile;
@@ -16,6 +17,7 @@ interface MeatShopManagementProps {
 
 const MeatShopManagement = ({ sellerProfile, onStatusToggle, canAddProducts = true }: MeatShopManagementProps) => {
   const [showProductForm, setShowProductForm] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   return (
     <div className="space-y-6">
@@ -71,13 +73,16 @@ const MeatShopManagement = ({ sellerProfile, onStatusToggle, canAddProducts = tr
             <MeatProductForm 
               sellerId={sellerProfile.id}
               onClose={() => setShowProductForm(false)}
-              onSuccess={() => setShowProductForm(false)}
+              onSuccess={() => {
+                setShowProductForm(false);
+                setRefreshTrigger(prev => prev + 1);
+              }}
             />
           ) : (
-            <div className="text-center py-8 text-gray-500">
-              <p>No products added yet.</p>
-              <p className="text-sm">Click "Add Product" to start listing your meat products.</p>
-            </div>
+            <MeatProductsList 
+              sellerId={sellerProfile.id}
+              refreshTrigger={refreshTrigger}
+            />
           )}
         </CardContent>
       </Card>
