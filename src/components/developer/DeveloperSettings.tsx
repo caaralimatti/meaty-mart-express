@@ -202,6 +202,21 @@ const DeveloperSettings = ({ onLogout, username }: DeveloperSettingsProps) => {
                   </div>
 
                   <div>
+                    <h3 className="font-semibold mb-2 text-emerald-800">API Key for Webhooks</h3>
+                    <div className="bg-emerald-50/50 p-4 rounded-lg border border-emerald-200/50 mb-4">
+                      <p className="text-sm text-emerald-600 mb-2">
+                        Use this API key in your ODOO webhook calls:
+                      </p>
+                      <div className="bg-gray-100 p-3 rounded text-sm font-mono break-all">
+                        dev-webhook-api-key-2024-secure-odoo-integration
+                      </div>
+                      <p className="text-xs text-emerald-500 mt-2">
+                        This key is used to authenticate webhook requests from ODOO to your approval endpoints.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
                     <h3 className="font-semibold mb-2 text-emerald-800">ODOO Webhook Endpoints</h3>
                     <div className="space-y-4">
                       <div className="bg-emerald-50/50 p-4 rounded-lg border border-emerald-200/50">
@@ -213,7 +228,7 @@ const DeveloperSettings = ({ onLogout, username }: DeveloperSettingsProps) => {
                           <strong>Method:</strong> POST
                         </p>
                         <p className="text-sm text-emerald-600 mb-2">
-                          <strong>Headers:</strong> x-api-key: YOUR_API_KEY
+                          <strong>Headers:</strong> x-api-key: dev-webhook-api-key-2024-secure-odoo-integration
                         </p>
                         <div className="bg-gray-100 p-3 rounded text-xs font-mono">
                           <pre>{JSON.stringify({
@@ -234,7 +249,7 @@ const DeveloperSettings = ({ onLogout, username }: DeveloperSettingsProps) => {
                           <strong>Method:</strong> POST
                         </p>
                         <p className="text-sm text-emerald-600 mb-2">
-                          <strong>Headers:</strong> x-api-key: YOUR_API_KEY
+                          <strong>Headers:</strong> x-api-key: dev-webhook-api-key-2024-secure-odoo-integration
                         </p>
                         <div className="bg-gray-100 p-3 rounded text-xs font-mono">
                           <pre>{JSON.stringify({
