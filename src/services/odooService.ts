@@ -1,13 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
-
-interface OdooConfig {
-  serverUrl: string;
-  database: string;
-  username: string;
-  password: string;
-  apiKey?: string;
-}
+import { getOdooConfig, type OdooConfig } from './odooConfigManager';
 
 interface OdooProduct {
   id: number;
@@ -58,13 +51,16 @@ class OdooService {
   private async makeRequest(endpoint: string, data?: any) {
     console.log(`Making Odoo proxy request for endpoint: ${endpoint}`, { data, sessionId: this.sessionId });
     
+    // Always get fresh config from localStorage
+    const config = getOdooConfig();
+    
     try {
       const { data: responseData, error } = await supabase.functions.invoke('odoo-api-proxy', {
         body: {
           odoo_endpoint: endpoint,
           data,
           session_id: this.sessionId,
-          config: this.config, // Pass the configuration to the edge function
+          config: config, // Pass the fresh configuration to the edge function
         },
       });
 
@@ -113,17 +109,14 @@ class OdooService {
   }
 
   async authenticate(): Promise<boolean> {
-    if (!this.config) {
-      // Auto-fetch config before authentication
-      try {
-        const { getOdooConfig } = await import('./odooConfig');
-        const config = await getOdooConfig();
-        this.setConfig(config);
-      } catch (error) {
-        const errorMessage = 'Odoo configuration not set. Please configure server, database, and credentials.';
-        await this.logActivity('/authenticate', 'POST', 500, {}, errorMessage);
-        throw new Error(errorMessage);
-      }
+    // Always get fresh config from localStorage
+    const config = getOdooConfig();
+    this.setConfig(config);
+    
+    if (!config.serverUrl || !config.database || !config.username || !config.password) {
+      const errorMessage = 'Odoo configuration incomplete. Please configure server, database, and credentials.';
+      await this.logActivity('/authenticate', 'POST', 500, {}, errorMessage);
+      throw new Error(errorMessage);
     }
 
     try {
@@ -188,9 +181,9 @@ class OdooService {
       if (!authSuccess) throw new Error("Not authenticated with Odoo");
     }
 
-    if (!this.config) {
-      throw new Error('Odoo configuration not set');
-    }
+    // Always get fresh config
+    const config = getOdooConfig();
+    this.setConfig(config);
 
     try {
       const fieldsToUse = fields || ['name', 'list_price', 'uom_id'];

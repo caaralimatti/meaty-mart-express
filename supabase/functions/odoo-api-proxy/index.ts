@@ -14,13 +14,21 @@ serve(async (req) => {
 
   try {
     const { odoo_endpoint, data, session_id, config } = await req.json()
-    console.log('Proxy request:', { odoo_endpoint, data, session_id, config })
+    console.log('Proxy request:', { odoo_endpoint, data, session_id, config: config ? 'Config provided' : 'No config' })
 
     // Use config from request if provided, otherwise fall back to environment variables
     const ODOO_URL = config?.serverUrl || Deno.env.get('ODOO_URL')
     const ODOO_DB = config?.database || Deno.env.get('ODOO_DB')
     const ODOO_USERNAME = config?.username || Deno.env.get('ODOO_USERNAME')
     const ODOO_PASSWORD = config?.password || Deno.env.get('ODOO_PASSWORD')
+
+    console.log('Using config:', {
+      url: ODOO_URL,
+      database: ODOO_DB,
+      username: ODOO_USERNAME,
+      password: ODOO_PASSWORD ? '***' : 'Not set',
+      source: config ? 'client' : 'environment'
+    })
 
     if (!ODOO_URL) {
       throw new Error('ODOO_URL not configured. Please provide it in the request config or set in Supabase secrets.')
