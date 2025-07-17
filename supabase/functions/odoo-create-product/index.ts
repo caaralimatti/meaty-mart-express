@@ -24,12 +24,23 @@ serve(async (req) => {
     });
   }
 
-try {
+    try {
     // Validate request body
     const body = await req.json();
     const { name, list_price, seller_id, seller_uid, default_code, product_type, config } = body;
     
+    console.log('Received product creation request:', {
+      name,
+      list_price,
+      seller_id,
+      seller_uid,
+      default_code,
+      product_type,
+      config: config ? 'Config provided' : 'No config'
+    });
+    
     if (!name || !seller_id || !product_type || !default_code) {
+      console.error('Missing required fields in product creation');
       return new Response(JSON.stringify({ error: 'Missing required fields' }), { 
         status: 400, 
         headers: {
@@ -74,8 +85,18 @@ try {
           default_code,
           product_type
         },
-        config: config || null // Pass the Odoo configuration if provided
+        config: config || {
+          serverUrl: 'https://goatgoat.xyz/',
+          database: 'staging',
+          username: 'admin',
+          password: 'admin'
+        }
       }
+    });
+
+    console.log('Odoo API Proxy Response:', {
+      data: data ? 'Data received' : 'No data',
+      error: error ? error.message : 'No error'
     });
 
     if (error) {

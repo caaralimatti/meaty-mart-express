@@ -120,6 +120,7 @@ const MeatProductForm = ({ sellerId, onClose, onSuccess }: MeatProductFormProps)
             fields: odooConfig.fields
           });
           
+          // Create product in Odoo using generic edge function
           const { data: odooResult, error: odooError } = await supabase.functions.invoke('odoo-create-product', {
             body: {
               name: formData.name,
@@ -132,11 +133,15 @@ const MeatProductForm = ({ sellerId, onClose, onSuccess }: MeatProductFormProps)
             }
           });
           
-          if (odooError) {
-            throw odooError;
+          if (odooResult?.error) {
+            console.error('Odoo Product Creation Error:', odooResult.error);
+            toast.error(`Failed to create Odoo product: ${odooResult.error}`);
+          } else if (odooError) {
+            console.error('Odoo Edge Function Error:', odooError);
+            toast.error(`Failed to invoke Odoo product creation: ${odooError.message}`);
+          } else {
+            console.log('Product created successfully in Odoo with ID:', odooResult?.id);
           }
-          
-          console.log('Product created successfully in Odoo with ID:', odooResult?.id);
         } catch (odooError) {
           console.error('Failed to create product in Odoo (non-blocking):', odooError);
           // Don't block the success flow if Odoo fails

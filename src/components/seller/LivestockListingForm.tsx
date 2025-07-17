@@ -225,11 +225,15 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
             }
           });
           
-          if (odooError) {
-            throw odooError;
-          }
-          
+        if (odooResult?.error) {
+          console.error('Odoo Product Creation Error:', odooResult.error);
+          toast.error(`Failed to create Odoo product: ${odooResult.error}`);
+        } else if (odooError) {
+          console.error('Odoo Edge Function Error:', odooError);
+          toast.error(`Failed to invoke Odoo product creation: ${odooError.message}`);
+        } else {
           console.log('Livestock product created successfully in Odoo with ID:', odooResult?.id);
+        }
         } catch (odooError) {
           console.error('Failed to create livestock product in Odoo (non-blocking):', odooError);
         }
