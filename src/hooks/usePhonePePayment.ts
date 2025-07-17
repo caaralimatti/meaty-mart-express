@@ -50,7 +50,8 @@ export const usePhonePePayment = () => {
           currency: 'INR',
           status: 'pending',
           payment_status: 'pending',
-          delivery_address: paymentData.deliveryAddress || null
+          delivery_address: paymentData.deliveryAddress || null,
+          order_number: 'TEMP' // Will be overridden by database trigger
         })
         .select()
         .single();
