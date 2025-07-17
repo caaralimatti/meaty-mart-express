@@ -98,18 +98,14 @@ class OdooService {
 
   private async logActivity(endpoint: string, method: string, status: number, payload: any, error: string | null) {
     try {
-      await fetch(`https://oaynfzqjielnsipttzbs.supabase.co/functions/v1/log-traffic`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      await supabase.functions.invoke('log-traffic', {
+        body: {
           endpoint: `Odoo: ${endpoint}`,
           method,
           status,
           payload,
           error,
-        }),
+        },
       });
     } catch (logError) {
       console.error('Failed to log activity:', logError);
