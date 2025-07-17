@@ -108,13 +108,13 @@ const MeatProductForm = ({ sellerId, onClose, onSuccess }: MeatProductFormProps)
       } else {
         // Create product in Odoo
         try {
-          await odooService.createProduct({
+          const odooResult = await odooService.createProduct({
             name: formData.name,
             list_price: parseFloat(formData.price),
             seller_id: seller.seller_name,
             state: 'pending'
           });
-          console.log('Product created successfully in Odoo');
+          console.log('Product created successfully in Odoo with ID:', odooResult);
         } catch (odooError) {
           console.error('Failed to create product in Odoo (non-blocking):', odooError);
           // Don't block the success flow if Odoo fails

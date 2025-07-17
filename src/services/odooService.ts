@@ -118,7 +118,16 @@ class OdooService {
 
   async authenticate(): Promise<boolean> {
     if (!this.config) {
-      throw new Error('Odoo configuration not set. Please configure server, database, and credentials.');
+      // Auto-fetch config before authentication
+      try {
+        const { getOdooConfig } = await import('./odooConfig');
+        const config = await getOdooConfig();
+        this.setConfig(config);
+      } catch (error) {
+        const errorMessage = 'Odoo configuration not set. Please configure server, database, and credentials.';
+        await this.logActivity('/authenticate', 'POST', 500, {}, errorMessage);
+        throw new Error(errorMessage);
+      }
     }
 
     try {
