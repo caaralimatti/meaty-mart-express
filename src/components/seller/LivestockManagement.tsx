@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Plus } from 'lucide-react';
 import { SellerProfile } from '@/hooks/useSellerData';
 import LivestockListingForm from './LivestockListingForm';
+import LivestockListingsList from './LivestockListingsList';
 
 interface LivestockManagementProps {
   sellerProfile: SellerProfile;
@@ -16,6 +17,7 @@ interface LivestockManagementProps {
 
 const LivestockManagement = ({ sellerProfile, onStatusToggle, canAddProducts = true }: LivestockManagementProps) => {
   const [showListingForm, setShowListingForm] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   return (
     <div className="space-y-6">
@@ -71,13 +73,16 @@ const LivestockManagement = ({ sellerProfile, onStatusToggle, canAddProducts = t
             <LivestockListingForm 
               sellerId={sellerProfile.id}
               onClose={() => setShowListingForm(false)}
-              onSuccess={() => setShowListingForm(false)}
+              onSuccess={() => {
+                setShowListingForm(false);
+                setRefreshTrigger(prev => prev + 1);
+              }}
             />
           ) : (
-            <div className="text-center py-8 text-gray-500">
-              <p>No livestock listings yet.</p>
-              <p className="text-sm">Click "Add Listing" to start listing your livestock.</p>
-            </div>
+            <LivestockListingsList 
+              sellerId={sellerProfile.id}
+              refreshTrigger={refreshTrigger}
+            />
           )}
         </CardContent>
       </Card>
