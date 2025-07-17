@@ -200,6 +200,55 @@ const DeveloperSettings = ({ onLogout, username }: DeveloperSettingsProps) => {
                       <p className="text-emerald-800"><strong>Environment:</strong> Development</p>
                     </div>
                   </div>
+
+                  <div>
+                    <h3 className="font-semibold mb-2 text-emerald-800">ODOO Webhook Endpoints</h3>
+                    <div className="space-y-4">
+                      <div className="bg-emerald-50/50 p-4 rounded-lg border border-emerald-200/50">
+                        <h4 className="font-medium text-emerald-800 mb-2">Seller Approval Webhook</h4>
+                        <p className="text-sm text-emerald-600 mb-2">
+                          <strong>URL:</strong> https://oaynfzqjielnsipttzbs.supabase.co/functions/v1/seller-approval-webhook
+                        </p>
+                        <p className="text-sm text-emerald-600 mb-2">
+                          <strong>Method:</strong> POST
+                        </p>
+                        <p className="text-sm text-emerald-600 mb-2">
+                          <strong>Headers:</strong> x-api-key: YOUR_API_KEY
+                        </p>
+                        <div className="bg-gray-100 p-3 rounded text-xs font-mono">
+                          <pre>{JSON.stringify({
+                            "seller_id": "uuid-string",
+                            "is_approved": true,
+                            "rejection_reason": "Optional rejection reason",
+                            "updated_at": "2024-01-01T00:00:00Z"
+                          }, null, 2)}</pre>
+                        </div>
+                      </div>
+
+                      <div className="bg-emerald-50/50 p-4 rounded-lg border border-emerald-200/50">
+                        <h4 className="font-medium text-emerald-800 mb-2">Product Approval Webhook</h4>
+                        <p className="text-sm text-emerald-600 mb-2">
+                          <strong>URL:</strong> https://oaynfzqjielnsipttzbs.supabase.co/functions/v1/product-approval-webhook
+                        </p>
+                        <p className="text-sm text-emerald-600 mb-2">
+                          <strong>Method:</strong> POST
+                        </p>
+                        <p className="text-sm text-emerald-600 mb-2">
+                          <strong>Headers:</strong> x-api-key: YOUR_API_KEY
+                        </p>
+                        <div className="bg-gray-100 p-3 rounded text-xs font-mono">
+                          <pre>{JSON.stringify({
+                            "product_id": "uuid-string",
+                            "seller_id": "uuid-string",
+                            "product_type": "meat",
+                            "is_approved": true,
+                            "rejection_reason": "Optional rejection reason",
+                            "updated_at": "2024-01-01T00:00:00Z"
+                          }, null, 2)}</pre>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   
                   <div className="text-center py-8 text-emerald-600">
                     <Settings className="w-12 h-12 mx-auto mb-4 text-emerald-400" />
