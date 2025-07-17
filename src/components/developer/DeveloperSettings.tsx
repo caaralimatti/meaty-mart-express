@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ApiMonitor from './ApiMonitor';
+import { ActivityLog } from './ActivityLog';
 import OdooSync from '@/components/OdooSync';
 import { Database, Monitor, Settings, LogOut, Smartphone, Globe } from 'lucide-react';
 
@@ -58,7 +59,10 @@ const DeveloperSettings = ({ onLogout, username }: DeveloperSettingsProps) => {
 
           {/* API Monitor Tab */}
           <TabsContent value="monitor">
-            <ApiMonitor />
+            <div className="space-y-6">
+              <ApiMonitor />
+              <ActivityLog />
+            </div>
           </TabsContent>
 
           {/* Database Tab */}

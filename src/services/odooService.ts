@@ -70,6 +70,8 @@ class OdooService {
 
       if (error) {
         console.error('Supabase function invoke error:', error);
+        // Log the error to activity log
+        this.logActivity(endpoint, 'POST', 500, data, error.message);
         throw error;
       }
       
@@ -78,13 +80,39 @@ class OdooService {
       if (responseData?.error) {
         console.error('Odoo API Error:', responseData.error);
         const odooErrorMessage = responseData.error.data?.message || responseData.error.message || 'Odoo API request failed';
+        // Log the error to activity log
+        this.logActivity(endpoint, 'POST', 400, data, odooErrorMessage);
         throw new Error(odooErrorMessage);
       }
 
+      // Log successful request
+      this.logActivity(endpoint, 'POST', 200, data, null);
       return responseData;
     } catch (error) {
       console.error('Odoo proxy request failed:', error);
+      // Log the error to activity log
+      this.logActivity(endpoint, 'POST', 500, data, error instanceof Error ? error.message : 'Unknown error');
       throw error;
+    }
+  }
+
+  private async logActivity(endpoint: string, method: string, status: number, payload: any, error: string | null) {
+    try {
+      await fetch(`https://oaynfzqjielnsipttzbs.supabase.co/functions/v1/log-traffic`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          endpoint: `Odoo: ${endpoint}`,
+          method,
+          status,
+          payload,
+          error,
+        }),
+      });
+    } catch (logError) {
+      console.error('Failed to log activity:', logError);
     }
   }
 

@@ -56,6 +56,36 @@ export type Database = {
         }
         Relationships: []
       }
+      dev_api_logs: {
+        Row: {
+          created_at: string | null
+          endpoint: string | null
+          error: string | null
+          id: string
+          method: string | null
+          payload: Json | null
+          status: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          endpoint?: string | null
+          error?: string | null
+          id?: string
+          method?: string | null
+          payload?: Json | null
+          status?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          endpoint?: string | null
+          error?: string | null
+          id?: string
+          method?: string | null
+          payload?: Json | null
+          status?: number | null
+        }
+        Relationships: []
+      }
       districts: {
         Row: {
           id: number
