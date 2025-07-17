@@ -11,7 +11,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { X, Camera, Upload } from 'lucide-react';
 import { odooService } from '@/services/odooService';
-import { getOdooConfig } from '@/services/odooConfigManager';
 
 interface LivestockListingFormProps {
   sellerId: string;
@@ -51,6 +50,7 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
   const [states, setStates] = useState<State[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
   const [filteredDistricts, setFilteredDistricts] = useState<District[]>([]);
+  const [liveImages, setLiveImages] = useState<File[]>([]);
   const [vaccinationReport, setVaccinationReport] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -84,9 +84,48 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
     }
   };
 
+  const handleLivePhotoCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setLiveImages(prev => [...prev, ...files]);
+  };
+
+  const removeLiveImage = (index: number) => {
+    setLiveImages(prev => prev.filter((_, i) => i !== index));
+  };
 
   const uploadFiles = async (listingId: string) => {
-    // Start your file upload here
+    // Upload live images
+    if (liveImages.length > 0) {
+      const imageUploadPromises = liveImages.map(async (image, index) => {
+        const fileExt = image.name.split('.').pop();
+        const fileName = `${listingId}_live_${index}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('livestock-images')
+          .upload(fileName, image);
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabase.storage
+          .from('livestock-images')
+          .getPublicUrl(fileName);
+
+        return {
+          livestock_listing_id: listingId,
+          image_url: urlData.publicUrl,
+          display_order: index + 1,
+          is_live_capture: true
+        };
+      });
+
+      const imageData = await Promise.all(imageUploadPromises);
+      
+      const { error } = await supabase
+        .from('livestock_images')
+        .insert(imageData);
+
+      if (error) throw error;
+    }
 
     // Upload vaccination report
     if (vaccinationReport) {
@@ -122,6 +161,10 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
       return;
     }
 
+    if (liveImages.length < 4) {
+      toast.error('Please capture at least 4 live photos');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -156,40 +199,18 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
         .single();
 
       if (!sellerError && seller) {
-        // Create product in Odoo using generic edge function
+        // Create product in Odoo for livestock
         try {
-          // Get Odoo configuration from localStorage
-          const odooConfig = getOdooConfig();
-          
-          // Add logging for debugging
-          console.log('Using Odoo config:', {
-            serverUrl: odooConfig.serverUrl,
-            database: odooConfig.database,
-            username: odooConfig.username,
-            fields: odooConfig.fields
+          const odooResult = await odooService.createProduct({
+            name: formData.name,
+            list_price: formData.unit_price ? parseFloat(formData.unit_price) : 0,
+            seller_id: seller.seller_name,
+            state: 'pending',
+            seller_uid: sellerId,
+            default_code: listing.id,
+            meat_type: 'livestock'
           });
-          
-          const { data: odooResult, error: odooError } = await supabase.functions.invoke('odoo-create-product', {
-            body: {
-              name: formData.name,
-              list_price: formData.unit_price ? parseFloat(formData.unit_price) : 0,
-              seller_id: seller.seller_name,
-              seller_uid: sellerId,
-              default_code: listing.id,
-              product_type: 'livestock',
-              config: odooConfig // Pass Odoo configuration
-            }
-          });
-          
-        if (odooResult?.error) {
-          console.error('Odoo Product Creation Error:', odooResult.error);
-          toast.error(`Failed to create Odoo product: ${odooResult.error}`);
-        } else if (odooError) {
-          console.error('Odoo Edge Function Error:', odooError);
-          toast.error(`Failed to invoke Odoo product creation: ${odooError.message}`);
-        } else {
-          console.log('Livestock product created successfully in Odoo with ID:', odooResult?.id);
-        }
+          console.log('Livestock product created successfully in Odoo with ID:', odooResult);
         } catch (odooError) {
           console.error('Failed to create livestock product in Odoo (non-blocking):', odooError);
         }
@@ -217,6 +238,47 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Live Photos Section */}
+          <div>
+            <Label className="text-base font-medium">Live Photos (Minimum 4 required) *</Label>
+            <div className="space-y-2">
+              <Input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                multiple
+                onChange={handleLivePhotoCapture}
+              />
+              <p className="text-sm text-gray-600">
+                Take live photos using your device camera. Minimum 4 photos required.
+              </p>
+              {liveImages.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  {liveImages.map((image, index) => (
+                    <div key={index} className="relative">
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt={`Live photo ${index + 1}`}
+                        className="w-full h-20 object-cover rounded border"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="absolute -top-2 -right-2 w-6 h-6 p-0"
+                        onClick={() => removeLiveImage(index)}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <p className="text-sm font-medium">
+                Photos captured: {liveImages.length}/4 minimum
+              </p>
+            </div>
+          </div>
 
           {/* Basic Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

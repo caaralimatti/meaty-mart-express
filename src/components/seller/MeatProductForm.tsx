@@ -9,7 +9,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { X, Upload } from 'lucide-react';
 import { odooService } from '@/services/odooService';
-import { getOdooConfig } from '@/services/odooConfigManager';
 
 interface MeatProductFormProps {
   sellerId: string;
@@ -107,41 +106,18 @@ const MeatProductForm = ({ sellerId, onClose, onSuccess }: MeatProductFormProps)
       if (sellerError) {
         console.error('Error fetching seller name:', sellerError);
       } else {
-        // Create product in Odoo using generic edge function
+        // Create product in Odoo
         try {
-          // Get Odoo configuration from localStorage
-          const odooConfig = getOdooConfig();
-          
-          // Add logging for debugging
-          console.log('Using Odoo config:', {
-            serverUrl: odooConfig.serverUrl,
-            database: odooConfig.database,
-            username: odooConfig.username,
-            fields: odooConfig.fields
+          const odooResult = await odooService.createProduct({
+            name: formData.name,
+            list_price: parseFloat(formData.price),
+            seller_id: seller.seller_name,
+            state: 'pending',
+            seller_uid: sellerId,
+            default_code: product.id,
+            meat_type: 'meat'
           });
-          
-          // Create product in Odoo using generic edge function
-          const { data: odooResult, error: odooError } = await supabase.functions.invoke('odoo-create-product', {
-            body: {
-              name: formData.name,
-              list_price: parseFloat(formData.price),
-              seller_id: seller.seller_name,
-              seller_uid: sellerId,
-              default_code: product.id,
-              product_type: 'meat',
-              config: odooConfig // Pass Odoo configuration
-            }
-          });
-          
-          if (odooResult?.error) {
-            console.error('Odoo Product Creation Error:', odooResult.error);
-            toast.error(`Failed to create Odoo product: ${odooResult.error}`);
-          } else if (odooError) {
-            console.error('Odoo Edge Function Error:', odooError);
-            toast.error(`Failed to invoke Odoo product creation: ${odooError.message}`);
-          } else {
-            console.log('Product created successfully in Odoo with ID:', odooResult?.id);
-          }
+          console.log('Product created successfully in Odoo with ID:', odooResult);
         } catch (odooError) {
           console.error('Failed to create product in Odoo (non-blocking):', odooError);
           // Don't block the success flow if Odoo fails
