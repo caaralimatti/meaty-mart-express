@@ -31,31 +31,49 @@ export const CustomerOnboarding = ({ onComplete }: CustomerOnboardingProps) => {
   const [enteredOTP, setEnteredOTP] = useState('');
   const [locationSelected, setLocationSelected] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [google, setGoogle] = useState<any>(null);
   
   const { toast } = useToast();
   const { otpState, isLoading: otpLoading, sendOTP, verifyOTP } = usePhoneOTP();
   const { registerCustomer, isLoading: registerLoading } = useCustomerAuth();
 
   useEffect(() => {
-    // Check if Google Maps is loaded
+    const loadGoogleMaps = async () => {
+      try {
+        if (window.google && window.google.maps) {
+          // Load the Maps library using the new API
+          const { Map } = await window.google.maps.importLibrary("maps") as any;
+          const { Marker } = await window.google.maps.importLibrary("marker") as any;
+          
+          setGoogle({
+            Map,
+            Marker,
+            Geocoder: window.google.maps.Geocoder
+          });
+          setMapLoaded(true);
+        }
+      } catch (error) {
+        console.error('Error loading Google Maps:', error);
+      }
+    };
+
+    // Check if Google Maps is available
     const checkGoogleMaps = () => {
-      if (window.google) {
-        setMapLoaded(true);
+      if (window.google && window.google.maps && window.google.maps.importLibrary) {
+        loadGoogleMaps();
+      } else {
+        // Keep checking until Google Maps is loaded
+        setTimeout(checkGoogleMaps, 100);
       }
     };
 
     checkGoogleMaps();
-    
-    // Keep checking until Google Maps is loaded
-    const interval = setInterval(checkGoogleMaps, 100);
-    
-    return () => clearInterval(interval);
   }, []);
 
   const initializeMap = () => {
-    if (!window.google || !mapLoaded) return;
+    if (!google || !mapLoaded) return;
 
-    const map = new window.google.maps.Map(document.getElementById('customer-map'), {
+    const map = new google.Map(document.getElementById('customer-map'), {
       center: { lat: 12.9716, lng: 77.5946 }, // Bangalore center
       zoom: 12
     });
@@ -72,14 +90,14 @@ export const CustomerOnboarding = ({ onComplete }: CustomerOnboardingProps) => {
       }
 
       // Add new marker
-      marker = new window.google.maps.Marker({
+      marker = new google.Marker({
         position: { lat, lng },
         map: map,
         title: 'Your Location'
       });
 
       // Reverse geocode to get address
-      const geocoder = new window.google.maps.Geocoder();
+      const geocoder = new google.Geocoder();
       geocoder.geocode({ location: { lat, lng } }, (results: any, status: any) => {
         if (status === 'OK' && results[0]) {
           const address = results[0].formatted_address;
@@ -100,10 +118,10 @@ export const CustomerOnboarding = ({ onComplete }: CustomerOnboardingProps) => {
   };
 
   useEffect(() => {
-    if (mapLoaded) {
+    if (mapLoaded && google) {
       initializeMap();
     }
-  }, [mapLoaded]);
+  }, [mapLoaded, google]);
 
   const handleSendOTP = async () => {
     if (!customerData.fullName || !customerData.phoneNumber) {
