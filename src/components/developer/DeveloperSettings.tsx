@@ -3,6 +3,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import ApiMonitor from './ApiMonitor';
 import { ActivityLog } from './ActivityLog';
 import OdooSync from '@/components/OdooSync';
@@ -16,6 +21,57 @@ interface DeveloperSettingsProps {
 const DeveloperSettings = ({ onLogout, username }: DeveloperSettingsProps) => {
   const [activeTab, setActiveTab] = useState('monitor');
   const [products, setProducts] = useState<any[]>([]);
+  const { toast } = useToast();
+  
+  // Webhook testing state
+  const [productId, setProductId] = useState('');
+  const [sellerId, setSellerId] = useState('');
+  const [productType, setProductType] = useState('meat');
+  const [approvalStatus, setApprovalStatus] = useState('approved');
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [isTestingWebhook, setIsTestingWebhook] = useState(false);
+
+  const testWebhook = async () => {
+    if (!productId || !sellerId) {
+      toast({
+        title: "Error",
+        description: "Product ID and Seller ID are required",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsTestingWebhook(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('product-approval-webhook', {
+        body: {
+          product_id: productId,
+          seller_id: sellerId,
+          product_type: productType,
+          approval_status: approvalStatus,
+          rejection_reason: rejectionReason || null,
+          updated_at: new Date().toISOString()
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Webhook test completed successfully",
+        variant: "default"
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `Webhook test failed: ${error.message}`,
+        variant: "destructive"
+      });
+    } finally {
+      setIsTestingWebhook(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 p-4">
@@ -260,10 +316,79 @@ const DeveloperSettings = ({ onLogout, username }: DeveloperSettingsProps) => {
                             "product_id": "uuid-string",
                             "seller_id": "uuid-string",
                             "product_type": "meat",
-                            "is_approved": true,
+                            "approval_status": "approved",
                             "rejection_reason": "Optional rejection reason",
                             "updated_at": "2024-01-01T00:00:00Z"
                           }, null, 2)}</pre>
+                        </div>
+                        
+                        <div className="mt-4 p-4 bg-white rounded-lg border border-emerald-200">
+                          <h5 className="font-medium text-emerald-800 mb-3">Test Webhook</h5>
+                          <div className="space-y-3">
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <Label htmlFor="productId">Product ID</Label>
+                                <Input
+                                  id="productId"
+                                  value={productId}
+                                  onChange={(e) => setProductId(e.target.value)}
+                                  placeholder="uuid-string"
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="sellerId">Seller ID</Label>
+                                <Input
+                                  id="sellerId"
+                                  value={sellerId}
+                                  onChange={(e) => setSellerId(e.target.value)}
+                                  placeholder="uuid-string"
+                                />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <Label htmlFor="productType">Product Type</Label>
+                                <Select value={productType} onValueChange={setProductType}>
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="meat">Meat</SelectItem>
+                                    <SelectItem value="livestock">Livestock</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div>
+                                <Label htmlFor="approvalStatus">Approval Status</Label>
+                                <Select value={approvalStatus} onValueChange={setApprovalStatus}>
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="approved">Approved</SelectItem>
+                                    <SelectItem value="rejected">Rejected</SelectItem>
+                                    <SelectItem value="pending">Pending</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                            <div>
+                              <Label htmlFor="rejectionReason">Rejection Reason (Optional)</Label>
+                              <Input
+                                id="rejectionReason"
+                                value={rejectionReason}
+                                onChange={(e) => setRejectionReason(e.target.value)}
+                                placeholder="Optional rejection reason"
+                              />
+                            </div>
+                            <Button 
+                              onClick={testWebhook}
+                              disabled={isTestingWebhook}
+                              className="w-full"
+                            >
+                              {isTestingWebhook ? 'Testing...' : 'Test Webhook'}
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>
