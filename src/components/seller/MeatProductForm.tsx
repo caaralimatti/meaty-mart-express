@@ -114,7 +114,8 @@ const MeatProductForm = ({ sellerId, onClose, onSuccess }: MeatProductFormProps)
             seller_id: seller.seller_name,
             state: 'pending',
             seller_uid: sellerId,
-            default_code: product.id
+            default_code: product.id,
+            meat_type: 'meat'
           });
           console.log('Product created successfully in Odoo with ID:', odooResult);
         } catch (odooError) {

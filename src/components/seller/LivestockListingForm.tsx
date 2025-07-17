@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { X, Camera, Upload } from 'lucide-react';
+import { odooService } from '@/services/odooService';
 
 interface LivestockListingFormProps {
   sellerId: string;
@@ -189,6 +190,31 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
 
       // Upload files
       await uploadFiles(listing.id);
+
+      // Get seller name for Odoo API
+      const { data: seller, error: sellerError } = await supabase
+        .from('sellers')
+        .select('seller_name')
+        .eq('id', sellerId)
+        .single();
+
+      if (!sellerError && seller) {
+        // Create product in Odoo for livestock
+        try {
+          const odooResult = await odooService.createProduct({
+            name: formData.name,
+            list_price: formData.unit_price ? parseFloat(formData.unit_price) : 0,
+            seller_id: seller.seller_name,
+            state: 'pending',
+            seller_uid: sellerId,
+            default_code: listing.id,
+            meat_type: 'livestock'
+          });
+          console.log('Livestock product created successfully in Odoo with ID:', odooResult);
+        } catch (odooError) {
+          console.error('Failed to create livestock product in Odoo (non-blocking):', odooError);
+        }
+      }
 
       toast.success('Livestock listing submitted for approval!');
       onSuccess();

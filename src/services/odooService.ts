@@ -301,7 +301,7 @@ class OdooService {
     }
   }
 
-  async createProduct(product: { name: string; list_price: number; seller_id: string; state: string; seller_name?: string; seller_uid?: string; default_code?: string }): Promise<number | null> {
+  async createProduct(product: { name: string; list_price: number; seller_id: string; state: string; seller_name?: string; seller_uid?: string; default_code?: string; meat_type?: string }): Promise<number | null> {
     if (!this.sessionId) {
       const authSuccess = await this.authenticate();
       if (!authSuccess) throw new Error("Not authenticated with Odoo");
