@@ -32,6 +32,7 @@ export const CustomerOnboarding = ({ onComplete }: CustomerOnboardingProps) => {
   const [locationSelected, setLocationSelected] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [google, setGoogle] = useState<any>(null);
+  const [manualAddress, setManualAddress] = useState('');
   
   const { toast } = useToast();
   const { otpState, isLoading: otpLoading, sendOTP, verifyOTP } = usePhoneOTP();
@@ -133,14 +134,18 @@ export const CustomerOnboarding = ({ onComplete }: CustomerOnboardingProps) => {
       return;
     }
 
-    if (!locationSelected) {
+    if (!locationSelected && !manualAddress) {
       toast({
-        title: "Location Required",
-        description: "Please select your location on the map",
+        title: "Address Required",
+        description: "Please enter your address or select location on the map",
         variant: "destructive",
       });
       return;
     }
+
+    // Use manual address if provided, otherwise use map address
+    const finalAddress = manualAddress || customerData.address;
+    setCustomerData(prev => ({ ...prev, address: finalAddress }));
 
     const result = await sendOTP(customerData.phoneNumber);
     if (result.success) {
@@ -164,8 +169,13 @@ export const CustomerOnboarding = ({ onComplete }: CustomerOnboardingProps) => {
 
     const result = await verifyOTP(enteredOTP);
     if (result.success) {
-      // Register customer after OTP verification
-      const registerResult = await registerCustomer(customerData);
+      // Register customer with final address
+      const finalCustomerData = {
+        ...customerData,
+        address: manualAddress || customerData.address
+      };
+      
+      const registerResult = await registerCustomer(finalCustomerData);
       if (registerResult.success) {
         setStep('complete');
         setTimeout(() => {
@@ -221,10 +231,22 @@ export const CustomerOnboarding = ({ onComplete }: CustomerOnboardingProps) => {
         </div>
 
         <div>
+          <Label htmlFor="address">Address *</Label>
+          <Input
+            id="address"
+            placeholder="Enter your delivery address"
+            value={manualAddress}
+            onChange={(e) => setManualAddress(e.target.value)}
+            className="mt-1"
+          />
+        </div>
+
+        <div>
           <Label className="flex items-center gap-2">
             <MapPin className="w-4 h-4" />
-            Select Your Location *
+            Select Your Location (Optional)
           </Label>
+          <p className="text-sm text-gray-600 mt-1">You can also click on the map to select your location</p>
           <div className="mt-2 space-y-2">
             <div
               id="customer-map"
@@ -239,11 +261,11 @@ export const CustomerOnboarding = ({ onComplete }: CustomerOnboardingProps) => {
                 </div>
               </div>
             )}
-            {locationSelected && customerData.address && (
+            {(manualAddress || customerData.address) && (
               <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-200">
                 <p className="text-sm text-emerald-800">
                   <MapPin className="w-4 h-4 inline mr-1" />
-                  {customerData.address}
+                  Address: {manualAddress || customerData.address}
                 </p>
               </div>
             )}
