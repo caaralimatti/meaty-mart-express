@@ -113,7 +113,6 @@ const MeatProductForm = ({ sellerId, onClose, onSuccess }: MeatProductFormProps)
             list_price: parseFloat(formData.price),
             seller_id: seller.seller_name,
             state: 'pending',
-            seller_name: seller.seller_name,
             seller_uid: sellerId,
             default_code: product.id
           });
