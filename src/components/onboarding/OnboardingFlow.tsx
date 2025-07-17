@@ -2,15 +2,14 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import WelcomeScreen from "./WelcomeScreen";
-import PhoneAuth from "./PhoneAuth";
-import BasicInfoCollection from "./BasicInfoCollection";
+import { CustomerOnboarding } from "../customer/CustomerOnboarding";
 import DeliveryPreferences from "./DeliveryPreferences";
 
 interface OnboardingFlowProps {
   onComplete: () => void;
 }
 
-type OnboardingStep = "welcome" | "auth" | "info" | "preferences";
+type OnboardingStep = "welcome" | "auth" | "preferences";
 
 const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>("welcome");
@@ -21,11 +20,6 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   };
 
   const handleAuthSuccess = () => {
-    setCurrentStep("info");
-  };
-
-  const handleInfoComplete = (data: any) => {
-    setUserData(prev => ({ ...prev, ...data }));
     setCurrentStep("preferences");
   };
 
@@ -43,11 +37,8 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
       case "auth":
         setCurrentStep("welcome");
         break;
-      case "info":
-        setCurrentStep("auth");
-        break;
       case "preferences":
-        setCurrentStep("info");
+        setCurrentStep("auth");
         break;
     }
   };
@@ -57,10 +48,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
       return <WelcomeScreen onNext={handleWelcomeNext} />;
     
     case "auth":
-      return <PhoneAuth onNext={handleAuthSuccess} onBack={handleBack} />;
-    
-    case "info":
-      return <BasicInfoCollection onNext={handleInfoComplete} onBack={handleBack} />;
+      return <CustomerOnboarding onComplete={handleAuthSuccess} />;
     
     case "preferences":
       return <DeliveryPreferences onComplete={handlePreferencesComplete} onBack={handleBack} />;
