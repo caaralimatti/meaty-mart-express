@@ -199,18 +199,24 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
         .single();
 
       if (!sellerError && seller) {
-        // Create product in Odoo for livestock
+        // Create product in Odoo using generic edge function
         try {
-          const odooResult = await odooService.createProduct({
-            name: formData.name,
-            list_price: formData.unit_price ? parseFloat(formData.unit_price) : 0,
-            seller_id: seller.seller_name,
-            state: 'pending',
-            seller_uid: sellerId,
-            default_code: listing.id,
-            meat_type: 'livestock'
+          const { data: odooResult, error: odooError } = await supabase.functions.invoke('odoo-create-product', {
+            body: {
+              name: formData.name,
+              list_price: formData.unit_price ? parseFloat(formData.unit_price) : 0,
+              seller_id: seller.seller_name,
+              seller_uid: sellerId,
+              default_code: listing.id,
+              product_type: 'livestock'
+            }
           });
-          console.log('Livestock product created successfully in Odoo with ID:', odooResult);
+          
+          if (odooError) {
+            throw odooError;
+          }
+          
+          console.log('Livestock product created successfully in Odoo with ID:', odooResult?.id);
         } catch (odooError) {
           console.error('Failed to create livestock product in Odoo (non-blocking):', odooError);
         }

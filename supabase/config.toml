@@ -18,3 +18,6 @@ verify_jwt = false
 
 [functions.create-odoo-customer]
 verify_jwt = false
+
+[functions.odoo-create-product]
+verify_jwt = false
