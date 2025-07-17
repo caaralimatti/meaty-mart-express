@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { X, Camera, Upload } from 'lucide-react';
 import { odooService } from '@/services/odooService';
+import { getOdooConfig } from '@/services/odooConfigManager';
 
 interface LivestockListingFormProps {
   sellerId: string;
@@ -201,6 +202,17 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
       if (!sellerError && seller) {
         // Create product in Odoo using generic edge function
         try {
+          // Get Odoo configuration from localStorage
+          const odooConfig = getOdooConfig();
+          
+          // Add logging for debugging
+          console.log('Using Odoo config:', {
+            serverUrl: odooConfig.serverUrl,
+            database: odooConfig.database,
+            username: odooConfig.username,
+            fields: odooConfig.fields
+          });
+          
           const { data: odooResult, error: odooError } = await supabase.functions.invoke('odoo-create-product', {
             body: {
               name: formData.name,
@@ -208,7 +220,8 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
               seller_id: seller.seller_name,
               seller_uid: sellerId,
               default_code: listing.id,
-              product_type: 'livestock'
+              product_type: 'livestock',
+              config: odooConfig // Pass Odoo configuration
             }
           });
           

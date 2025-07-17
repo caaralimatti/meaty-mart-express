@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { X, Upload } from 'lucide-react';
 import { odooService } from '@/services/odooService';
+import { getOdooConfig } from '@/services/odooConfigManager';
 
 interface MeatProductFormProps {
   sellerId: string;
@@ -108,6 +109,17 @@ const MeatProductForm = ({ sellerId, onClose, onSuccess }: MeatProductFormProps)
       } else {
         // Create product in Odoo using generic edge function
         try {
+          // Get Odoo configuration from localStorage
+          const odooConfig = getOdooConfig();
+          
+          // Add logging for debugging
+          console.log('Using Odoo config:', {
+            serverUrl: odooConfig.serverUrl,
+            database: odooConfig.database,
+            username: odooConfig.username,
+            fields: odooConfig.fields
+          });
+          
           const { data: odooResult, error: odooError } = await supabase.functions.invoke('odoo-create-product', {
             body: {
               name: formData.name,
@@ -115,7 +127,8 @@ const MeatProductForm = ({ sellerId, onClose, onSuccess }: MeatProductFormProps)
               seller_id: seller.seller_name,
               seller_uid: sellerId,
               default_code: product.id,
-              product_type: 'meat'
+              product_type: 'meat',
+              config: odooConfig // Pass Odoo configuration
             }
           });
           

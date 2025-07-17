@@ -24,10 +24,10 @@ serve(async (req) => {
     });
   }
 
-  try {
+try {
     // Validate request body
     const body = await req.json();
-    const { name, list_price, seller_id, seller_uid, default_code, product_type } = body;
+    const { name, list_price, seller_id, seller_uid, default_code, product_type, config } = body;
     
     if (!name || !seller_id || !product_type || !default_code) {
       return new Response(JSON.stringify({ error: 'Missing required fields' }), { 
@@ -38,6 +38,9 @@ serve(async (req) => {
         } 
       });
     }
+    
+    // Log incoming configuration
+    console.log('Received config:', config ? 'Config provided' : 'No config provided');
 
     // Verify product_type is valid
     if (product_type !== 'meat' && product_type !== 'livestock') {
@@ -70,7 +73,8 @@ serve(async (req) => {
           seller_uid,
           default_code,
           product_type
-        }
+        },
+        config: config || null // Pass the Odoo configuration if provided
       }
     });
 
