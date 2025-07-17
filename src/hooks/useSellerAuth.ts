@@ -83,6 +83,8 @@ export const useSellerAuth = () => {
         supplier_rank: 1,
         customer_rank: 0,
         state: 'Pending for Approval',
+        ref: sellerId,
+        seller_type: authData.typeOfSeller.toLowerCase(),
       };
       
       console.log('Creating Odoo customer with data:', customerData);
