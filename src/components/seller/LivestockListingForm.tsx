@@ -161,10 +161,6 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
       return;
     }
 
-    if (liveImages.length < 4) {
-      toast.error('Please capture at least 4 live photos');
-      return;
-    }
 
     setLoading(true);
     try {
@@ -240,7 +236,7 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Live Photos Section */}
           <div>
-            <Label className="text-base font-medium">Live Photos (Minimum 4 required) *</Label>
+            <Label className="text-base font-medium">Live Photos</Label>
             <div className="space-y-2">
               <Input
                 type="file"
@@ -250,7 +246,7 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
                 onChange={handleLivePhotoCapture}
               />
               <p className="text-sm text-gray-600">
-                Take live photos using your device camera. Minimum 4 photos required.
+                Take live photos using your device camera (optional).
               </p>
               {liveImages.length > 0 && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -275,7 +271,7 @@ const LivestockListingForm = ({ sellerId, onClose, onSuccess }: LivestockListing
                 </div>
               )}
               <p className="text-sm font-medium">
-                Photos captured: {liveImages.length}/4 minimum
+                Photos captured: {liveImages.length}
               </p>
             </div>
           </div>
