@@ -44,18 +44,27 @@ const DeveloperSettings = ({ onLogout, username }: DeveloperSettingsProps) => {
     setIsTestingWebhook(true);
     
     try {
-      const { data, error } = await supabase.functions.invoke('product-approval-webhook', {
-        body: {
+      const response = await fetch('https://oaynfzqjielnsipttzbs.supabase.co/functions/v1/product-approval-webhook', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': 'dev-webhook-api-key-2024-secure-odoo-integration'
+        },
+        body: JSON.stringify({
           product_id: productId,
           seller_id: sellerId,
           product_type: productType,
           approval_status: approvalStatus,
           rejection_reason: rejectionReason || null,
           updated_at: new Date().toISOString()
-        }
+        })
       });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
 
       toast({
         title: "Success",
