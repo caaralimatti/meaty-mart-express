@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 // Global variable to track if Google Maps API is loaded
@@ -20,9 +21,9 @@ export const locationService = {
         return;
       }
       
-      // Create script element
+      // Create script element - API key will be handled by edge function
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyADassC7VpWzhXLyqKB0iGISTjVngGlvKI&libraries=places`;
+      script.src = `https://maps.googleapis.com/maps/api/js?libraries=places`;
       script.async = true;
       script.defer = true;
       

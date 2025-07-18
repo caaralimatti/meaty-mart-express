@@ -22,7 +22,7 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
   );
   const [isLoadingGPS, setIsLoadingGPS] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
   const googleMapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
@@ -38,10 +38,10 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
   }, [isOpen]);
 
   useEffect(() => {
-    if (coordinates && googleMapRef.current) {
+    if (coordinates && googleMapRef.current && isMapLoaded) {
       updateMapLocation(coordinates.lat, coordinates.lng);
     }
-  }, [coordinates]);
+  }, [coordinates, isMapLoaded]);
 
   const initializeGoogleMaps = async () => {
     try {
@@ -49,28 +49,38 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
       await locationService.loadGoogleMapsAPI();
       
       if (mapRef.current && (window as any).google) {
+        // Use modern API pattern
+        const { Map } = await (window as any).google.maps.importLibrary("maps");
+        const { AdvancedMarkerElement } = await (window as any).google.maps.importLibrary("marker");
+        const { Autocomplete } = await (window as any).google.maps.importLibrary("places");
+        
         const defaultLocation = coordinates || { lat: 15.3647, lng: 75.1240 }; // Hubli, Karnataka
         
-        googleMapRef.current = new (window as any).google.maps.Map(mapRef.current, {
+        googleMapRef.current = new Map(mapRef.current, {
           center: defaultLocation,
           zoom: 13,
+          mapId: 'DEMO_MAP_ID',
           mapTypeControl: false,
           streetViewControl: false,
           fullscreenControl: false,
         });
 
-        // Add marker
-        markerRef.current = new (window as any).google.maps.Marker({
-          position: defaultLocation,
+        // Add marker using AdvancedMarkerElement
+        markerRef.current = new AdvancedMarkerElement({
           map: googleMapRef.current,
-          draggable: true,
+          position: defaultLocation,
           title: 'Delivery Location'
         });
 
         // Listen for marker drag events
+        markerRef.current.addListener('dragstart', () => {
+          // Marker drag started
+        });
+
         markerRef.current.addListener('dragend', async (event: any) => {
-          const lat = event.latLng.lat();
-          const lng = event.latLng.lng();
+          const position = markerRef.current.position;
+          const lat = position.lat;
+          const lng = position.lng;
           setCoordinates({ lat, lng });
           
           // Reverse geocode to get address
@@ -87,7 +97,7 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
           setCoordinates({ lat, lng });
           
           if (markerRef.current) {
-            markerRef.current.setPosition({ lat, lng });
+            markerRef.current.position = { lat, lng };
           }
           
           // Reverse geocode to get address
@@ -99,7 +109,7 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
 
         // Initialize autocomplete
         if (inputRef.current) {
-          autocompleteRef.current = new (window as any).google.maps.places.Autocomplete(inputRef.current, {
+          autocompleteRef.current = new Autocomplete(inputRef.current, {
             types: ['address'],
             componentRestrictions: { country: 'IN' }
           });
@@ -113,13 +123,15 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
               setAddress(place.formatted_address || '');
               
               if (markerRef.current) {
-                markerRef.current.setPosition({ lat, lng });
+                markerRef.current.position = { lat, lng };
               }
               
               googleMapRef.current?.setCenter({ lat, lng });
             }
           });
         }
+
+        setIsMapLoaded(true);
       }
     } catch (error) {
       console.error('Error initializing Google Maps:', error);
@@ -136,7 +148,7 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
       googleMapRef.current.setCenter({ lat, lng });
       
       if (markerRef.current) {
-        markerRef.current.setPosition({ lat, lng });
+        markerRef.current.position = { lat, lng };
       }
     }
   };
@@ -275,10 +287,12 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
               ref={mapRef}
               className="w-full h-96 rounded-lg border-2 border-emerald-200 bg-gray-100 flex items-center justify-center"
             >
-              <div className="text-center text-gray-500">
-                <MapPin className="w-8 h-8 mx-auto mb-2" />
-                <p>Loading map...</p>
-              </div>
+              {!isMapLoaded && (
+                <div className="text-center text-gray-500">
+                  <MapPin className="w-8 h-8 mx-auto mb-2" />
+                  <p>Loading map...</p>
+                </div>
+              )}
             </div>
             <p className="text-xs text-gray-600">
               Click on the map or drag the marker to set your precise delivery location
