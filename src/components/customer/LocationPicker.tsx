@@ -35,6 +35,24 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
     if (isOpen) {
       initializeGoogleMaps();
     }
+    
+    // Cleanup function to properly dispose of Google Maps objects
+    return () => {
+      if (markerRef.current) {
+        markerRef.current.map = null;
+        markerRef.current = null;
+      }
+      if (autocompleteRef.current) {
+        autocompleteRef.current = null;
+      }
+      if (googleMapRef.current) {
+        googleMapRef.current = null;
+      }
+      if (mapRef.current) {
+        mapRef.current.innerHTML = '';
+      }
+      setIsMapLoaded(false);
+    };
   }, [isOpen]);
 
   useEffect(() => {
