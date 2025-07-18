@@ -31,28 +31,42 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
   
   const { toast } = useToast();
 
+  const cleanup = () => {
+    try {
+      // Clear all Google Maps objects and event listeners
+      if (markerRef.current) {
+        markerRef.current.map = null;
+        markerRef.current = null;
+      }
+      
+      if (autocompleteRef.current) {
+        autocompleteRef.current = null;
+      }
+      
+      if (googleMapRef.current) {
+        // Remove all event listeners from the map
+        (window as any).google?.maps?.event?.clearInstanceListeners?.(googleMapRef.current);
+        googleMapRef.current = null;
+      }
+      
+      // Clear the map container completely
+      if (mapRef.current) {
+        mapRef.current.innerHTML = '';
+      }
+      
+      setIsMapLoaded(false);
+    } catch (error) {
+      console.error('Error during cleanup:', error);
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       initializeGoogleMaps();
     }
     
     // Cleanup function to properly dispose of Google Maps objects
-    return () => {
-      if (markerRef.current) {
-        markerRef.current.map = null;
-        markerRef.current = null;
-      }
-      if (autocompleteRef.current) {
-        autocompleteRef.current = null;
-      }
-      if (googleMapRef.current) {
-        googleMapRef.current = null;
-      }
-      if (mapRef.current) {
-        mapRef.current.innerHTML = '';
-      }
-      setIsMapLoaded(false);
-    };
+    return cleanup;
   }, [isOpen]);
 
   useEffect(() => {
@@ -60,6 +74,13 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
       updateMapLocation(coordinates.lat, coordinates.lng);
     }
   }, [coordinates, isMapLoaded]);
+
+  // Cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      cleanup();
+    };
+  }, []);
 
   const initializeGoogleMaps = async () => {
     try {
