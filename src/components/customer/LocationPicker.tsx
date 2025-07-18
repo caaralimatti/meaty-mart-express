@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,6 +24,7 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
   const [isLoadingGPS, setIsLoadingGPS] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
   const googleMapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
@@ -33,40 +35,49 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
 
   const cleanup = () => {
     try {
-      // Clear all Google Maps objects and event listeners
+      console.log('Starting cleanup...');
+      
+      // Only cleanup if objects exist and map was actually loaded
       if (markerRef.current) {
+        console.log('Cleaning up marker');
         markerRef.current.map = null;
         markerRef.current = null;
       }
       
       if (autocompleteRef.current) {
+        console.log('Cleaning up autocomplete');
         autocompleteRef.current = null;
       }
       
-      if (googleMapRef.current) {
+      if (googleMapRef.current && (window as any).google?.maps?.event) {
+        console.log('Cleaning up map');
         // Remove all event listeners from the map
-        (window as any).google?.maps?.event?.clearInstanceListeners?.(googleMapRef.current);
+        (window as any).google.maps.event.clearInstanceListeners(googleMapRef.current);
         googleMapRef.current = null;
       }
       
-      // Clear the map container completely
-      if (mapRef.current) {
-        mapRef.current.innerHTML = '';
-      }
+      // REMOVED: mapRef.current.innerHTML = '' - This was causing the React DOM conflict!
+      // React will handle DOM cleanup automatically
       
       setIsMapLoaded(false);
+      setIsInitializing(false);
+      console.log('Cleanup complete');
     } catch (error) {
       console.error('Error during cleanup:', error);
     }
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !isInitializing && !isMapLoaded) {
       initializeGoogleMaps();
     }
     
-    // Cleanup function to properly dispose of Google Maps objects
-    return cleanup;
+    // Return cleanup function for this effect
+    return () => {
+      if (!isOpen) {
+        cleanup();
+      }
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -78,20 +89,39 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
   // Cleanup on component unmount
   useEffect(() => {
     return () => {
+      console.log('Component unmounting, cleaning up...');
       cleanup();
     };
   }, []);
 
   const initializeGoogleMaps = async () => {
+    if (isInitializing || isMapLoaded) return;
+    
+    setIsInitializing(true);
+    
     try {
+      console.log('Initializing Google Maps...');
       // Wait for Google Maps to load
       await locationService.loadGoogleMapsAPI();
       
-      if (mapRef.current && (window as any).google) {
+      // Check if component is still mounted and map container exists
+      if (!mapRef.current || !isOpen) {
+        console.log('Component unmounted during initialization');
+        setIsInitializing(false);
+        return;
+      }
+      
+      if ((window as any).google) {
         // Use modern API pattern
         const { Map } = await (window as any).google.maps.importLibrary("maps");
         const { AdvancedMarkerElement } = await (window as any).google.maps.importLibrary("marker");
         const { Autocomplete } = await (window as any).google.maps.importLibrary("places");
+        
+        // Check again if component is still mounted
+        if (!mapRef.current || !isOpen) {
+          setIsInitializing(false);
+          return;
+        }
         
         const defaultLocation = coordinates || { lat: 15.3647, lng: 75.1240 }; // Hubli, Karnataka
         
@@ -171,9 +201,12 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
         }
 
         setIsMapLoaded(true);
+        setIsInitializing(false);
+        console.log('Google Maps initialized successfully');
       }
     } catch (error) {
       console.error('Error initializing Google Maps:', error);
+      setIsInitializing(false);
       toast({
         title: "Maps Error",
         description: "Failed to load Google Maps. Please try again.",
@@ -326,10 +359,10 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
               ref={mapRef}
               className="w-full h-96 rounded-lg border-2 border-emerald-200 bg-gray-100 flex items-center justify-center"
             >
-              {!isMapLoaded && (
+              {(isInitializing || !isMapLoaded) && (
                 <div className="text-center text-gray-500">
                   <MapPin className="w-8 h-8 mx-auto mb-2" />
-                  <p>Loading map...</p>
+                  <p>{isInitializing ? 'Initializing map...' : 'Loading map...'}</p>
                 </div>
               )}
             </div>
