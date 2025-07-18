@@ -23,109 +23,54 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
   );
   const [isLoadingGPS, setIsLoadingGPS] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(false);
+  const [isMapReady, setIsMapReady] = useState(false);
+  
+  // Refs to hold Google Maps instances - these persist across re-renders
   const mapRef = useRef<HTMLDivElement>(null);
-  const googleMapRef = useRef<any>(null);
-  const markerRef = useRef<any>(null);
-  const autocompleteRef = useRef<any>(null);
+  const mapInstance = useRef<any>(null);
+  const markerInstance = useRef<any>(null);
+  const autocompleteInstance = useRef<any>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   
   const { toast } = useToast();
 
-  const cleanup = () => {
-    try {
-      console.log('Starting cleanup...');
-      
-      // Only cleanup if objects exist and map was actually loaded
-      if (markerRef.current) {
-        console.log('Cleaning up marker');
-        markerRef.current.map = null;
-        markerRef.current = null;
-      }
-      
-      if (autocompleteRef.current) {
-        console.log('Cleaning up autocomplete');
-        autocompleteRef.current = null;
-      }
-      
-      if (googleMapRef.current && (window as any).google?.maps?.event) {
-        console.log('Cleaning up map');
-        // Remove all event listeners from the map
-        (window as any).google.maps.event.clearInstanceListeners(googleMapRef.current);
-        googleMapRef.current = null;
-      }
-      
-      // REMOVED: mapRef.current.innerHTML = '' - This was causing the React DOM conflict!
-      // React will handle DOM cleanup automatically
-      
-      setIsMapLoaded(false);
-      setIsInitializing(false);
-      console.log('Cleanup complete');
-    } catch (error) {
-      console.error('Error during cleanup:', error);
-    }
-  };
-
+  // Single useEffect for complete Google Maps lifecycle management
   useEffect(() => {
-    if (isOpen && !isInitializing && !isMapLoaded) {
-      initializeGoogleMaps();
+    // Only initialize if modal is open and map isn't already initialized
+    if (!isOpen || mapInstance.current) {
+      return;
     }
-    
-    // Return cleanup function for this effect
-    return () => {
-      if (!isOpen) {
-        cleanup();
-      }
-    };
-  }, [isOpen]);
 
-  useEffect(() => {
-    if (coordinates && googleMapRef.current && isMapLoaded) {
-      updateMapLocation(coordinates.lat, coordinates.lng);
-    }
-  }, [coordinates, isMapLoaded]);
+    let isComponentMounted = true;
 
-  // Cleanup on component unmount
-  useEffect(() => {
-    return () => {
-      console.log('Component unmounting, cleaning up...');
-      cleanup();
-    };
-  }, []);
+    const initializeMap = async () => {
+      try {
+        console.log('Initializing Google Maps...');
+        
+        // Load Google Maps API
+        await locationService.loadGoogleMapsAPI();
+        
+        // Check if component is still mounted
+        if (!isComponentMounted || !mapRef.current) {
+          console.log('Component unmounted during API load');
+          return;
+        }
 
-  const initializeGoogleMaps = async () => {
-    if (isInitializing || isMapLoaded) return;
-    
-    setIsInitializing(true);
-    
-    try {
-      console.log('Initializing Google Maps...');
-      // Wait for Google Maps to load
-      await locationService.loadGoogleMapsAPI();
-      
-      // Check if component is still mounted and map container exists
-      if (!mapRef.current || !isOpen) {
-        console.log('Component unmounted during initialization');
-        setIsInitializing(false);
-        return;
-      }
-      
-      if ((window as any).google) {
-        // Use modern API pattern
+        // Import required Google Maps libraries
         const { Map } = await (window as any).google.maps.importLibrary("maps");
         const { AdvancedMarkerElement } = await (window as any).google.maps.importLibrary("marker");
         const { Autocomplete } = await (window as any).google.maps.importLibrary("places");
         
-        // Check again if component is still mounted
-        if (!mapRef.current || !isOpen) {
-          setIsInitializing(false);
+        // Final check if component is still mounted
+        if (!isComponentMounted || !mapRef.current) {
+          console.log('Component unmounted during library import');
           return;
         }
-        
+
         const defaultLocation = coordinates || { lat: 15.3647, lng: 75.1240 }; // Hubli, Karnataka
         
-        googleMapRef.current = new Map(mapRef.current, {
+        // Initialize map
+        mapInstance.current = new Map(mapRef.current, {
           center: defaultLocation,
           zoom: 13,
           mapId: 'DEMO_MAP_ID',
@@ -134,96 +79,128 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
           fullscreenControl: false,
         });
 
-        // Add marker using AdvancedMarkerElement
-        markerRef.current = new AdvancedMarkerElement({
-          map: googleMapRef.current,
+        // Add marker
+        markerInstance.current = new AdvancedMarkerElement({
+          map: mapInstance.current,
           position: defaultLocation,
           title: 'Delivery Location'
         });
 
-        // Listen for marker drag events
-        markerRef.current.addListener('dragstart', () => {
-          // Marker drag started
+        // Add map click listener
+        mapInstance.current.addListener('click', async (event: any) => {
+          if (!isComponentMounted) return;
+          
+          const lat = event.latLng.lat();
+          const lng = event.latLng.lng();
+          setCoordinates({ lat, lng });
+          
+          if (markerInstance.current) {
+            markerInstance.current.position = { lat, lng };
+          }
+          
+          // Reverse geocode to get address
+          const addressResult = await locationService.reverseGeocode(lat, lng);
+          if (addressResult && isComponentMounted) {
+            setAddress(addressResult);
+          }
         });
 
-        markerRef.current.addListener('dragend', async (event: any) => {
-          const position = markerRef.current.position;
+        // Add marker drag listener
+        markerInstance.current.addListener('dragend', async (event: any) => {
+          if (!isComponentMounted) return;
+          
+          const position = markerInstance.current.position;
           const lat = position.lat;
           const lng = position.lng;
           setCoordinates({ lat, lng });
           
           // Reverse geocode to get address
           const addressResult = await locationService.reverseGeocode(lat, lng);
-          if (addressResult) {
-            setAddress(addressResult);
-          }
-        });
-
-        // Add click listener to map
-        googleMapRef.current.addListener('click', async (event: any) => {
-          const lat = event.latLng.lat();
-          const lng = event.latLng.lng();
-          setCoordinates({ lat, lng });
-          
-          if (markerRef.current) {
-            markerRef.current.position = { lat, lng };
-          }
-          
-          // Reverse geocode to get address
-          const addressResult = await locationService.reverseGeocode(lat, lng);
-          if (addressResult) {
+          if (addressResult && isComponentMounted) {
             setAddress(addressResult);
           }
         });
 
         // Initialize autocomplete
-        if (inputRef.current) {
-          autocompleteRef.current = new Autocomplete(inputRef.current, {
+        if (inputRef.current && isComponentMounted) {
+          autocompleteInstance.current = new Autocomplete(inputRef.current, {
             types: ['address'],
             componentRestrictions: { country: 'IN' }
           });
 
-          autocompleteRef.current.addListener('place_changed', () => {
-            const place = autocompleteRef.current?.getPlace();
+          autocompleteInstance.current.addListener('place_changed', () => {
+            if (!isComponentMounted) return;
+            
+            const place = autocompleteInstance.current?.getPlace();
             if (place?.geometry?.location) {
               const lat = place.geometry.location.lat();
               const lng = place.geometry.location.lng();
               setCoordinates({ lat, lng });
               setAddress(place.formatted_address || '');
               
-              if (markerRef.current) {
-                markerRef.current.position = { lat, lng };
+              if (markerInstance.current) {
+                markerInstance.current.position = { lat, lng };
               }
               
-              googleMapRef.current?.setCenter({ lat, lng });
+              mapInstance.current?.setCenter({ lat, lng });
             }
           });
         }
 
-        setIsMapLoaded(true);
-        setIsInitializing(false);
-        console.log('Google Maps initialized successfully');
-      }
-    } catch (error) {
-      console.error('Error initializing Google Maps:', error);
-      setIsInitializing(false);
-      toast({
-        title: "Maps Error",
-        description: "Failed to load Google Maps. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+        if (isComponentMounted) {
+          setIsMapReady(true);
+          console.log('Google Maps initialized successfully');
+        }
 
-  const updateMapLocation = (lat: number, lng: number) => {
-    if (googleMapRef.current) {
-      googleMapRef.current.setCenter({ lat, lng });
-      
-      if (markerRef.current) {
-        markerRef.current.position = { lat, lng };
+      } catch (error) {
+        console.error('Error initializing Google Maps:', error);
+        if (isComponentMounted) {
+          toast({
+            title: "Maps Error",
+            description: "Failed to load Google Maps. Please try again.",
+            variant: "destructive",
+          });
+        }
+      }
+    };
+
+    initializeMap();
+
+    // Cleanup function - this is the critical fix
+    return () => {
+      console.log('Cleaning up Google Maps...');
+      isComponentMounted = false;
+
+      // Clean up Google Maps instances properly
+      if (markerInstance.current) {
+        markerInstance.current.map = null;
+        markerInstance.current = null;
+      }
+
+      if (autocompleteInstance.current) {
+        autocompleteInstance.current = null;
+      }
+
+      if (mapInstance.current && (window as any).google?.maps?.event) {
+        // Remove all event listeners from the map
+        (window as any).google.maps.event.clearInstanceListeners(mapInstance.current);
+        mapInstance.current = null;
+      }
+
+      setIsMapReady(false);
+      console.log('Google Maps cleanup complete');
+    };
+  }, [isOpen]); // Only depend on isOpen
+
+  // Update map when coordinates change
+  useEffect(() => {
+    if (coordinates && mapInstance.current && isMapReady) {
+      mapInstance.current.setCenter(coordinates);
+      if (markerInstance.current) {
+        markerInstance.current.position = coordinates;
       }
     }
-  };
+  }, [coordinates, isMapReady]);
 
   const handleUseCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -359,10 +336,10 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
               ref={mapRef}
               className="w-full h-96 rounded-lg border-2 border-emerald-200 bg-gray-100 flex items-center justify-center"
             >
-              {(isInitializing || !isMapLoaded) && (
+              {!isMapReady && (
                 <div className="text-center text-gray-500">
                   <MapPin className="w-8 h-8 mx-auto mb-2" />
-                  <p>{isInitializing ? 'Initializing map...' : 'Loading map...'}</p>
+                  <p>Loading map...</p>
                 </div>
               )}
             </div>
