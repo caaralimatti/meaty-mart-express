@@ -69,8 +69,18 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
 
         const defaultLocation = coordinates || { lat: 15.3647, lng: 75.1240 }; // Hubli, Karnataka
         
-        // Initialize map
-        mapInstance.current = new Map(mapRef.current, {
+        // Create an isolated container for Google Maps
+        const mapContainer = document.createElement('div');
+        mapContainer.style.width = '100%';
+        mapContainer.style.height = '100%';
+        mapContainer.style.borderRadius = '8px';
+        
+        // Clear and append the isolated container
+        mapRef.current.innerHTML = '';
+        mapRef.current.appendChild(mapContainer);
+        
+        // Initialize map on the isolated container
+        mapInstance.current = new Map(mapContainer, {
           center: defaultLocation,
           zoom: 13,
           mapId: 'DEMO_MAP_ID',
