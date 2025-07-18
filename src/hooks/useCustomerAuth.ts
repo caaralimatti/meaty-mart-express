@@ -9,6 +9,20 @@ export interface CustomerData {
   latitude?: number;
   longitude?: number;
   address?: string;
+  // Extended fields
+  businessAddress?: string;
+  businessCity?: string;
+  businessPincode?: string;
+  gstin?: string;
+  fssaiLicense?: string;
+  bankAccountNumber?: string;
+  ifscCode?: string;
+  accountHolderName?: string;
+  businessLogoUrl?: string;
+  aadhaarNumber?: string;
+  notificationEmail?: boolean;
+  notificationSms?: boolean;
+  notificationPush?: boolean;
 }
 
 export const useCustomerAuth = () => {
@@ -33,7 +47,21 @@ export const useCustomerAuth = () => {
           email: customerData.email,
           location_latitude: customerData.latitude,
           location_longitude: customerData.longitude,
-          address: customerData.address
+          address: customerData.address,
+          // Extended fields
+          business_address: customerData.businessAddress,
+          business_city: customerData.businessCity,
+          business_pincode: customerData.businessPincode,
+          gstin: customerData.gstin,
+          fssai_license: customerData.fssaiLicense,
+          bank_account_number: customerData.bankAccountNumber,
+          ifsc_code: customerData.ifscCode,
+          account_holder_name: customerData.accountHolderName,
+          business_logo_url: customerData.businessLogoUrl,
+          aadhaar_number: customerData.aadhaarNumber,
+          notification_email: customerData.notificationEmail ?? true,
+          notification_sms: customerData.notificationSms ?? true,
+          notification_push: customerData.notificationPush ?? false
         });
 
       if (profileError) throw profileError;

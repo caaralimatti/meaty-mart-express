@@ -22,12 +22,17 @@ import {
   Search,
   Eye,
   Download,
-  Star
+  Star,
+  Edit2,
+  Save,
+  X,
+  Building
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { customerService } from '@/services/customerService';
 
 interface CustomerAccountProps {
   isOpen: boolean;
@@ -40,6 +45,19 @@ interface CustomerProfile {
   phone_number: string;
   email?: string;
   address?: string;
+  business_address?: string;
+  business_city?: string;
+  business_pincode?: string;
+  gstin?: string;
+  fssai_license?: string;
+  bank_account_number?: string;
+  ifsc_code?: string;
+  account_holder_name?: string;
+  business_logo_url?: string;
+  aadhaar_number?: string;
+  notification_email?: boolean;
+  notification_sms?: boolean;
+  notification_push?: boolean;
   created_at: string;
 }
 
@@ -81,6 +99,11 @@ export const CustomerAccount = ({ isOpen, onClose }: CustomerAccountProps) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Editing state
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [editingValue, setEditingValue] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   
   // Filters for orders
   const [searchTerm, setSearchTerm] = useState('');
@@ -172,6 +195,116 @@ export const CustomerAccount = ({ isOpen, onClose }: CustomerAccountProps) => {
       case 'refunded': return 'bg-blue-100 text-blue-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const startEditing = (field: string, currentValue: string) => {
+    setEditingField(field);
+    setEditingValue(currentValue || '');
+  };
+
+  const cancelEditing = () => {
+    setEditingField(null);
+    setEditingValue('');
+  };
+
+  const saveField = async () => {
+    if (!customerProfile || !editingField) return;
+
+    setIsSaving(true);
+    try {
+      const result = await customerService.updateProfile(customerProfile.id, {
+        [editingField]: editingValue
+      });
+
+      if (result.success) {
+        setCustomerProfile(prev => prev ? {
+          ...prev,
+          [editingField]: editingValue
+        } : null);
+        
+        setEditingField(null);
+        setEditingValue('');
+        
+        toast({
+          title: "Profile Updated",
+          description: "Your profile has been updated successfully",
+        });
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Update Failed",
+        description: error.message || "Failed to update profile",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const EditableField = ({ 
+    label, 
+    field, 
+    value, 
+    icon: Icon, 
+    type = 'text' 
+  }: { 
+    label: string; 
+    field: string; 
+    value?: string; 
+    icon: any; 
+    type?: string; 
+  }) => {
+    const isEditing = editingField === field;
+    
+    return (
+      <div>
+        <Label>{label}</Label>
+        <div className="flex items-center gap-2 mt-1">
+          <Icon className="w-4 h-4 text-gray-500" />
+          {isEditing ? (
+            <div className="flex items-center gap-2 flex-1">
+              <Input
+                type={type}
+                value={editingValue}
+                onChange={(e) => setEditingValue(e.target.value)}
+                className="flex-1"
+                autoFocus
+              />
+              <Button
+                size="sm"
+                onClick={saveField}
+                disabled={isSaving}
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                <Save className="w-4 h-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={cancelEditing}
+                disabled={isSaving}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 flex-1">
+              <span className="text-gray-900">{value || 'Not provided'}</span>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => startEditing(field, value || '')}
+                className="ml-auto"
+              >
+                <Edit2 className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
   };
 
   const filteredOrders = orders.filter(order => {
@@ -288,13 +421,12 @@ export const CustomerAccount = ({ isOpen, onClose }: CustomerAccountProps) => {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <Label>Full Name</Label>
-                          <div className="flex items-center gap-2 mt-1">
-                            <User className="w-4 h-4 text-gray-500" />
-                            <span className="text-gray-900">{customerProfile?.full_name}</span>
-                          </div>
-                        </div>
+                        <EditableField
+                          label="Full Name"
+                          field="full_name"
+                          value={customerProfile?.full_name}
+                          icon={User}
+                        />
                         <div>
                           <Label>Phone Number</Label>
                           <div className="flex items-center gap-2 mt-1">
@@ -302,13 +434,13 @@ export const CustomerAccount = ({ isOpen, onClose }: CustomerAccountProps) => {
                             <span className="text-gray-900">{customerProfile?.phone_number}</span>
                           </div>
                         </div>
-                        <div>
-                          <Label>Email</Label>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Mail className="w-4 h-4 text-gray-500" />
-                            <span className="text-gray-900">{customerProfile?.email || 'Not provided'}</span>
-                          </div>
-                        </div>
+                        <EditableField
+                          label="Email"
+                          field="email"
+                          value={customerProfile?.email}
+                          icon={Mail}
+                          type="email"
+                        />
                         <div>
                           <Label>Member Since</Label>
                           <div className="flex items-center gap-2 mt-1">
@@ -320,15 +452,92 @@ export const CustomerAccount = ({ isOpen, onClose }: CustomerAccountProps) => {
                         </div>
                       </div>
                       
-                      {customerProfile?.address && (
-                        <div>
-                          <Label>Delivery Address</Label>
-                          <div className="flex items-center gap-2 mt-1">
-                            <MapPin className="w-4 h-4 text-gray-500" />
-                            <span className="text-gray-900">{customerProfile.address}</span>
-                          </div>
-                        </div>
-                      )}
+                      <EditableField
+                        label="Delivery Address"
+                        field="address"
+                        value={customerProfile?.address}
+                        icon={MapPin}
+                      />
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Building className="w-5 h-5" />
+                        Business Information
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <EditableField
+                          label="Business Address"
+                          field="business_address"
+                          value={customerProfile?.business_address}
+                          icon={Building}
+                        />
+                        <EditableField
+                          label="Business City"
+                          field="business_city"
+                          value={customerProfile?.business_city}
+                          icon={Building}
+                        />
+                        <EditableField
+                          label="Business PIN Code"
+                          field="business_pincode"
+                          value={customerProfile?.business_pincode}
+                          icon={Building}
+                        />
+                        <EditableField
+                          label="GSTIN"
+                          field="gstin"
+                          value={customerProfile?.gstin}
+                          icon={Building}
+                        />
+                        <EditableField
+                          label="FSSAI License"
+                          field="fssai_license"
+                          value={customerProfile?.fssai_license}
+                          icon={Building}
+                        />
+                        <EditableField
+                          label="Aadhaar Number"
+                          field="aadhaar_number"
+                          value={customerProfile?.aadhaar_number}
+                          icon={Building}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <CreditCard className="w-5 h-5" />
+                        Banking Information
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <EditableField
+                          label="Bank Account Number"
+                          field="bank_account_number"
+                          value={customerProfile?.bank_account_number}
+                          icon={CreditCard}
+                        />
+                        <EditableField
+                          label="IFSC Code"
+                          field="ifsc_code"
+                          value={customerProfile?.ifsc_code}
+                          icon={CreditCard}
+                        />
+                        <EditableField
+                          label="Account Holder Name"
+                          field="account_holder_name"
+                          value={customerProfile?.account_holder_name}
+                          icon={CreditCard}
+                        />
+                      </div>
                     </CardContent>
                   </Card>
                 </div>

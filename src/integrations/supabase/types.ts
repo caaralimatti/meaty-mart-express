@@ -14,41 +14,121 @@ export type Database = {
   }
   public: {
     Tables: {
+      customer_profile_audit: {
+        Row: {
+          change_reason: string | null
+          changed_by: string | null
+          created_at: string | null
+          customer_id: string | null
+          field_name: string
+          id: string
+          new_value: string | null
+          old_value: string | null
+        }
+        Insert: {
+          change_reason?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          customer_id?: string | null
+          field_name: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+        }
+        Update: {
+          change_reason?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          customer_id?: string | null
+          field_name?: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_profile_audit_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
+          aadhaar_number: string | null
+          account_holder_name: string | null
           address: string | null
+          bank_account_number: string | null
+          business_address: string | null
+          business_city: string | null
+          business_logo_url: string | null
+          business_pincode: string | null
           created_at: string
           email: string | null
+          fssai_license: string | null
           full_name: string
+          gstin: string | null
           id: string
+          ifsc_code: string | null
           location_latitude: number | null
           location_longitude: number | null
+          notification_email: boolean | null
+          notification_push: boolean | null
+          notification_sms: boolean | null
           odoo_partner_id: number | null
           phone_number: string
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          aadhaar_number?: string | null
+          account_holder_name?: string | null
           address?: string | null
+          bank_account_number?: string | null
+          business_address?: string | null
+          business_city?: string | null
+          business_logo_url?: string | null
+          business_pincode?: string | null
           created_at?: string
           email?: string | null
+          fssai_license?: string | null
           full_name: string
+          gstin?: string | null
           id?: string
+          ifsc_code?: string | null
           location_latitude?: number | null
           location_longitude?: number | null
+          notification_email?: boolean | null
+          notification_push?: boolean | null
+          notification_sms?: boolean | null
           odoo_partner_id?: number | null
           phone_number: string
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          aadhaar_number?: string | null
+          account_holder_name?: string | null
           address?: string | null
+          bank_account_number?: string | null
+          business_address?: string | null
+          business_city?: string | null
+          business_logo_url?: string | null
+          business_pincode?: string | null
           created_at?: string
           email?: string | null
+          fssai_license?: string | null
           full_name?: string
+          gstin?: string | null
           id?: string
+          ifsc_code?: string | null
           location_latitude?: number | null
           location_longitude?: number | null
+          notification_email?: boolean | null
+          notification_push?: boolean | null
+          notification_sms?: boolean | null
           odoo_partner_id?: number | null
           phone_number?: string
           updated_at?: string
