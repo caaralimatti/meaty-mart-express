@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,21 +55,28 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
           return;
         }
 
+        // Find the gmaps-root div inside the React-managed container
+        const gmapsRoot = mapRef.current.querySelector('#gmaps-root') as HTMLDivElement;
+        if (!gmapsRoot) {
+          console.error('gmaps-root container not found');
+          return;
+        }
+
         // Import required Google Maps libraries
         const { Map } = await (window as any).google.maps.importLibrary("maps");
         const { AdvancedMarkerElement } = await (window as any).google.maps.importLibrary("marker");
         const { Autocomplete } = await (window as any).google.maps.importLibrary("places");
         
         // Final check if component is still mounted
-        if (!isComponentMounted || !mapRef.current) {
+        if (!isComponentMounted) {
           console.log('Component unmounted during library import');
           return;
         }
 
         const defaultLocation = coordinates || { lat: 15.3647, lng: 75.1240 }; // Hubli, Karnataka
         
-        // Initialize map directly on React-managed div - NO DOM manipulation
-        mapInstance.current = new Map(mapRef.current, {
+        // Initialize map on the isolated gmaps-root div - React only manages the parent
+        mapInstance.current = new Map(gmapsRoot, {
           center: defaultLocation,
           zoom: 13,
           mapId: 'DEMO_MAP_ID',
@@ -334,12 +340,15 @@ export const LocationPicker = ({ isOpen, onClose, onLocationSelect, currentLocat
             <label className="text-sm font-medium">Pin Location on Map</label>
             <div 
               ref={mapRef}
-              className="w-full h-96 rounded-lg border-2 border-emerald-200 bg-gray-100 flex items-center justify-center"
+              className="w-full h-96 rounded-lg border-2 border-emerald-200 bg-gray-100 relative"
             >
+              <div id="gmaps-root" className="w-full h-full rounded-lg" />
               {!isMapReady && (
-                <div className="text-center text-gray-500">
-                  <MapPin className="w-8 h-8 mx-auto mb-2" />
-                  <p>Loading map...</p>
+                <div className="absolute inset-0 flex items-center justify-center text-center text-gray-500 bg-gray-100 rounded-lg">
+                  <div>
+                    <MapPin className="w-8 h-8 mx-auto mb-2" />
+                    <p>Loading map...</p>
+                  </div>
                 </div>
               )}
             </div>
