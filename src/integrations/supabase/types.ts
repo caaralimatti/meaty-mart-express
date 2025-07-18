@@ -789,16 +789,70 @@ export type Database = {
           },
         ]
       }
+      seller_profile_audit: {
+        Row: {
+          change_reason: string | null
+          changed_by: string | null
+          created_at: string | null
+          field_name: string
+          id: string
+          new_value: string | null
+          old_value: string | null
+          seller_id: string | null
+        }
+        Insert: {
+          change_reason?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          field_name: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          seller_id?: string | null
+        }
+        Update: {
+          change_reason?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          field_name?: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          seller_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_profile_audit_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sellers: {
         Row: {
+          aadhaar_number: string | null
+          account_holder_name: string | null
           approval_status: Database["public"]["Enums"]["approval_status"] | null
           approved_at: string | null
+          bank_account_number: string | null
+          business_address: string | null
+          business_city: string | null
+          business_logo_url: string | null
+          business_pincode: string | null
           contact_email: string | null
           contact_phone: string | null
           created_at: string
+          fssai_license: string | null
+          gstin: string | null
           id: string
+          ifsc_code: string | null
           livestock_status: boolean | null
           meat_shop_status: boolean | null
+          notification_email: boolean | null
+          notification_push: boolean | null
+          notification_sms: boolean | null
           seller_name: string
           seller_type: Database["public"]["Enums"]["seller_type_enum"]
           updated_at: string
@@ -806,16 +860,29 @@ export type Database = {
           user_type: Database["public"]["Enums"]["user_type_enum"] | null
         }
         Insert: {
+          aadhaar_number?: string | null
+          account_holder_name?: string | null
           approval_status?:
             | Database["public"]["Enums"]["approval_status"]
             | null
           approved_at?: string | null
+          bank_account_number?: string | null
+          business_address?: string | null
+          business_city?: string | null
+          business_logo_url?: string | null
+          business_pincode?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
+          fssai_license?: string | null
+          gstin?: string | null
           id?: string
+          ifsc_code?: string | null
           livestock_status?: boolean | null
           meat_shop_status?: boolean | null
+          notification_email?: boolean | null
+          notification_push?: boolean | null
+          notification_sms?: boolean | null
           seller_name: string
           seller_type: Database["public"]["Enums"]["seller_type_enum"]
           updated_at?: string
@@ -823,16 +890,29 @@ export type Database = {
           user_type?: Database["public"]["Enums"]["user_type_enum"] | null
         }
         Update: {
+          aadhaar_number?: string | null
+          account_holder_name?: string | null
           approval_status?:
             | Database["public"]["Enums"]["approval_status"]
             | null
           approved_at?: string | null
+          bank_account_number?: string | null
+          business_address?: string | null
+          business_city?: string | null
+          business_logo_url?: string | null
+          business_pincode?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
+          fssai_license?: string | null
+          gstin?: string | null
           id?: string
+          ifsc_code?: string | null
           livestock_status?: boolean | null
           meat_shop_status?: boolean | null
+          notification_email?: boolean | null
+          notification_push?: boolean | null
+          notification_sms?: boolean | null
           seller_name?: string
           seller_type?: Database["public"]["Enums"]["seller_type_enum"]
           updated_at?: string

@@ -16,6 +16,20 @@ export interface SellerProfile {
   approved_at?: string;
   created_at: string;
   updated_at: string;
+  // New profile fields
+  business_address?: string;
+  business_city?: string;
+  business_pincode?: string;
+  gstin?: string;
+  fssai_license?: string;
+  bank_account_number?: string;
+  ifsc_code?: string;
+  account_holder_name?: string;
+  business_logo_url?: string;
+  aadhaar_number?: string;
+  notification_email?: boolean;
+  notification_sms?: boolean;
+  notification_push?: boolean;
   metadata?: any;
 }
 
@@ -119,10 +133,35 @@ export const useSellerData = () => {
     }
   };
 
+  const updateSellerProfile = async (updates: Partial<SellerProfile>) => {
+    if (!sellerProfile) return;
+
+    try {
+      const { error } = await supabase
+        .from('sellers')
+        .update(updates)
+        .eq('id', sellerProfile.id);
+
+      if (error) throw error;
+
+      setSellerProfile(prev => prev ? {
+        ...prev,
+        ...updates
+      } : null);
+
+      toast.success('Profile updated successfully');
+    } catch (error: any) {
+      console.error('Error updating seller profile:', error);
+      toast.error('Failed to update profile');
+      throw error;
+    }
+  };
+
   return {
     sellerProfile,
     loading,
     updateShopStatus,
+    updateSellerProfile,
     refreshSellerData,
     logoutSeller
   };
