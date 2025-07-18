@@ -33,6 +33,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { customerService } from '@/services/customerService';
+import { LocationPicker } from './LocationPicker';
+import { useLocation } from '@/hooks/useLocation';
+import { locationService } from '@/services/locationService';
 
 interface CustomerAccountProps {
   isOpen: boolean;
@@ -58,6 +61,8 @@ interface CustomerProfile {
   notification_email?: boolean;
   notification_sms?: boolean;
   notification_push?: boolean;
+  location_latitude?: number;
+  location_longitude?: number;
   created_at: string;
 }
 
@@ -109,6 +114,10 @@ export const CustomerAccount = ({ isOpen, onClose }: CustomerAccountProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  
+  // Location management
+  const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false);
+  const { currentLocation, updateLocation } = useLocation();
   
   const { toast } = useToast();
 
@@ -241,6 +250,40 @@ export const CustomerAccount = ({ isOpen, onClose }: CustomerAccountProps) => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleLocationSelect = async (location: { address: string; lat: number; lng: number }) => {
+    updateLocation(location);
+    
+    // Save to customer profile if logged in
+    if (customerProfile?.id) {
+      try {
+        const saved = await locationService.saveCustomerLocation(customerProfile.id, location);
+        if (saved) {
+          // Update the local customer profile state
+          setCustomerProfile(prev => prev ? {
+            ...prev,
+            address: location.address,
+            location_latitude: location.lat,
+            location_longitude: location.lng
+          } : null);
+          
+          toast({
+            title: "Location Saved",
+            description: "Your delivery location has been updated.",
+          });
+        }
+      } catch (error) {
+        console.error('Error saving location:', error);
+        toast({
+          title: "Save Error",
+          description: "Location updated locally but failed to save to profile.",
+          variant: "destructive",
+        });
+      }
+    }
+    
+    setIsLocationPickerOpen(false);
   };
 
   const EditableField = ({ 
@@ -400,10 +443,18 @@ export const CustomerAccount = ({ isOpen, onClose }: CustomerAccountProps) => {
                 variant="outline" 
                 className="w-full"
               >
-                Close Account
-              </Button>
-            </div>
+              Close Account
+            </Button>
           </div>
+        </div>
+
+        {/* Location Picker Modal */}
+        <LocationPicker
+          isOpen={isLocationPickerOpen}
+          onClose={() => setIsLocationPickerOpen(false)}
+          onLocationSelect={handleLocationSelect}
+          currentLocation={currentLocation}
+        />
 
           {/* Main Content */}
           <div className="flex-1 overflow-y-auto">
@@ -452,12 +503,29 @@ export const CustomerAccount = ({ isOpen, onClose }: CustomerAccountProps) => {
                         </div>
                       </div>
                       
-                      <EditableField
-                        label="Delivery Address"
-                        field="address"
-                        value={customerProfile?.address}
-                        icon={MapPin}
-                      />
+                      <div>
+                        <Label>Delivery Address</Label>
+                        <div className="flex items-center gap-2 mt-1">
+                          <MapPin className="w-4 h-4 text-gray-500" />
+                          <span className="text-gray-900 flex-1">
+                            {customerProfile?.address || currentLocation?.address || 'Not set'}
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setIsLocationPickerOpen(true)}
+                            className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                          >
+                            <MapPin className="w-4 h-4 mr-1" />
+                            Set Location
+                          </Button>
+                        </div>
+                        {(customerProfile?.location_latitude && customerProfile?.location_longitude) && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            Coordinates: {customerProfile.location_latitude.toFixed(6)}, {customerProfile.location_longitude.toFixed(6)}
+                          </div>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
 
