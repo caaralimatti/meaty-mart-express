@@ -63,7 +63,7 @@ export const useApiMonitor = () => {
       }
 
       try {
-        const response = await originalFetch(...args);
+        const response = await originalFetch(args[0], args[1]);
         
         if (isRecordingRef.current) {
           const responseClone = response.clone();
