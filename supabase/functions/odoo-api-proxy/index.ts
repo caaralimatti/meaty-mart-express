@@ -55,6 +55,11 @@ serve(async (req) => {
       }
     }
 
+    // Validate required endpoint parameter
+    if (!odoo_endpoint) {
+      throw new Error('odoo_endpoint is required');
+    }
+
     // Construct the full Odoo URL
     let odooUrl = ODOO_URL;
     if (!odooUrl.endsWith('/')) {
