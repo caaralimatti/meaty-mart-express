@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -66,7 +66,9 @@ export type Database = {
           business_logo_url: string | null
           business_pincode: string | null
           created_at: string
+          delivery_addresses: Json | null
           email: string | null
+          fcm_token: string | null
           fssai_license: string | null
           full_name: string
           gstin: string | null
@@ -79,8 +81,10 @@ export type Database = {
           notification_sms: boolean | null
           odoo_partner_id: number | null
           phone_number: string
+          preferences: Json | null
           updated_at: string
           user_id: string | null
+          user_type: string | null
         }
         Insert: {
           aadhaar_number?: string | null
@@ -92,7 +96,9 @@ export type Database = {
           business_logo_url?: string | null
           business_pincode?: string | null
           created_at?: string
+          delivery_addresses?: Json | null
           email?: string | null
+          fcm_token?: string | null
           fssai_license?: string | null
           full_name: string
           gstin?: string | null
@@ -105,8 +111,10 @@ export type Database = {
           notification_sms?: boolean | null
           odoo_partner_id?: number | null
           phone_number: string
+          preferences?: Json | null
           updated_at?: string
           user_id?: string | null
+          user_type?: string | null
         }
         Update: {
           aadhaar_number?: string | null
@@ -118,7 +126,9 @@ export type Database = {
           business_logo_url?: string | null
           business_pincode?: string | null
           created_at?: string
+          delivery_addresses?: Json | null
           email?: string | null
+          fcm_token?: string | null
           fssai_license?: string | null
           full_name?: string
           gstin?: string | null
@@ -131,8 +141,109 @@ export type Database = {
           notification_sms?: boolean | null
           odoo_partner_id?: number | null
           phone_number?: string
+          preferences?: Json | null
           updated_at?: string
           user_id?: string | null
+          user_type?: string | null
+        }
+        Relationships: []
+      }
+      data_deletion_requests: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          notes: string | null
+          phone_number: string | null
+          processed_at: string | null
+          processed_by: string | null
+          reason: string | null
+          requested_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          notes?: string | null
+          phone_number?: string | null
+          processed_at?: string | null
+          processed_by?: string | null
+          reason?: string | null
+          requested_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          notes?: string | null
+          phone_number?: string | null
+          processed_at?: string | null
+          processed_by?: string | null
+          reason?: string | null
+          requested_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      delivery_fee_configs: {
+        Row: {
+          calibration_multiplier: number
+          config_name: string
+          created_at: string
+          dynamic_multipliers: Json
+          free_delivery_threshold: number | null
+          id: string
+          is_active: boolean
+          last_modified_by: string | null
+          max_fee: number
+          max_serviceable_distance_km: number
+          min_fee: number
+          scope: string
+          tier_rates: Json
+          updated_at: string
+          use_routing: boolean
+          version: number
+        }
+        Insert: {
+          calibration_multiplier?: number
+          config_name?: string
+          created_at?: string
+          dynamic_multipliers?: Json
+          free_delivery_threshold?: number | null
+          id?: string
+          is_active?: boolean
+          last_modified_by?: string | null
+          max_fee?: number
+          max_serviceable_distance_km?: number
+          min_fee?: number
+          scope: string
+          tier_rates?: Json
+          updated_at?: string
+          use_routing?: boolean
+          version?: number
+        }
+        Update: {
+          calibration_multiplier?: number
+          config_name?: string
+          created_at?: string
+          dynamic_multipliers?: Json
+          free_delivery_threshold?: number | null
+          id?: string
+          is_active?: boolean
+          last_modified_by?: string | null
+          max_fee?: number
+          max_serviceable_distance_km?: number
+          min_fee?: number
+          scope?: string
+          tier_rates?: Json
+          updated_at?: string
+          use_routing?: boolean
+          version?: number
         }
         Relationships: []
       }
@@ -191,6 +302,123 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      edge_function_logs: {
+        Row: {
+          api_call_count: number | null
+          caller_ip: unknown | null
+          created_at: string | null
+          created_by: string | null
+          dry_run: boolean | null
+          endpoint: string
+          error_rate_percent: number | null
+          flags: Json | null
+          id: string
+          latency_ms: number | null
+          request: Json | null
+          response: Json | null
+          status: number
+          ts: string | null
+          updated_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          api_call_count?: number | null
+          caller_ip?: unknown | null
+          created_at?: string | null
+          created_by?: string | null
+          dry_run?: boolean | null
+          endpoint: string
+          error_rate_percent?: number | null
+          flags?: Json | null
+          id?: string
+          latency_ms?: number | null
+          request?: Json | null
+          response?: Json | null
+          status: number
+          ts?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          api_call_count?: number | null
+          caller_ip?: unknown | null
+          created_at?: string | null
+          created_by?: string | null
+          dry_run?: boolean | null
+          endpoint?: string
+          error_rate_percent?: number | null
+          flags?: Json | null
+          id?: string
+          latency_ms?: number | null
+          request?: Json | null
+          response?: Json | null
+          status?: number
+          ts?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      feature_flag_changes: {
+        Row: {
+          change_reason: string | null
+          changed_by: string | null
+          created_at: string | null
+          flag_name: string
+          id: string
+          new_value: boolean
+          old_value: boolean | null
+        }
+        Insert: {
+          change_reason?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          flag_name: string
+          id?: string
+          new_value: boolean
+          old_value?: boolean | null
+        }
+        Update: {
+          change_reason?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          flag_name?: string
+          id?: string
+          new_value?: boolean
+          old_value?: boolean | null
+        }
+        Relationships: []
+      }
+      feature_flags: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          enabled: boolean | null
+          feature_name: string
+          id: string
+          target_user_percentage: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          enabled?: boolean | null
+          feature_name: string
+          id?: string
+          target_user_percentage?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          enabled?: boolean | null
+          feature_name?: string
+          id?: string
+          target_user_percentage?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       livestock_approvals: {
         Row: {
@@ -414,10 +642,12 @@ export type Database = {
           approved_at: string | null
           created_at: string
           description: string | null
+          extra_metadata: Json | null
           id: string
           is_active: boolean | null
           name: string
           nutritional_info_id: string | null
+          odoo_product_id: number | null
           price: number
           seller_id: string
           stock: number | null
@@ -430,10 +660,12 @@ export type Database = {
           approved_at?: string | null
           created_at?: string
           description?: string | null
+          extra_metadata?: Json | null
           id?: string
           is_active?: boolean | null
           name: string
           nutritional_info_id?: string | null
+          odoo_product_id?: number | null
           price: number
           seller_id: string
           stock?: number | null
@@ -446,10 +678,12 @@ export type Database = {
           approved_at?: string | null
           created_at?: string
           description?: string | null
+          extra_metadata?: Json | null
           id?: string
           is_active?: boolean | null
           name?: string
           nutritional_info_id?: string | null
+          odoo_product_id?: number | null
           price?: number
           seller_id?: string
           stock?: number | null
@@ -471,6 +705,202 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notification_logs: {
+        Row: {
+          created_at: string | null
+          customer_id: string | null
+          delivered_at: string | null
+          delivery_attempts: number | null
+          delivery_method: string
+          delivery_status: string | null
+          error_message: string | null
+          external_id: string | null
+          id: string
+          message: string
+          notification_type: string
+          recipient_email: string | null
+          recipient_phone: string | null
+          scheduled_at: string | null
+          seller_id: string | null
+          sent_at: string | null
+          template_id: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: string | null
+          delivered_at?: string | null
+          delivery_attempts?: number | null
+          delivery_method: string
+          delivery_status?: string | null
+          error_message?: string | null
+          external_id?: string | null
+          id?: string
+          message: string
+          notification_type: string
+          recipient_email?: string | null
+          recipient_phone?: string | null
+          scheduled_at?: string | null
+          seller_id?: string | null
+          sent_at?: string | null
+          template_id?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string | null
+          delivered_at?: string | null
+          delivery_attempts?: number | null
+          delivery_method?: string
+          delivery_status?: string | null
+          error_message?: string | null
+          external_id?: string | null
+          id?: string
+          message?: string
+          notification_type?: string
+          recipient_email?: string | null
+          recipient_phone?: string | null
+          scheduled_at?: string | null
+          seller_id?: string | null
+          sent_at?: string | null
+          template_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_logs_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_logs_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_logs_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "notification_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_preferences: {
+        Row: {
+          created_at: string | null
+          customer_id: string | null
+          email_enabled: boolean | null
+          id: string
+          order_notifications: boolean | null
+          promotion_notifications: boolean | null
+          push_enabled: boolean | null
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          review_notifications: boolean | null
+          seller_id: string | null
+          sms_enabled: boolean | null
+          system_notifications: boolean | null
+          timezone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: string | null
+          email_enabled?: boolean | null
+          id?: string
+          order_notifications?: boolean | null
+          promotion_notifications?: boolean | null
+          push_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          review_notifications?: boolean | null
+          seller_id?: string | null
+          sms_enabled?: boolean | null
+          system_notifications?: boolean | null
+          timezone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string | null
+          email_enabled?: boolean | null
+          id?: string
+          order_notifications?: boolean | null
+          promotion_notifications?: boolean | null
+          push_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          review_notifications?: boolean | null
+          seller_id?: string | null
+          sms_enabled?: boolean | null
+          system_notifications?: boolean | null
+          timezone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_preferences_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_templates: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          delivery_methods: Json | null
+          id: string
+          is_active: boolean | null
+          message_template: string
+          template_name: string
+          template_type: string
+          template_variables: Json | null
+          title_template: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          delivery_methods?: Json | null
+          id?: string
+          is_active?: boolean | null
+          message_template: string
+          template_name: string
+          template_type: string
+          template_variables?: Json | null
+          title_template: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          delivery_methods?: Json | null
+          id?: string
+          is_active?: boolean | null
+          message_template?: string
+          template_name?: string
+          template_type?: string
+          template_variables?: Json | null
+          title_template?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       nutritional_info: {
         Row: {
@@ -505,39 +935,138 @@ export type Database = {
         }
         Relationships: []
       }
+      odoo_session_logs: {
+        Row: {
+          attempt_timestamp: string | null
+          caller_ip: unknown | null
+          created_at: string | null
+          endpoint_called: string | null
+          failure_reason: string | null
+          id: string
+          session_id: string | null
+          set_cookie_seen: boolean | null
+          success: boolean
+          uid_present: boolean | null
+          user_agent: string | null
+        }
+        Insert: {
+          attempt_timestamp?: string | null
+          caller_ip?: unknown | null
+          created_at?: string | null
+          endpoint_called?: string | null
+          failure_reason?: string | null
+          id?: string
+          session_id?: string | null
+          set_cookie_seen?: boolean | null
+          success: boolean
+          uid_present?: boolean | null
+          user_agent?: string | null
+        }
+        Update: {
+          attempt_timestamp?: string | null
+          caller_ip?: unknown | null
+          created_at?: string | null
+          endpoint_called?: string | null
+          failure_reason?: string | null
+          id?: string
+          session_id?: string | null
+          set_cookie_seen?: boolean | null
+          success?: boolean
+          uid_present?: boolean | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      oms_configuration: {
+        Row: {
+          config_key: string
+          config_type: string
+          config_value: Json
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          updated_at: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          config_key: string
+          config_type: string
+          config_value: Json
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          config_key?: string
+          config_type?: string
+          config_value?: Json
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string | null
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
+          cut_preference: string | null
           id: string
           livestock_id: string | null
           order_id: string
           product_id: string | null
+          product_name: string | null
+          product_sku: string | null
+          product_snapshot: Json | null
           product_type: string
           quantity: number
+          special_requests: string | null
           total_price: number
           unit_price: number
+          weight_preference: string | null
         }
         Insert: {
           created_at?: string
+          cut_preference?: string | null
           id?: string
           livestock_id?: string | null
           order_id: string
           product_id?: string | null
+          product_name?: string | null
+          product_sku?: string | null
+          product_snapshot?: Json | null
           product_type: string
           quantity?: number
+          special_requests?: string | null
           total_price: number
           unit_price: number
+          weight_preference?: string | null
         }
         Update: {
           created_at?: string
+          cut_preference?: string | null
           id?: string
           livestock_id?: string | null
           order_id?: string
           product_id?: string | null
+          product_name?: string | null
+          product_sku?: string | null
+          product_snapshot?: Json | null
           product_type?: string
           quantity?: number
+          special_requests?: string | null
           total_price?: number
           unit_price?: number
+          weight_preference?: string | null
         }
         Relationships: [
           {
@@ -549,40 +1078,192 @@ export type Database = {
           },
         ]
       }
+      order_routing_decisions: {
+        Row: {
+          algorithm_version: string
+          decision_score: number | null
+          failure_reason: string | null
+          fallback_sellers: string[] | null
+          id: string
+          order_id: string | null
+          primary_seller_id: string | null
+          routing_completed_at: string | null
+          routing_duration_ms: number | null
+          routing_factors: Json | null
+          routing_successful: boolean | null
+        }
+        Insert: {
+          algorithm_version: string
+          decision_score?: number | null
+          failure_reason?: string | null
+          fallback_sellers?: string[] | null
+          id?: string
+          order_id?: string | null
+          primary_seller_id?: string | null
+          routing_completed_at?: string | null
+          routing_duration_ms?: number | null
+          routing_factors?: Json | null
+          routing_successful?: boolean | null
+        }
+        Update: {
+          algorithm_version?: string
+          decision_score?: number | null
+          failure_reason?: string | null
+          fallback_sellers?: string[] | null
+          id?: string
+          order_id?: string | null
+          primary_seller_id?: string | null
+          routing_completed_at?: string | null
+          routing_duration_ms?: number | null
+          routing_factors?: Json | null
+          routing_successful?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_routing_decisions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_routing_decisions_primary_seller_id_fkey"
+            columns: ["primary_seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_state_transitions: {
+        Row: {
+          from_status: Database["public"]["Enums"]["order_status_enum"] | null
+          id: string
+          metadata: Json | null
+          notes: string | null
+          order_id: string | null
+          to_status: Database["public"]["Enums"]["order_status_enum"]
+          transition_reason: string | null
+          transitioned_at: string | null
+          triggered_by_user_id: string | null
+          triggered_by_user_type: string | null
+        }
+        Insert: {
+          from_status?: Database["public"]["Enums"]["order_status_enum"] | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          order_id?: string | null
+          to_status: Database["public"]["Enums"]["order_status_enum"]
+          transition_reason?: string | null
+          transitioned_at?: string | null
+          triggered_by_user_id?: string | null
+          triggered_by_user_type?: string | null
+        }
+        Update: {
+          from_status?: Database["public"]["Enums"]["order_status_enum"] | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          order_id?: string | null
+          to_status?: Database["public"]["Enums"]["order_status_enum"]
+          transition_reason?: string | null
+          transitioned_at?: string | null
+          triggered_by_user_id?: string | null
+          triggered_by_user_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_state_transitions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
+          accepted_at: string | null
+          actual_delivery_time: string | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          completed_at: string | null
+          confirmed_at: string | null
           created_at: string
+          created_by: string | null
           currency: string
           customer_id: string
           delivery_address: string | null
+          delivery_coordinates: unknown | null
+          delivery_fee: number | null
+          estimated_delivery_time: string | null
+          expires_at: string | null
           id: string
+          order_metadata: Json | null
           order_number: string
           payment_status: string
+          special_instructions: string | null
           status: string
+          status_enum: Database["public"]["Enums"]["order_status_enum"] | null
+          subtotal: number | null
+          tax_amount: number | null
           total_amount: number
           updated_at: string
         }
         Insert: {
+          accepted_at?: string | null
+          actual_delivery_time?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          confirmed_at?: string | null
           created_at?: string
+          created_by?: string | null
           currency?: string
           customer_id: string
           delivery_address?: string | null
+          delivery_coordinates?: unknown | null
+          delivery_fee?: number | null
+          estimated_delivery_time?: string | null
+          expires_at?: string | null
           id?: string
+          order_metadata?: Json | null
           order_number: string
           payment_status?: string
+          special_instructions?: string | null
           status?: string
+          status_enum?: Database["public"]["Enums"]["order_status_enum"] | null
+          subtotal?: number | null
+          tax_amount?: number | null
           total_amount: number
           updated_at?: string
         }
         Update: {
+          accepted_at?: string | null
+          actual_delivery_time?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          completed_at?: string | null
+          confirmed_at?: string | null
           created_at?: string
+          created_by?: string | null
           currency?: string
           customer_id?: string
           delivery_address?: string | null
+          delivery_coordinates?: unknown | null
+          delivery_fee?: number | null
+          estimated_delivery_time?: string | null
+          expires_at?: string | null
           id?: string
+          order_metadata?: Json | null
           order_number?: string
           payment_status?: string
+          special_instructions?: string | null
           status?: string
+          status_enum?: Database["public"]["Enums"]["order_status_enum"] | null
+          subtotal?: number | null
+          tax_amount?: number | null
           total_amount?: number
           updated_at?: string
         }
@@ -767,6 +1448,148 @@ export type Database = {
           },
         ]
       }
+      product_review_stats: {
+        Row: {
+          average_rating: number | null
+          last_updated: string | null
+          product_id: string
+          rating_1_count: number | null
+          rating_2_count: number | null
+          rating_3_count: number | null
+          rating_4_count: number | null
+          rating_5_count: number | null
+          total_reviews: number | null
+          verified_average_rating: number | null
+          verified_reviews_count: number | null
+        }
+        Insert: {
+          average_rating?: number | null
+          last_updated?: string | null
+          product_id: string
+          rating_1_count?: number | null
+          rating_2_count?: number | null
+          rating_3_count?: number | null
+          rating_4_count?: number | null
+          rating_5_count?: number | null
+          total_reviews?: number | null
+          verified_average_rating?: number | null
+          verified_reviews_count?: number | null
+        }
+        Update: {
+          average_rating?: number | null
+          last_updated?: string | null
+          product_id?: string
+          rating_1_count?: number | null
+          rating_2_count?: number | null
+          rating_3_count?: number | null
+          rating_4_count?: number | null
+          rating_5_count?: number | null
+          total_reviews?: number | null
+          verified_average_rating?: number | null
+          verified_reviews_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_review_stats_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: true
+            referencedRelation: "meat_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_reviews: {
+        Row: {
+          created_at: string | null
+          customer_id: string | null
+          helpful_count: number | null
+          id: string
+          is_verified_purchase: boolean | null
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_reason: string | null
+          moderation_status: string | null
+          order_id: string | null
+          order_item_id: string | null
+          product_id: string | null
+          rating: number
+          review_images: Json | null
+          review_text: string | null
+          review_title: string | null
+          unhelpful_count: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: string | null
+          helpful_count?: number | null
+          id?: string
+          is_verified_purchase?: boolean | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_reason?: string | null
+          moderation_status?: string | null
+          order_id?: string | null
+          order_item_id?: string | null
+          product_id?: string | null
+          rating: number
+          review_images?: Json | null
+          review_text?: string | null
+          review_title?: string | null
+          unhelpful_count?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string | null
+          helpful_count?: number | null
+          id?: string
+          is_verified_purchase?: boolean | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_reason?: string | null
+          moderation_status?: string | null
+          order_id?: string | null
+          order_item_id?: string | null
+          product_id?: string | null
+          rating?: number
+          review_images?: Json | null
+          review_text?: string | null
+          review_title?: string | null
+          unhelpful_count?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_reviews_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_reviews_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "meat_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_transactions: {
         Row: {
           change_reason: string | null
@@ -811,6 +1634,93 @@ export type Database = {
             columns: ["meat_product_id"]
             isOneToOne: false
             referencedRelation: "meat_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_webhook_events: {
+        Row: {
+          created_at: string | null
+          dry_run_data: Json | null
+          duplicate_check_field: string | null
+          duplicate_prevented: boolean | null
+          duplicate_value: string | null
+          event_data: Json | null
+          event_source: string
+          event_type: string
+          id: string
+          new_status: string | null
+          old_status: string | null
+          product_id: string | null
+          seller_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          dry_run_data?: Json | null
+          duplicate_check_field?: string | null
+          duplicate_prevented?: boolean | null
+          duplicate_value?: string | null
+          event_data?: Json | null
+          event_source: string
+          event_type: string
+          id?: string
+          new_status?: string | null
+          old_status?: string | null
+          product_id?: string | null
+          seller_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          dry_run_data?: Json | null
+          duplicate_check_field?: string | null
+          duplicate_prevented?: boolean | null
+          duplicate_value?: string | null
+          event_data?: Json | null
+          event_source?: string
+          event_type?: string
+          id?: string
+          new_status?: string | null
+          old_status?: string | null
+          product_id?: string | null
+          seller_id?: string | null
+        }
+        Relationships: []
+      }
+      review_helpfulness: {
+        Row: {
+          created_at: string | null
+          customer_id: string | null
+          id: string
+          is_helpful: boolean
+          review_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: string | null
+          id?: string
+          is_helpful: boolean
+          review_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string | null
+          id?: string
+          is_helpful?: boolean
+          review_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_helpfulness_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_helpfulness_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "product_reviews"
             referencedColumns: ["id"]
           },
         ]
@@ -864,6 +1774,71 @@ export type Database = {
             foreignKeyName: "seller_approvals_seller_id_fkey"
             columns: ["seller_id"]
             isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seller_capacity: {
+        Row: {
+          acceptance_rate_percentage: number | null
+          availability_status: string | null
+          average_acceptance_time_seconds: number | null
+          average_preparation_time_minutes: number | null
+          current_active_orders: number | null
+          current_daily_orders: number | null
+          id: string
+          is_currently_available: boolean | null
+          last_capacity_check: string | null
+          manual_override_until: string | null
+          max_concurrent_orders: number | null
+          max_daily_orders: number | null
+          operating_hours: Json | null
+          override_reason: string | null
+          seller_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          acceptance_rate_percentage?: number | null
+          availability_status?: string | null
+          average_acceptance_time_seconds?: number | null
+          average_preparation_time_minutes?: number | null
+          current_active_orders?: number | null
+          current_daily_orders?: number | null
+          id?: string
+          is_currently_available?: boolean | null
+          last_capacity_check?: string | null
+          manual_override_until?: string | null
+          max_concurrent_orders?: number | null
+          max_daily_orders?: number | null
+          operating_hours?: Json | null
+          override_reason?: string | null
+          seller_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          acceptance_rate_percentage?: number | null
+          availability_status?: string | null
+          average_acceptance_time_seconds?: number | null
+          average_preparation_time_minutes?: number | null
+          current_active_orders?: number | null
+          current_daily_orders?: number | null
+          id?: string
+          is_currently_available?: boolean | null
+          last_capacity_check?: string | null
+          manual_override_until?: string | null
+          max_concurrent_orders?: number | null
+          max_daily_orders?: number | null
+          operating_hours?: Json | null
+          override_reason?: string | null
+          seller_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_capacity_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: true
             referencedRelation: "sellers"
             referencedColumns: ["id"]
           },
@@ -924,17 +1899,26 @@ export type Database = {
           contact_email: string | null
           contact_phone: string | null
           created_at: string
+          delivery_radius_km: number | null
+          fcm_token: string | null
           fssai_license: string | null
           gstin: string | null
           id: string
           ifsc_code: string | null
+          latitude: number | null
           livestock_status: boolean | null
+          location_updated_at: string | null
+          location_verified: boolean | null
+          longitude: number | null
           meat_shop_status: boolean | null
           notification_email: boolean | null
           notification_push: boolean | null
           notification_sms: boolean | null
+          odoo_seller_id: number | null
+          seller_image_url: string | null
           seller_name: string
           seller_type: Database["public"]["Enums"]["seller_type_enum"]
+          shop_image_url: string | null
           updated_at: string
           user_id: string | null
           user_type: Database["public"]["Enums"]["user_type_enum"] | null
@@ -954,17 +1938,26 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
+          delivery_radius_km?: number | null
+          fcm_token?: string | null
           fssai_license?: string | null
           gstin?: string | null
           id?: string
           ifsc_code?: string | null
+          latitude?: number | null
           livestock_status?: boolean | null
+          location_updated_at?: string | null
+          location_verified?: boolean | null
+          longitude?: number | null
           meat_shop_status?: boolean | null
           notification_email?: boolean | null
           notification_push?: boolean | null
           notification_sms?: boolean | null
+          odoo_seller_id?: number | null
+          seller_image_url?: string | null
           seller_name: string
           seller_type: Database["public"]["Enums"]["seller_type_enum"]
+          shop_image_url?: string | null
           updated_at?: string
           user_id?: string | null
           user_type?: Database["public"]["Enums"]["user_type_enum"] | null
@@ -984,22 +1977,76 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
+          delivery_radius_km?: number | null
+          fcm_token?: string | null
           fssai_license?: string | null
           gstin?: string | null
           id?: string
           ifsc_code?: string | null
+          latitude?: number | null
           livestock_status?: boolean | null
+          location_updated_at?: string | null
+          location_verified?: boolean | null
+          longitude?: number | null
           meat_shop_status?: boolean | null
           notification_email?: boolean | null
           notification_push?: boolean | null
           notification_sms?: boolean | null
+          odoo_seller_id?: number | null
+          seller_image_url?: string | null
           seller_name?: string
           seller_type?: Database["public"]["Enums"]["seller_type_enum"]
+          shop_image_url?: string | null
           updated_at?: string
           user_id?: string | null
           user_type?: Database["public"]["Enums"]["user_type_enum"] | null
         }
         Relationships: []
+      }
+      shopping_cart: {
+        Row: {
+          added_at: string | null
+          customer_id: string | null
+          id: string
+          product_id: string | null
+          quantity: number
+          unit_price: number
+          updated_at: string | null
+        }
+        Insert: {
+          added_at?: string | null
+          customer_id?: string | null
+          id?: string
+          product_id?: string | null
+          quantity: number
+          unit_price: number
+          updated_at?: string | null
+        }
+        Update: {
+          added_at?: string | null
+          customer_id?: string | null
+          id?: string
+          product_id?: string | null
+          quantity?: number
+          unit_price?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shopping_cart_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shopping_cart_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "meat_products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       states: {
         Row: {
@@ -1021,9 +2068,64 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_review: {
+        Args: { moderator_id: string; target_review_id: string }
+        Returns: boolean
+      }
+      calculate_endpoint_error_rate: {
+        Args: { endpoint_name: string; time_window?: unknown }
+        Returns: number
+      }
       generate_order_number: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_endpoint_call_volume: {
+        Args: { endpoint_name: string; time_window?: unknown }
+        Returns: number
+      }
+      initialize_seller_capacity: {
+        Args: { p_seller_id: string }
+        Returns: boolean
+      }
+      reject_review: {
+        Args: {
+          moderator_id: string
+          rejection_reason: string
+          target_review_id: string
+        }
+        Returns: boolean
+      }
+      sanitize_log_data: {
+        Args: { data: Json }
+        Returns: Json
+      }
+      update_order_status: {
+        Args: {
+          p_new_status: Database["public"]["Enums"]["order_status_enum"]
+          p_notes?: string
+          p_order_id: string
+          p_reason?: string
+          p_triggered_by?: string
+          p_user_type?: string
+        }
+        Returns: boolean
+      }
+      update_product_review_stats: {
+        Args: { target_product_id: string }
+        Returns: undefined
+      }
+      update_review_helpfulness_counts: {
+        Args: { target_review_id: string }
+        Returns: undefined
+      }
+      verify_purchase_for_review: {
+        Args: {
+          target_customer_id: string
+          target_order_id?: string
+          target_product_id: string
+        }
+        Returns: boolean
       }
     }
     Enums: {
@@ -1034,6 +2136,16 @@ export type Database = {
         | "Rejected"
         | "Sold"
         | "Inactive"
+      order_status_enum:
+        | "pending"
+        | "accepted"
+        | "confirmed"
+        | "ready_for_pickup"
+        | "out_for_delivery"
+        | "delivered"
+        | "cancelled"
+        | "expired"
+        | "failed"
       pricing_type_enum: "Fixed" | "Negotiable"
       seller_type_enum: "Meat" | "Livestock" | "Both"
       transportation_type_enum: "Aggregator" | "Seller"
@@ -1172,6 +2284,17 @@ export const Constants = {
         "Rejected",
         "Sold",
         "Inactive",
+      ],
+      order_status_enum: [
+        "pending",
+        "accepted",
+        "confirmed",
+        "ready_for_pickup",
+        "out_for_delivery",
+        "delivered",
+        "cancelled",
+        "expired",
+        "failed",
       ],
       pricing_type_enum: ["Fixed", "Negotiable"],
       seller_type_enum: ["Meat", "Livestock", "Both"],
