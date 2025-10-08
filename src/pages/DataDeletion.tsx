@@ -34,7 +34,7 @@ export default function DataDeletion() {
 
     try {
       const { error } = await supabase
-        .from("data_deletion_requests")
+        .from("data_deletion_requests" as any)
         .insert({
           phone_number: phoneNumber || null,
           email: email || null,
